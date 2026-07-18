@@ -21,3 +21,10 @@ SIG_ACC_IN  = 1 << SIG_BUS_OFFSET + 5 ; ACC from bus
 SIG_RAM_OFFSET = SIG_BUS_OFFSET + 6 ; offset of ram control signals
 SIG_RAM_READ = 1 << SIG_RAM_OFFSET + 0 ; read from RAM (to MDR)
 
+
+; ucode definition
+
+#ruledef ucode
+{
+    uc {signals} => signals
+}
