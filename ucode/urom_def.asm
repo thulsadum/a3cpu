@@ -1,5 +1,7 @@
 ; Definition of the ucode.
 
+#once
+
 ; Phase 1: Fetch Instructions
 #bankdef acpu
 {
