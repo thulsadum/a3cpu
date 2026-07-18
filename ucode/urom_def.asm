@@ -6,6 +6,7 @@
 #bankdef acpu
 {
   bits = 7
+  outp = 0
 }
 
 ; BUS CONTROL
@@ -26,5 +27,5 @@ SIG_RAM_READ = 1 << SIG_RAM_OFFSET + 0 ; read from RAM (to MDR)
 
 #ruledef ucode
 {
-    uc {signals} => signals
+    uc {signals} => signals`7
 }
