@@ -5,7 +5,7 @@
 ; Phase 1: Fetch Instructions
 #bankdef acpu
 {
-  bits = 7
+  bits = 8
   outp = 0
 }
 
@@ -30,5 +30,5 @@ SIG_RAM_READ = 1 << SIG_RAM_OFFSET + 0 ; read from RAM (to MDR)
 
 #ruledef ucode
 {
-    uc {signals} => signals`7
+    uc {signals} => signals`8
 }
