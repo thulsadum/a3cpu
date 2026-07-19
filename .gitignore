@@ -1,2 +1,2 @@
 ucode/*.bin
-ucsim/ac3pu-sim
+src/ac3pu-sim
