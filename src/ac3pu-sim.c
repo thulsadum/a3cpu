@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <arpa/inet.h>
 
 #define UROM_BIT_WIDTH 7
 #define RAM_SIZE 256
@@ -95,6 +96,10 @@ int main(int argc, const char ** argv) {
     }
     fread(cpu.ram, sizeof(uint16_t), RAM_SIZE, ram_file);
     fclose(ram_file);
+
+    for(int i = 0; i < RAM_SIZE; i++) {
+        cpu.ram[i] = ntohs(cpu.ram[i]);
+    }
 
     int cycle = 0;
     print_cpu_state(cycle, &cpu);
