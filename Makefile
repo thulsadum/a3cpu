@@ -15,7 +15,9 @@ $(SIM): src/*.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(UROM): ucode/urom_fetch.asm ucode/urom_def.asm
-	$(CASM) $(CASMFLAGS) -o $@ ucode/urom_fetch.asm
+
+ucode/%.bin: ucode/%.asm ucode/urom_def.asm
+	$(CASM) $(CASMFLAGS) -o $@ $<
 
 test: test-ucode
 
