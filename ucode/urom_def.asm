@@ -2,11 +2,19 @@
 
 #once
 
-; Phase 1: Fetch Instructions
+#bankdef mrom
+{
+    bits = 8
+    outp = 0
+    size = 255
+    fill = 0
+}
+
 #bankdef acpu
 {
   bits = 16
-  outp = 0
+  outp = 8*256
+  addr = 0x0000
 }
 
 ; BUS CONTROL

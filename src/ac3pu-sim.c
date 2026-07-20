@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <arpa/inet.h>
 
+#define MAP_ROM_SIZE 256
 #define RAM_SIZE 256
 #define UPROGRAM_SIZE 512
 
@@ -32,7 +33,9 @@ typedef struct {
     uint16_t mdr;
     uint16_t ir;
     uint16_t acc;
-    uint16_t ram[256];
+    uint8_t  mrom[MAP_ROM_SIZE];
+    uinstruction_t urom[UPROGRAM_SIZE];
+    uint16_t ram[RAM_SIZE];
 } cpu_t;
 
 
@@ -78,21 +81,24 @@ int main(int argc, const char ** argv) {
     }
 
     cpu_t cpu = {0};
-    uinstruction_t ucode[UPROGRAM_SIZE] = {0};
     int ucode_len = 0;
 
-    /* load ucode from file */
+    /* load mapping rom and ucode from a single file */
     FILE *u_file = fopen(argv[1], "rb");
     if(!u_file) {
         perror("Error opening ucode file");
         return 1;
     }
-
-    ucode_len = fread(ucode, sizeof(uinstruction_t), UPROGRAM_SIZE, u_file);
+    /* read mapping rom first */
+    if (fread(cpu.mrom, sizeof(uint8_t), MAP_ROM_SIZE, u_file) < MAP_ROM_SIZE) {
+        fprintf(stderr, "error reading ucode file: %s\n", "end of file reached unexpectedly.");
+        return 1;
+    }
+    ucode_len = fread(cpu.urom, sizeof(uinstruction_t), UPROGRAM_SIZE, u_file);
     fclose(u_file);
 
     for(int i = 0; i < ucode_len; i++) {
-        ucode[i].raw = ntohs(ucode[i].raw);
+        cpu.urom[i].raw = ntohs(cpu.urom[i].raw);
     }
 
     /* load ram from file */
@@ -113,7 +119,7 @@ int main(int argc, const char ** argv) {
 
     for (int upc = 0; upc < ucode_len; upc++) {
         cycle++;
-        tick(&cpu, ucode[upc]);
+        tick(&cpu, cpu.urom[upc]);
         print_cpu_state(cycle, &cpu);
     }
 
