@@ -19,7 +19,7 @@ $(UROM): ucode/urom_fetch.asm ucode/urom_def.asm
 
 test: test-ucode
 
-test-ucode: test-ucode-00_fetch
+test-ucode: test-ucode-00_fetch test-ucode-01_decode
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
