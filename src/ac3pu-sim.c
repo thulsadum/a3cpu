@@ -33,6 +33,7 @@ typedef struct {
     uint16_t mdr;
     uint16_t ir;
     uint16_t acc;
+    uint16_t upc;
     uint8_t  mrom[MAP_ROM_SIZE];
     uinstruction_t urom[UPROGRAM_SIZE];
     uint16_t ram[RAM_SIZE];
@@ -45,9 +46,10 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
 }
 
 
-void tick(cpu_t *cpu, uinstruction_t uc) {
+void tick(cpu_t *cpu) {
     uint16_t bus = 0;
     int bus_drivers = 0;
+    uinstruction_t uc = cpu->urom[cpu->upc];
 
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
@@ -70,6 +72,7 @@ void tick(cpu_t *cpu, uinstruction_t uc) {
     if (uc.signals.pc_inc) {
         cpu->pc++;
     }
+    cpu->upc++;
 }
 
 
@@ -117,9 +120,9 @@ int main(int argc, const char ** argv) {
     int cycle = 0;
     print_cpu_state(cycle, &cpu);
 
-    for (int upc = 0; upc < ucode_len; upc++) {
+    for (cpu.upc = 0; cpu.upc < ucode_len; ) {
         cycle++;
-        tick(&cpu, cpu.urom[upc]);
+        tick(&cpu);
         print_cpu_state(cycle, &cpu);
     }
 
