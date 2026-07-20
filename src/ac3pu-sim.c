@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <arpa/inet.h>
 
-#define UROM_BIT_WIDTH 7
 #define RAM_SIZE 256
 #define UPROGRAM_SIZE 512
 
@@ -14,12 +13,16 @@ typedef struct {
     uint8_t mdr_out : 1;
     uint8_t ir_in : 1;
     uint8_t acc_in : 1;
+    uint8_t upc_reset :1;
+    uint8_t upc_inc :1;
+    uint8_t upc_from_mrom :1;
     uint8_t pc_inc : 1;
     uint8_t ram_read : 1;
+    uint8_t cpu_halt : 1;
 } cbits_t;
 
 typedef union {
-    uint8_t raw;
+    uint16_t raw;
     cbits_t signals;
 } uinstruction_t;
 
@@ -87,6 +90,10 @@ int main(int argc, const char ** argv) {
 
     ucode_len = fread(ucode, sizeof(uinstruction_t), UPROGRAM_SIZE, u_file);
     fclose(u_file);
+
+    for(int i = 0; i < ucode_len; i++) {
+        ucode[i].raw = ntohs(ucode[i].raw);
+    }
 
     /* load ram from file */
     FILE *ram_file = fopen(argv[2], "rb");
