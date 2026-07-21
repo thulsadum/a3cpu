@@ -4,7 +4,7 @@
 
 #bankdef mrom
 {
-    bits = 8
+    bits = 16
     outp = 0
     size = 255
     fill = 0
@@ -13,7 +13,7 @@
 #bankdef acpu
 {
   bits = 16
-  outp = 8*256
+  outp = 16*256
   addr = 0x0000
 }
 
