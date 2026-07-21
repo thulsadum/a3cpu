@@ -28,12 +28,32 @@ typedef union {
 } uinstruction_t;
 
 typedef struct {
+    uint8_t opcode : 8;
+    uint8_t immediate : 8;
+} sinst_t;
+
+typedef union {
+    uint16_t raw;
+    sinst_t simple;
+} cinstruction_t;
+
+typedef struct {
+    uint8_t halt;
+} flags_t;
+
+typedef union {
+    uint16_t raw;
+    flags_t flags;
+} flag_register_t;
+
+typedef struct {
     uint16_t pc;
     uint16_t mar;
     uint16_t mdr;
-    uint16_t ir;
+    cinstruction_t ir;
     uint16_t acc;
     uint16_t upc;
+    flag_register_t flags;
     uint8_t  mrom[MAP_ROM_SIZE];
     uinstruction_t urom[UPROGRAM_SIZE];
     uint16_t ram[RAM_SIZE];
@@ -41,8 +61,8 @@ typedef struct {
 
 
 void print_cpu_state(int cycle, cpu_t *cpu) {
-    printf("CYCLE:%03d | PC:0x%04X | MAR:0x%04X | MDR:0x%04X | IR:0x%04X | ACC:0x%04X\n",
-           cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir, cpu->acc);
+    printf("CYCLE:%03d | PC:0x%04X | MAR:0x%04X | MDR:0x%04X | IR:0x%04X | ACC:0x%04X | FLAGS:0x%04X\n",
+           cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir.raw, cpu->acc, cpu->flags.raw);
 }
 
 
@@ -50,6 +70,11 @@ void tick(cpu_t *cpu) {
     uint16_t bus = 0;
     int bus_drivers = 0;
     uinstruction_t uc = cpu->urom[cpu->upc];
+
+    /* handling cpu signals */
+    if (cpu->flags.flags.halt) return;
+
+    if(uc.signals.cpu_halt) cpu->flags.flags.halt = 1;
 
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
@@ -60,7 +85,7 @@ void tick(cpu_t *cpu) {
 
     /* read from bus */
     if (uc.signals.mar_in) cpu->mar = bus;
-    if (uc.signals.ir_in) cpu->ir = bus;
+    if (uc.signals.ir_in) cpu->ir = (cinstruction_t)bus;
     if (uc.signals.acc_in) cpu->acc = bus;
 
     /* misc */
@@ -72,7 +97,13 @@ void tick(cpu_t *cpu) {
     if (uc.signals.pc_inc) {
         cpu->pc++;
     }
+
+    /* upc management */
     cpu->upc++;
+    if (uc.signals.upc_from_mrom) {
+        /* load upc from mapping rom */
+        cpu->upc = cpu->mrom[cpu->ir.simple.opcode];
+    }
 }
 
 
@@ -120,10 +151,14 @@ int main(int argc, const char ** argv) {
     int cycle = 0;
     print_cpu_state(cycle, &cpu);
 
-    for (cpu.upc = 0; cpu.upc < ucode_len; ) {
+    for (cpu.upc = 0; cpu.upc < ucode_len && cpu.flags.flags.halt == 0; ) {
         cycle++;
         tick(&cpu);
         print_cpu_state(cycle, &cpu);
+    }
+
+    if(cpu.flags.flags.halt) {
+        printf("--- CPU HALTED ---");
     }
 
     return 0;
