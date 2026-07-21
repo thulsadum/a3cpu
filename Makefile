@@ -5,7 +5,7 @@ CASM = customasm
 CASMFLAGS = 
 
 SIM = src/ac3pu-sim
-UROM = ucode/urom_fetch.bin
+DEFAULT_UROM = ucode/urom_full.bin
 
 .PHONY: all test clean test-ucode test-asm
 
@@ -25,11 +25,13 @@ test-ucode: test-ucode-00_fetch test-ucode-01_decode
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
-	@$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
-	@$(SIM) $(UROM) test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
+	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
+	UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)"); \
+	make $$UROM; \
+	$(SIM) $$UROM test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
 	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok"
 	@rm -f test/ucode/$*/{ram.bin,actual.txt}
 
 clean:
-	rm -f $(SIM) $(UROM)
+	rm -f $(SIM) ucode/*.bin ucode/*.hex
 
