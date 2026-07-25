@@ -10,6 +10,13 @@
 
 typedef uint32_t sig_t;
 
+typedef enum {
+    ALU_ADD = 0,
+    ALU_SUB,
+    ALU_SHL,
+    ALU_SHR,
+} alu_op_t;
+
 typedef struct {
     sig_t pc_out : 1;
     sig_t mar_in : 1;
@@ -25,10 +32,7 @@ typedef struct {
     sig_t ram_read : 1;
     sig_t ram_write : 1;
     sig_t cpu_halt : 1;
-    sig_t alu_add : 1;
-    sig_t alu_sub : 1;
-    sig_t alu_shl : 1;
-    sig_t alu_shr : 1;
+    alu_op_t alu_op : 4;
 } cbits_t;
 
 typedef union {
@@ -78,24 +82,20 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
     uint16_t a,b;
     a = cpu->acc;
     b = cpu->mdr;
- 
-    if (uc.signals.alu_add) {
+
+    switch (uc.signals.alu_op) {
+    case ALU_ADD:
         return a+b;
-    }
- 
-    if (uc.signals.alu_sub) {
+    case ALU_SUB:
         return a-b;
-    }
-
-    if (uc.signals.alu_shl) {
+    case ALU_SHL:
         return a<<b;
-    }
-
-    if (uc.signals.alu_shr) {
+    case ALU_SHR:
         return a>>b;
+    default:
+        assert(false && "Undefined ALU operation");
     }
 
-    assert(false && "Undefined ALU operation");
     return 0;
 }
 
