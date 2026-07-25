@@ -32,7 +32,9 @@ OP_ALU_ADD  = OC_ADD  << OP_OFFSET
 OP_ALU_SUBI = OC_SUBI << OP_OFFSET
 OP_ALU_SUB  = OC_SUB  << OP_OFFSET
 OP_ALU_SHLI = OC_SHLI << OP_OFFSET
+OP_ALU_SHL  = OC_SHL  << OP_OFFSET
 OP_ALU_SHRI = OC_SHRI << OP_OFFSET
+OP_ALU_SHR  = OC_SHR  << OP_OFFSET
 
 #ruledef alu {
     addi {imm:u16} => OP_ALU_ADDI`16 @ imm`16
@@ -42,4 +44,6 @@ OP_ALU_SHRI = OC_SHRI << OP_OFFSET
 
     add {addr:u16} => OP_ALU_ADD`16  @ addr`16
     sub {addr:u16} => OP_ALU_SUB`16  @ addr`16
+    shl {addr:u16} => OP_ALU_SHL`16  @ addr`16
+    shr {addr:u16} => OP_ALU_SHR`16  @ addr`16
 }
