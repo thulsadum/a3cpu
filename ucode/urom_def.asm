@@ -51,6 +51,11 @@ CPU_OFFSET = RAM_END
 SIG_CPU_HALT = 1 << CPU_OFFSET + 0
 CPU_END = CPU_OFFSET + 1
 
+ALU_OFFSET = CPU_END
+SIG_ALU_OUT = 1 << ALU_OFFSET + 0 ; ALU to BUS
+SIG_ALU_OP_ADD = 1 << ALU_OFFSET + 1 ; ALU: A + B [A <- ACC, B <- MDR]
+ALU_END = ALU_OFFSET + 2
+
 ; ucode definition
 
 #ruledef ucode

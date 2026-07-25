@@ -14,6 +14,7 @@ OP_NOP = OC_NOP << OP_OFFSET
     nop => OP_NOP`16
 }
 
+
 OP_LDA = OC_LDA << OP_OFFSET
 OP_LDI = OC_LDI << OP_OFFSET
 OP_STA = OC_STA << OP_OFFSET
@@ -23,4 +24,17 @@ OP_STA = OC_STA << OP_OFFSET
     ldi {imm:u16} => OP_LDI`16 @ imm`16
 
     sta {addr:u16} => OP_STA`16 @ addr`16
+}
+
+
+OP_ALU_ADDI = OC_ADDI << OP_OFFSET
+OP_ALU_SUBI = OC_SUBI << OP_OFFSET
+OP_ALU_SHLI = OC_SHLI << OP_OFFSET
+OP_ALU_SHRI = OC_SHRI << OP_OFFSET
+
+#ruledef alu {
+    addi {imm:u16} => OP_ALU_ADDI`16 @ imm`16
+    subi {imm:u16} => OP_ALU_SUBI`16 @ imm`16
+    shli {imm:u16} => OP_ALU_SHLI`16 @ imm`16
+    shri {imm:u16} => OP_ALU_SHRI`16 @ imm`16
 }
