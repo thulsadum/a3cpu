@@ -36,6 +36,8 @@ ldi 16
 shr two
 
 
+halt
+
 answer:
     #d16 0x0042
 two:

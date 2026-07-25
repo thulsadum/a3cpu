@@ -8,7 +8,7 @@
 #define RAM_SIZE 256
 #define UPROGRAM_SIZE 512
 
-typedef uint16_t sig_t;
+typedef uint32_t sig_t;
 
 typedef struct {
     sig_t pc_out : 1;
@@ -27,10 +27,12 @@ typedef struct {
     sig_t cpu_halt : 1;
     sig_t alu_add : 1;
     sig_t alu_sub : 1;
+    sig_t alu_shl : 1;
+    sig_t alu_shr : 1;
 } cbits_t;
 
 typedef union {
-    uint16_t raw;
+    sig_t raw;
     cbits_t signals;
 } uinstruction_t;
 
@@ -83,6 +85,14 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
  
     if (uc.signals.alu_sub) {
         return a-b;
+    }
+
+    if (uc.signals.alu_shl) {
+        return a<<b;
+    }
+
+    if (uc.signals.alu_shr) {
+        return a>>b;
     }
 
     assert(false && "Undefined ALU operation");
@@ -168,7 +178,7 @@ int main(int argc, const char ** argv) {
         cpu.mrom[i] = ntohs(cpu.mrom[i]);
     }
     for(int i = 0; i < ucode_len; i++) {
-        cpu.urom[i].raw = ntohs(cpu.urom[i].raw);
+        cpu.urom[i].raw = ntohl(cpu.urom[i].raw);
     }
 
     /* load ram from file */

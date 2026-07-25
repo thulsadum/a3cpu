@@ -12,7 +12,7 @@
 
 #bankdef acpu
 {
-  bits = 16
+  bits = 32
   outp = 16*256
   addr = 0x0000
 }
@@ -55,11 +55,13 @@ CPU_END = CPU_OFFSET + 1
 ALU_OFFSET = CPU_END
 SIG_ALU_OP_ADD = 1 << ALU_OFFSET + 0 ; ALU: A + B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SUB = 1 << ALU_OFFSET + 1 ; ALU: A - B [A <- ACC, B <- MDR]
-ALU_END = ALU_OFFSET + 1
+SIG_ALU_OP_SHL = 1 << ALU_OFFSET + 2 ; ALU: A << B [A <- ACC, B <- MDR]
+SIG_ALU_OP_SHR = 1 << ALU_OFFSET + 3 ; ALU: A >> B [A <- ACC, B <- MDR]
+ALU_END = ALU_OFFSET + 4
 
 ; ucode definition
 
 #ruledef ucode
 {
-    uc {signals} => signals`16
+    uc {signals} => signals`32
 }
