@@ -1,5 +1,7 @@
-
+#once
 
 OC_HALT = 0x66
 OC_NOP = 0x00
 
+OC_LDA = 0x01
+OC_STA = 0x02

@@ -1,8 +1,12 @@
 ; Just the Fetch-Phase
 
+#once
+
 #include "urom_def.asm"
 #include "urom_fetch.asm"
 #include "../asmdef/ac3puasm_opcodes.asm"
+
+#bank acpu
 
 op_nop:
     uc SIG_UPC_RESET

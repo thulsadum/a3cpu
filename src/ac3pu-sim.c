@@ -13,14 +13,17 @@ typedef uint16_t sig_t;
 typedef struct {
     sig_t pc_out : 1;
     sig_t mar_in : 1;
+    sig_t mdr_in : 1;
     sig_t mdr_out : 1;
     sig_t ir_in : 1;
     sig_t acc_in : 1;
+    sig_t acc_out : 1;
     sig_t upc_reset :1;
-    sig_t upc_inc :1;
+//    sig_t upc_inc :1;
     sig_t upc_from_mrom :1;
     sig_t pc_inc : 1;
     sig_t ram_read : 1;
+    sig_t ram_write : 1;
     sig_t cpu_halt : 1;
 } cbits_t;
 
@@ -81,6 +84,7 @@ void tick(cpu_t *cpu) {
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
     if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
+    if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
 
     /* check for bus conflicts */
     assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
@@ -89,10 +93,14 @@ void tick(cpu_t *cpu) {
     if (uc.signals.mar_in) cpu->mar = bus;
     if (uc.signals.ir_in) cpu->ir = (cinstruction_t)bus;
     if (uc.signals.acc_in) cpu->acc = bus;
+    if (uc.signals.mdr_in) cpu->mdr = bus;
 
     /* misc */
     if (uc.signals.ram_read) {
         cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
+    }
+    if (uc.signals.ram_write) {
+        cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
     }
 
     /* branch logic */
