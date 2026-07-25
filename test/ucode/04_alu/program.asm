@@ -9,7 +9,6 @@ addi 5
 
 ldi 3
 add answer
-halt
 
 lda answer
 add 3
