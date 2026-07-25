@@ -11,7 +11,7 @@ ldi 3
 add answer
 
 lda answer
-add 3
+addi 3
 halt
 
 lda answer
