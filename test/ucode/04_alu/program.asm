@@ -12,7 +12,6 @@ add answer
 
 lda answer
 addi 3
-halt
 
 lda answer
 add answer
