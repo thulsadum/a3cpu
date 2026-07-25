@@ -15,10 +15,14 @@ addi 3
 
 lda answer
 add answer
-halt
+
 
 ldi 5
 subi 3
+halt
+
+ldi 2
+sub answer
 halt
 
 ldi 1
