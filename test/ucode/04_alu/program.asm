@@ -22,23 +22,18 @@ subi 3
 
 ldi 0x44
 sub answer
-halt
 
 ldi 1
 shli 3
-halt
 
 ldi 1
 shl two
-halt
 
 ldi 16
 shri 3
-halt
 
 ldi 16
 shr two
-halt
 
 
 answer:
