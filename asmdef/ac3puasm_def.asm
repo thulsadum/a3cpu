@@ -28,6 +28,7 @@ OP_STA = OC_STA << OP_OFFSET
 
 
 OP_ALU_ADDI = OC_ADDI << OP_OFFSET
+OP_ALU_ADD  = OC_ADD  << OP_OFFSET
 OP_ALU_SUBI = OC_SUBI << OP_OFFSET
 OP_ALU_SHLI = OC_SHLI << OP_OFFSET
 OP_ALU_SHRI = OC_SHRI << OP_OFFSET
@@ -37,4 +38,6 @@ OP_ALU_SHRI = OC_SHRI << OP_OFFSET
     subi {imm:u16} => OP_ALU_SUBI`16 @ imm`16
     shli {imm:u16} => OP_ALU_SHLI`16 @ imm`16
     shri {imm:u16} => OP_ALU_SHRI`16 @ imm`16
+
+    add {addr:u16} => OP_ALU_ADD`16  @ addr`16
 }
