@@ -7,7 +7,10 @@
 lda A
 sta C
 lda B
+ldi 0x1337
+sta D
 lda C
+lda D
 halt
 
 A:
@@ -15,4 +18,6 @@ A:
 B:
     #d16 0xcafe
 C:
+    #res 1
+D:
     #res 1

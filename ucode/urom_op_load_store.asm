@@ -14,6 +14,12 @@ op_lda:
     uc SIG_RAM_READ
     uc SIG_MDR_OUT | SIG_ACC_IN | SIG_UPC_RESET
 
+op_ldi:
+    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
+    uc SIG_RAM_READ
+    uc SIG_MDR_OUT | SIG_ACC_IN | SIG_UPC_RESET
+
+
 op_sta:
     uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
     uc SIG_RAM_READ
@@ -28,6 +34,9 @@ op_sta:
 
 #addr OC_LDA
 #d16 op_lda
+
+#addr OC_LDI
+#d16 op_ldi
 
 #addr OC_STA
 #d16 op_sta
