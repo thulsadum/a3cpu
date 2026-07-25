@@ -18,13 +18,14 @@ typedef struct {
     sig_t ir_in : 1;
     sig_t acc_in : 1;
     sig_t acc_out : 1;
+    sig_t alu_out : 1;
     sig_t upc_reset :1;
-//    sig_t upc_inc :1;
     sig_t upc_from_mrom :1;
     sig_t pc_inc : 1;
     sig_t ram_read : 1;
     sig_t ram_write : 1;
     sig_t cpu_halt : 1;
+    sig_t alu_add : 1;
 } cbits_t;
 
 typedef union {
@@ -70,6 +71,17 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
            cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir.raw, cpu->acc, cpu->flags.raw);
 }
 
+int16_t alu(cpu_t *cpu, uinstruction_t uc) {
+    uint16_t a,b;
+    a = cpu->acc;
+    b = cpu->mdr;
+    if (uc.signals.alu_add) {
+        return a+b;
+    }
+
+    assert(false && "Undefined ALU operation");
+    return 0;
+}
 
 void tick(cpu_t *cpu) {
     uint16_t bus = 0;
@@ -85,6 +97,7 @@ void tick(cpu_t *cpu) {
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
     if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
     if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
+    if (uc.signals.alu_out) { bus = alu(cpu, uc); bus_drivers++; }
 
     /* check for bus conflicts */
     assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");

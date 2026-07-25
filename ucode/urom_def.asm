@@ -26,7 +26,8 @@ SIG_MDR_OUT = 1 << BUS_OFFSET + 3 ; MDR to bus
 SIG_IR_IN   = 1 << BUS_OFFSET + 4 ; IR from bus
 SIG_ACC_IN  = 1 << BUS_OFFSET + 5 ; ACC from bus
 SIG_ACC_OUT  = 1 << BUS_OFFSET + 6 ; ACC to bus
-BUS_END = BUS_OFFSET + 7
+SIG_ALU_OUT  = 1 << BUS_OFFSET + 7 ; ALU to bus
+BUS_END = BUS_OFFSET + 8
 
 ; uPC CONTOL
 UPC_OFFSET = BUS_END
@@ -52,9 +53,8 @@ SIG_CPU_HALT = 1 << CPU_OFFSET + 0
 CPU_END = CPU_OFFSET + 1
 
 ALU_OFFSET = CPU_END
-SIG_ALU_OUT = 1 << ALU_OFFSET + 0 ; ALU to BUS
-SIG_ALU_OP_ADD = 1 << ALU_OFFSET + 1 ; ALU: A + B [A <- ACC, B <- MDR]
-ALU_END = ALU_OFFSET + 2
+SIG_ALU_OP_ADD = 1 << ALU_OFFSET + 0 ; ALU: A + B [A <- ACC, B <- MDR]
+ALU_END = ALU_OFFSET + 1
 
 ; ucode definition
 
