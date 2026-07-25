@@ -28,10 +28,20 @@ ldi 1
 shli 3
 halt
 
+ldi 1
+shl two
+halt
+
 ldi 16
 shri 3
+halt
+
+ldi 16
+shr two
 halt
 
 
 answer:
     #d16 0x0042
+two:
+    #d16 0x0002
