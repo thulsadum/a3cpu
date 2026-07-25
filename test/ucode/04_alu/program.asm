@@ -19,9 +19,8 @@ add answer
 
 ldi 5
 subi 3
-halt
 
-ldi 2
+ldi 0x44
 sub answer
 halt
 

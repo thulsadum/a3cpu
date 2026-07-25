@@ -26,6 +26,7 @@ typedef struct {
     sig_t ram_write : 1;
     sig_t cpu_halt : 1;
     sig_t alu_add : 1;
+    sig_t alu_sub : 1;
 } cbits_t;
 
 typedef union {
@@ -75,8 +76,13 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
     uint16_t a,b;
     a = cpu->acc;
     b = cpu->mdr;
+ 
     if (uc.signals.alu_add) {
         return a+b;
+    }
+ 
+    if (uc.signals.alu_sub) {
+        return a-b;
     }
 
     assert(false && "Undefined ALU operation");
