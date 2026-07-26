@@ -3,9 +3,9 @@
 #bank ac3pu_program
 
 sec
-halt
 
 clc
+halt
 
 sez
 clz
