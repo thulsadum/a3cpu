@@ -113,7 +113,7 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
         if (uc.signals.alu_carry_mux) {
             alu_carry = cpu->flags.flags.carry;
         }
-        return a + ~b + (!alu_carry);
+        return a + ~b + alu_carry;
     case ALU_SHL:
         return a<<b;
     case ALU_SHR:
