@@ -1,6 +1,6 @@
 #once
 
-OC_HALT = 0x66
+OC_HALT = 0x31 ; actualy an alias for OC_FLAG_HALT_1
 OC_NOP = 0x00
 
 OC_LDA = 0x01
