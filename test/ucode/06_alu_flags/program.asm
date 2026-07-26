@@ -34,13 +34,13 @@ adc foobar
 sec
 ldi  0x03
 sbbi 0x01
-;; should give: 0x01
+;; should give: 0x02
 
 
 sec
 ldi 0x49
 sbb foobar
-;; should give: 0x06
+;; should give: 0x07
 
 clc
 ldi  0x03
