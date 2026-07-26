@@ -41,6 +41,8 @@ typedef struct {
     sig_t ram_read : 1;
     sig_t ram_write : 1;
     alu_op_t alu_op : 4;
+    sig_t alu_carry_value : 1;
+    sig_t alu_carry_mux : 1;
     sig_t flag_change : 1;
     sig_t flag_value : 1;
     flag_sel_t flag_sel : 2;
@@ -98,6 +100,12 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
     switch (uc.signals.alu_op) {
     case ALU_ADD:
         return a+b;
+    case ALU_ADC:
+        int alu_carry = uc.signals.alu_carry_value;
+        if (uc.signals.alu_carry_mux) {
+            alu_carry = cpu->flags.flags.carry;
+        }
+        return a+b+alu_carry;
     case ALU_SUB:
         return a-b;
     case ALU_SHL:

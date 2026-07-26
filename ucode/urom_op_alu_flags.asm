@@ -1,6 +1,7 @@
 #include "urom_def.asm"
 #include "urom_fetch.asm"
 #include "urom_op_simple.asm"
+#include "urom_op_alu.asm"
 #include "../asmdef/ac3puasm_opcodes.asm"
 
 

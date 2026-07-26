@@ -1,5 +1,7 @@
 ; Just the Fetch-Phase
 
+#once
+
 #include "urom_def.asm"
 #include "urom_fetch.asm"
 #include "urom_op_simple.asm"
@@ -9,18 +11,26 @@
 #bank acpu
 
 #ruledef alu_helper {
-    __alu_bin_imm({alu_op}) => asm {
+    __alu_bin_imm({alu_op},{alu_carry}) => asm {
         uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | SIG_UPC_RESET
+        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | {alu_carry} | SIG_UPC_RESET
     }
 
-    __alu_bin_dir({alu_op}) => asm {
+    __alu_bin_dir({alu_op},{alu_carry}) => asm {
         uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
         uc SIG_RAM_READ
         uc SIG_MAR_IN | SIG_MDR_OUT
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | SIG_UPC_RESET
+        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | {alu_carry} | SIG_UPC_RESET
+    }
+
+    __alu_bin_imm({alu_op}) => asm {
+        __alu_bin_imm({alu_op},0)
+    }
+
+    __alu_bin_dir({alu_op}) => asm {
+        __alu_bin_dir({alu_op},0)
     }
 }
 
@@ -40,6 +50,21 @@ op_add: __alu_bin_dir(SIG_ALU_OP_ADD)
 #d16 op_addi
 #addr OC_ADD
 #d16 op_add
+
+
+;;;
+;;; ADC
+;;;
+#bank acpu
+op_adci: __alu_bin_imm(SIG_ALU_OP_ADC,SIG_ALU_CARRY_FLAG)
+op_adc: __alu_bin_dir(SIG_ALU_OP_ADC,SIG_ALU_CARRY_FLAG)
+
+; set addresses of uprogs for opcodes into mapping rom
+#bank mrom
+#addr OC_ADCI
+#d16 op_adci
+#addr OC_ADC
+#d16 op_adc
 
 
 
