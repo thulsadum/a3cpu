@@ -7,7 +7,7 @@
 ;;; sec / clc --- carry flag manipulation
 #bank acpu
 op_sec:
-    uc SIG_FLAG_CHANGE | SIG_FLAG_CARRY_1 | SIG_UPC_RESET
+    uc set_flag(SIG_FLAG_SEL_CARRY,1) | SIG_UPC_RESET
 
 #bank mrom
 #addr OC_FLAG_CARRY_1

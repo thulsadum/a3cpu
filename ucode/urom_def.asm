@@ -67,10 +67,13 @@ ALU_END = ALU_OFFSET + ALU_OP_SEL_LEN
 ; FLAGS CONTROL
 FLAGS_OFFSET = ALU_END
 SIG_FLAG_CHANGE = 1 << FLAGS_OFFSET    ; signals CPU to update a single flag
-FLAG_SEL_OFFSET = FLAGS_OFFSET + 1
-FLAG_SEL_LEN = 3
-SIG_FLAG_CARRY_1 = 0b011 << FLAG_SEL_OFFSET ; FLAGS[CARRY] = 1
+SIG_FLAG_VALUE = 0 << FLAGS_OFFSET+1   ; the value to update to, will be determined later
+FLAG_SEL_OFFSET = FLAGS_OFFSET + 2
+FLAG_SEL_LEN = 2
+SIG_FLAG_SEL_CARRY = 0b01 << FLAG_SEL_OFFSET
 FLAGS_END = FLAGS_OFFSET + FLAG_SEL_LEN
+
+#fn set_flag(flag,value) => SIG_FLAG_CHANGE | {flag} | {value} << (FLAG_SEL_OFFSET-1)
 
 ; ucode definition
 
