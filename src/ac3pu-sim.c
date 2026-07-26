@@ -30,6 +30,7 @@ typedef struct {
     sig_t mdr_in : 1;
     sig_t mdr_out : 1;
     sig_t ir_in : 1;
+    sig_t ir_imm8_out : 1;
     sig_t acc_in : 1;
     sig_t acc_out : 1;
     sig_t alu_out : 1;
@@ -150,6 +151,7 @@ void tick(cpu_t *cpu) {
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
     if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
     if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
+    if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
     if (uc.signals.alu_out) { bus = alu(cpu, uc); bus_drivers++; }
 
     /* check for bus conflicts */

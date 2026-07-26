@@ -24,10 +24,11 @@ SIG_MAR_IN  = 1 << BUS_OFFSET + 1 ; MAR from bus
 SIG_MDR_IN = 1 << BUS_OFFSET + 2 ; MDR from bus
 SIG_MDR_OUT = 1 << BUS_OFFSET + 3 ; MDR to bus
 SIG_IR_IN   = 1 << BUS_OFFSET + 4 ; IR from bus
-SIG_ACC_IN  = 1 << BUS_OFFSET + 5 ; ACC from bus
-SIG_ACC_OUT  = 1 << BUS_OFFSET + 6 ; ACC to bus
-SIG_ALU_OUT  = 1 << BUS_OFFSET + 7 ; ALU to bus
-BUS_END = BUS_OFFSET + 8
+SIG_IR_IMM8_OUT = 1 << BUS_OFFSET + 5 ; IR from bus
+SIG_ACC_IN  = 1 << BUS_OFFSET + 6 ; ACC from bus
+SIG_ACC_OUT  = 1 << BUS_OFFSET + 7 ; ACC to bus
+SIG_ALU_OUT  = 1 << BUS_OFFSET + 8 ; ALU to bus
+BUS_END = BUS_OFFSET + 9
 
 ; uPC CONTOL
 UPC_OFFSET = BUS_END
