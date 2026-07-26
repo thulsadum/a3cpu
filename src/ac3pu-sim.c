@@ -98,8 +98,6 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
     b = cpu->mdr;
 
     switch (uc.signals.alu_op) {
-    case ALU_ADD:
-        return a+b;
     case ALU_ADC:
         int alu_carry = uc.signals.alu_carry_value;
         if (uc.signals.alu_carry_mux) {

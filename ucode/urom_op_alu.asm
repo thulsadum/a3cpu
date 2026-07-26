@@ -41,8 +41,8 @@
 ;;; ADD
 ;;;
 #bank acpu
-op_addi: __alu_bin_imm(SIG_ALU_OP_ADD)
-op_add: __alu_bin_dir(SIG_ALU_OP_ADD)
+op_addi: __alu_bin_imm(SIG_ALU_OP_ADC,SIG_ALU_CARRY_0)
+op_add: __alu_bin_dir(SIG_ALU_OP_ADC,SIG_ALU_CARRY_0)
 
 ; set addresses of uprogs for opcodes into mapping rom
 #bank mrom
