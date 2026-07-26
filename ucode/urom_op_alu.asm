@@ -72,8 +72,8 @@ op_adc: __alu_bin_dir(SIG_ALU_OP_ADC,SIG_ALU_CARRY_FLAG)
 ;;; SUB
 ;;;
 #bank acpu
-op_subi: __alu_bin_imm(SIG_ALU_OP_SUB)
-op_sub: __alu_bin_dir(SIG_ALU_OP_SUB)
+op_subi: __alu_bin_imm(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1)
+op_sub: __alu_bin_dir(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1)
 
 #bank mrom
 #addr OC_SUBI
