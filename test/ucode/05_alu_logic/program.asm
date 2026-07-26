@@ -14,7 +14,7 @@ andi 0x1234
 lda mask
 and mask
 
-halt
+
 
 ldi 0x8001
 ori 0x8000
