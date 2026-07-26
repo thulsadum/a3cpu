@@ -65,3 +65,15 @@ OP_ALU_XOR  = OC_XOR  << OP_OFFSET
     xor {addr:u16} => OP_ALU_XOR`16  @ addr`16
 }
 
+OP_FLAG_CARRY_0 = OC_FLAG_CARRY_0 << OP_OFFSET
+OP_FLAG_CARRY_1 = OC_FLAG_CARRY_1 << OP_OFFSET
+OP_FLAG_ZERO_0 = OC_FLAG_ZERO_0 << OP_OFFSET
+OP_FLAG_ZERO_1 = OC_FLAG_ZERO_1 << OP_OFFSET
+
+#ruledef flags {
+    clc => OP_FLAG_CARRY_0`16
+    sec => OP_FLAG_CARRY_1`16
+
+    clz => OP_FLAG_ZERO_0`16
+    sez => OP_FLAG_ZERO_1`16
+}

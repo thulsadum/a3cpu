@@ -20,6 +20,10 @@ typedef enum {
     ALU_XOR,
 } alu_op_t;
 
+typedef enum {
+    FLAG_CARRY = 0,
+} flag_sel_t;
+
 typedef struct {
     sig_t pc_out : 1;
     sig_t mar_in : 1;
@@ -36,6 +40,9 @@ typedef struct {
     sig_t ram_write : 1;
     sig_t cpu_halt : 1;
     alu_op_t alu_op : 4;
+    sig_t flag_change : 1;
+    sig_t flag_value : 1;
+    flag_sel_t flag_sel : 2;
 } cbits_t;
 
 typedef union {
@@ -54,7 +61,8 @@ typedef union {
 } cinstruction_t;
 
 typedef struct {
-    uint8_t halt;
+    uint16_t halt:1;
+    uint16_t carry:1;
 } flags_t;
 
 typedef union {
@@ -116,7 +124,17 @@ void tick(cpu_t *cpu) {
     /* handling cpu signals */
     if (cpu->flags.flags.halt) return;
 
+    /* flag manipulation */
     if(uc.signals.cpu_halt) cpu->flags.flags.halt = 1;
+    if(uc.signals.flag_change) {
+        if(uc.signals.flag_value) {
+            // flag set
+            cpu->flags.raw |= 1 << uc.signals.flag_sel;
+        } else {
+            // flag cleared
+            cpu->flags.raw &= 0xffff ^ (1 << uc.signals.flag_sel);
+        }
+    }
 
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
