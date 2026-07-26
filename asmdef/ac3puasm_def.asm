@@ -49,12 +49,16 @@ OP_ALU_SHR  = OC_SHR  << OP_OFFSET
 }
 
 OP_ALU_ADCI = OC_ADCI << OP_OFFSET
+OP_ALU_SBBI = OC_SBBI << OP_OFFSET
 OP_ALU_ADC  = OC_ADC  << OP_OFFSET
+OP_ALU_SBB  = OC_SBB  << OP_OFFSET
 
 #ruledef alu_arithmetic_with_carry {
     adci {imm:u16} => OP_ALU_ADCI`16 @ imm`16
+    sbbi {imm:u16} => OP_ALU_SBBI`16 @ imm`16
 
     adc {addr:u16} => OP_ALU_ADC`16  @ addr`16
+    sbb {addr:u16} => OP_ALU_SBB`16  @ addr`16
 }
 
 OP_ALU_ANDI = OC_ANDI << OP_OFFSET

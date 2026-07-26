@@ -84,6 +84,22 @@ op_sub: __alu_bin_dir(SIG_ALU_OP_SUB)
 
 
 ;;;
+;;; SBB
+;;;
+#bank acpu
+op_sbbi: __alu_bin_imm(SIG_ALU_OP_SBB,SIG_ALU_CARRY_FLAG)
+op_sbb: __alu_bin_dir(SIG_ALU_OP_SBB,SIG_ALU_CARRY_FLAG)
+
+; set addresses of uprogs for opcodes into mapping rom
+#bank mrom
+#addr OC_SBBI
+#d16 op_sbbi
+#addr OC_SBB
+#d16 op_sbb
+
+
+
+;;;
 ;;; SHL
 ;;;
 #bank acpu
@@ -161,3 +177,4 @@ op_xor: __alu_bin_dir(SIG_ALU_OP_XOR)
 #d16 op_xori
 #addr OC_XOR
 #d16 op_xor
+

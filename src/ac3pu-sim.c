@@ -14,7 +14,7 @@ typedef enum {
     ALU_ADD = 0,
     ALU_ADC,
     ALU_SUB,
-    _ALU_SBB,
+    ALU_SBB,
     ALU_SHL,
     ALU_SHR,
     ALU_AND,
@@ -94,18 +94,26 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
 
 int16_t alu(cpu_t *cpu, uinstruction_t uc) {
     uint16_t a,b;
+    uint16_t alu_carry;
+
     a = cpu->acc;
     b = cpu->mdr;
 
     switch (uc.signals.alu_op) {
     case ALU_ADC:
-        int alu_carry = uc.signals.alu_carry_value;
+        alu_carry = uc.signals.alu_carry_value;
         if (uc.signals.alu_carry_mux) {
             alu_carry = cpu->flags.flags.carry;
         }
         return a+b+alu_carry;
     case ALU_SUB:
         return a-b;
+    case ALU_SBB:
+        alu_carry = uc.signals.alu_carry_value;
+        if (uc.signals.alu_carry_mux) {
+            alu_carry = cpu->flags.flags.carry;
+        }
+        return a + ~b + (!alu_carry);
     case ALU_SHL:
         return a<<b;
     case ALU_SHR:

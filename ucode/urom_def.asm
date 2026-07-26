@@ -57,6 +57,7 @@ ALU_OFFSET = CPU_END
 ALU_OP_SEL_LEN = 4
 SIG_ALU_OP_ADC = 1 << ALU_OFFSET  ; ALU: A + B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SUB = 2 << ALU_OFFSET  ; ALU: A - B [A <- ACC, B <- MDR]
+SIG_ALU_OP_SBB = 3 << ALU_OFFSET  ; ALU: A - B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SHL = 4 << ALU_OFFSET  ; ALU: A << B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SHR = 5 << ALU_OFFSET  ; ALU: A >> B [A <- ACC, B <- MDR]
 SIG_ALU_OP_AND = 6 << ALU_OFFSET  ; ALU: A & B [A <- ACC, B <- MDR]
