@@ -28,7 +28,7 @@ ori 0x1234
 lda mask
 or mask
 
-halt
+
 
 ldi 0x8001
 xori 0x8000
