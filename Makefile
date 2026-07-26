@@ -21,7 +21,7 @@ ucode/%.bin: ucode/%.asm ucode/urom_def.asm
 
 test: test-ucode
 
-test-ucode: test-ucode-01_decode test-ucode-02_pipe test-ucode-03_load_store test-ucode-04_alu_arithmetic
+test-ucode: test-ucode-01_decode test-ucode-02_pipe test-ucode-03_load_store test-ucode-04_alu_arithmetic test-ucode-05_alu_logic
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
