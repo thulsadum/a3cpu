@@ -12,7 +12,9 @@ typedef uint32_t sig_t;
 
 typedef enum {
     ALU_ADD = 0,
+    ALU_ADC,
     ALU_SUB,
+    _ALU_SBB,
     ALU_SHL,
     ALU_SHR,
     ALU_AND,
