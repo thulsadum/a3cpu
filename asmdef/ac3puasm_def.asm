@@ -94,8 +94,8 @@ OP_ALU_SHRI8 = OC_SHRI8 << OP_OFFSET
 
 
 #ruledef alu_arithmetic_derived {
-    inc => asm { addi 1  }
-    dec => asm { subi 1 }
+    inc => asm { addi.8 1  }
+    dec => asm { subi.8 1 }
     neg => asm { xori 0xffff }
 }
 
