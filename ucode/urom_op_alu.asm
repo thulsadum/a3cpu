@@ -27,49 +27,78 @@
 ; Register ACC -> Op A
 ; Register MDR -> Op B
 
+;;;
+;;; ADD
+;;;
+#bank acpu
 op_addi: __alu_bin_imm(SIG_ALU_OP_ADD)
 op_add: __alu_bin_dir(SIG_ALU_OP_ADD)
 
-op_subi: __alu_bin_imm(SIG_ALU_OP_SUB)
-op_sub: __alu_bin_dir(SIG_ALU_OP_SUB)
-
-op_shli: __alu_bin_imm(SIG_ALU_OP_SHL)
-op_shl: __alu_bin_dir(SIG_ALU_OP_SHL)
-
-op_shri: __alu_bin_imm(SIG_ALU_OP_SHR)
-op_shr: __alu_bin_dir(SIG_ALU_OP_SHR)
-
-op_andi: __alu_bin_imm(SIG_ALU_OP_AND)
-op_and: __alu_bin_dir(SIG_ALU_OP_AND)
-
-
-
 ; set addresses of uprogs for opcodes into mapping rom
-
 #bank mrom
-
 #addr OC_ADDI
 #d16 op_addi
 #addr OC_ADD
 #d16 op_add
 
+
+
+;;;
+;;; SUB
+;;;
+#bank acpu
+op_subi: __alu_bin_imm(SIG_ALU_OP_SUB)
+op_sub: __alu_bin_dir(SIG_ALU_OP_SUB)
+
+#bank mrom
 #addr OC_SUBI
 #d16 op_subi
 #addr OC_SUB
 #d16 op_sub
 
+
+
+;;;
+;;; SHL
+;;;
+#bank acpu
+op_shli: __alu_bin_imm(SIG_ALU_OP_SHL)
+op_shl: __alu_bin_dir(SIG_ALU_OP_SHL)
+
+#bank mrom
 #addr OC_SHLI
 #d16 op_shli
 #addr OC_SHL
 #d16 op_shl
 
+
+
+;;;
+;;; SHR
+;;;
+#bank acpu
+op_shri: __alu_bin_imm(SIG_ALU_OP_SHR)
+op_shr: __alu_bin_dir(SIG_ALU_OP_SHR)
+
+#bank mrom
 #addr OC_SHRI
 #d16 op_shri
 #addr OC_SHR
 #d16 op_shr
 
+
+
+
+
+;;;
+;;; AND
+;;;
+#bank acpu
+op_andi: __alu_bin_imm(SIG_ALU_OP_AND)
+op_and: __alu_bin_dir(SIG_ALU_OP_AND)
+
+#bank mrom
 #addr OC_ANDI
 #d16 op_andi
 #addr OC_AND
 #d16 op_and
-
