@@ -36,7 +36,7 @@ OP_ALU_SHL  = OC_SHL  << OP_OFFSET
 OP_ALU_SHRI = OC_SHRI << OP_OFFSET
 OP_ALU_SHR  = OC_SHR  << OP_OFFSET
 
-#ruledef alu {
+#ruledef alu_arithmetic {
     addi {imm:u16} => OP_ALU_ADDI`16 @ imm`16
     subi {imm:u16} => OP_ALU_SUBI`16 @ imm`16
     shli {imm:u16} => OP_ALU_SHLI`16 @ imm`16
@@ -47,3 +47,21 @@ OP_ALU_SHR  = OC_SHR  << OP_OFFSET
     shl {addr:u16} => OP_ALU_SHL`16  @ addr`16
     shr {addr:u16} => OP_ALU_SHR`16  @ addr`16
 }
+
+OP_ALU_ANDI = OC_ANDI << OP_OFFSET
+OP_ALU_AND  = OC_AND  << OP_OFFSET
+OP_ALU_ORI = OC_ORI << OP_OFFSET
+OP_ALU_OR  = OC_OR  << OP_OFFSET
+OP_ALU_XORI = OC_XORI << OP_OFFSET
+OP_ALU_XOR  = OC_XOR  << OP_OFFSET
+
+#ruledef alu_logic {
+    andi {imm:u16} => OP_ALU_ANDI`16 @ imm`16
+    ori {imm:u16} => OP_ALU_ORI`16 @ imm`16
+    xori {imm:u16} => OP_ALU_XORI`16 @ imm`16
+
+    and {addr:u16} => OP_ALU_AND`16  @ addr`16
+    or {addr:u16} => OP_ALU_OR`16  @ addr`16
+    xor {addr:u16} => OP_ALU_XOR`16  @ addr`16
+}
+

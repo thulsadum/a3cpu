@@ -56,7 +56,8 @@ ALU_OFFSET = CPU_END
 SIG_ALU_OP_ADD = 0 << ALU_OFFSET  ; ALU: A + B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SUB = 1 << ALU_OFFSET  ; ALU: A - B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SHL = 2 << ALU_OFFSET  ; ALU: A << B [A <- ACC, B <- MDR]
-SIG_ALU_OP_SHR = 3 << ALU_OFFSET  ; ALU: A >> B [A <- ACC, B <- MDR]
+SIG_ALU_OP_SHR = 3 << ALU_OFFSET  ; ALU: A & B [A <- ACC, B <- MDR]
+SIG_ALU_OP_AND = 4 << ALU_OFFSET  ; ALU: A & B [A <- ACC, B <- MDR]
 ALU_END = ALU_OFFSET + 4
 
 ; ucode definition

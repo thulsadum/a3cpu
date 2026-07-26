@@ -15,6 +15,7 @@ typedef enum {
     ALU_SUB,
     ALU_SHL,
     ALU_SHR,
+    ALU_AND,
 } alu_op_t;
 
 typedef struct {
@@ -92,6 +93,8 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
         return a<<b;
     case ALU_SHR:
         return a>>b;
+    case ALU_AND:
+        return a & b;
     default:
         assert(false && "Undefined ALU operation");
     }

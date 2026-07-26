@@ -59,6 +59,20 @@ op_shr:
     uc SIG_RAM_READ
     uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_SHR | SIG_UPC_RESET
 
+op_andi:
+    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
+    uc SIG_RAM_READ
+    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_AND | SIG_UPC_RESET
+
+op_and:
+    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
+    uc SIG_RAM_READ
+    uc SIG_MAR_IN | SIG_MDR_OUT
+    uc SIG_RAM_READ
+    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_AND | SIG_UPC_RESET
+
+
+
 ; set addresses of uprogs for opcodes into mapping rom
 
 #bank mrom
@@ -82,4 +96,9 @@ op_shr:
 #d16 op_shri
 #addr OC_SHR
 #d16 op_shr
+
+#addr OC_ANDI
+#d16 op_andi
+#addr OC_AND
+#d16 op_and
 
