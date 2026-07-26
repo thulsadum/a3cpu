@@ -26,7 +26,7 @@ test-ucode: test-ucode-01_decode test-ucode-02_pipe test-ucode-03_load_store tes
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
 	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
-	UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)") && \
+	@UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)") && \
 	make $$UROM && \
 	$(SIM) $$UROM test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
 	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok"
