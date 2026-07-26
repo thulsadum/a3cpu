@@ -119,3 +119,20 @@ op_or: __alu_bin_dir(SIG_ALU_OP_OR)
 #d16 op_ori
 #addr OC_OR
 #d16 op_or
+
+
+
+
+
+;;;
+;;; XOR
+;;;
+#bank acpu
+op_xori: __alu_bin_imm(SIG_ALU_OP_XOR)
+op_xor: __alu_bin_dir(SIG_ALU_OP_XOR)
+
+#bank mrom
+#addr OC_XORI
+#d16 op_xori
+#addr OC_XOR
+#d16 op_xor
