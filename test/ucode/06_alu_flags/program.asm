@@ -10,7 +10,7 @@ clz
 
 sec
 ldi  0x01
-adci 0x01
+adci.16 0x01
 ;; should give: 0x03
 
 
@@ -21,7 +21,7 @@ adc foobar
 
 clc
 ldi  0x01
-adci 0x01
+adci.16 0x01
 ;; should give: 0x02
 
 clc
@@ -33,7 +33,7 @@ adc foobar
 
 sec
 ldi  0x03
-sbbi 0x01
+sbbi.16 0x01
 ;; should give: 0x02
 
 
@@ -44,7 +44,7 @@ sbb foobar
 
 clc
 ldi  0x03
-sbbi 0x01
+sbbi.16 0x01
 ;; should give: 0x02
 
 clc

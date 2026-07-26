@@ -5,32 +5,32 @@
 ; test lda
 
 ldi 3
-addi 5
+addi.16 5
 
 ldi 3
 add answer
 
 lda answer
-addi 3
+addi.16 3
 
 lda answer
 add answer
 
 
 ldi 5
-subi 3
+subi.16 3
 
 ldi 0x44
 sub answer
 
 ldi 1
-shli 3
+shli.16 3
 
 ldi 1
 shl two
 
 ldi 16
-shri 3
+shri.16 3
 
 ldi 16
 shr two

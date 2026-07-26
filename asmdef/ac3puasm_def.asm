@@ -37,10 +37,14 @@ OP_ALU_SHRI = OC_SHRI << OP_OFFSET
 OP_ALU_SHR  = OC_SHR  << OP_OFFSET
 
 #ruledef alu_arithmetic {
-    addi {imm:u16} => OP_ALU_ADDI`16 @ imm`16
-    subi {imm:u16} => OP_ALU_SUBI`16 @ imm`16
-    shli {imm:u16} => OP_ALU_SHLI`16 @ imm`16
-    shri {imm:u16} => OP_ALU_SHRI`16 @ imm`16
+    addi {imm:u8}  => asm { addi.8  {imm} }
+    addi {imm:u16} => asm { addi.16 {imm} }
+    subi {imm:u8}  => asm { subi.8  {imm} }
+    subi {imm:u16} => asm { subi.16 {imm} }
+    shli {imm:u8}  => asm { shli.8  {imm} }
+    shli {imm:u16} => asm { shli.16 {imm} }
+    shri {imm:u8}  => asm { shri.8  {imm} }
+    shri {imm:u16} => asm { shri.16 {imm} }
 
     add {addr:u16} => OP_ALU_ADD`16  @ addr`16
     sub {addr:u16} => OP_ALU_SUB`16  @ addr`16
@@ -54,12 +58,47 @@ OP_ALU_ADC  = OC_ADC  << OP_OFFSET
 OP_ALU_SBB  = OC_SBB  << OP_OFFSET
 
 #ruledef alu_arithmetic_with_carry {
-    adci {imm:u16} => OP_ALU_ADCI`16 @ imm`16
-    sbbi {imm:u16} => OP_ALU_SBBI`16 @ imm`16
+    adci {imm:u8}  => asm { adci.8  {imm} }
+    adci {imm:u16} => asm { adci.16 {imm} }
+    sbbi {imm:u8}  => asm { sbbi.8  {imm} }
+    sbbi {imm:u16} => asm { sbbi.16 {imm} }
 
     adc {addr:u16} => OP_ALU_ADC`16  @ addr`16
     sbb {addr:u16} => OP_ALU_SBB`16  @ addr`16
 }
+
+OP_ALU_ADCI8 = OC_ADCI8 << OP_OFFSET
+OP_ALU_ADDI8 = OC_ADDI8 << OP_OFFSET
+OP_ALU_SBBI8 = OC_SBBI8 << OP_OFFSET
+OP_ALU_SUBI8 = OC_SUBI8 << OP_OFFSET
+OP_ALU_SHLI8 = OC_SHLI8 << OP_OFFSET
+OP_ALU_SHRI8 = OC_SHRI8 << OP_OFFSET
+
+#ruledef alu_arithmetic_imm8 {
+    adci.8  {imm:u8}  => (OP_ALU_ADCI8 | (imm & 0xff))`16
+    adci.16 {imm:u16} => OP_ALU_ADCI`16 @ imm`16
+    addi.8  {imm:u8}  => (OP_ALU_ADDI8 | (imm & 0xff))`16
+    addi.16 {imm:u16} => OP_ALU_ADDI`16 @ imm`16
+
+    sbbi.8  {imm:u8}  => (OP_ALU_SBBI8 | (imm & 0xff))`16
+    sbbi.16 {imm:u16} => OP_ALU_SBBI`16 @ imm`16
+    subi.8  {imm:u8}  => (OP_ALU_SUBI8 | (imm & 0xff))`16
+    subi.16 {imm:u16} => OP_ALU_SUBI`16 @ imm`16
+
+    shli.8  {imm:u8}  => (OP_ALU_SHLI8 | (imm & 0xff))`16
+    shli.16 {imm:u16} => OP_ALU_SHLI`16 @ imm`16
+    shri.8  {imm:u8}  => (OP_ALU_SHRI8 | (imm & 0xff))`16
+    shri.16 {imm:u16} => OP_ALU_SHRI`16 @ imm`16
+}
+
+
+
+#ruledef alu_arithmetic_derived {
+    inc => asm { addi 1  }
+    dec => asm { subi 1 }
+    neg => asm { xori 0xffff }
+}
+
 
 OP_ALU_ANDI = OC_ANDI << OP_OFFSET
 OP_ALU_AND  = OC_AND  << OP_OFFSET
@@ -90,3 +129,4 @@ OP_FLAG_ZERO_1 = OC_FLAG_ZERO_1 << OP_OFFSET
     clz => OP_FLAG_ZERO_0`16
     sez => OP_FLAG_ZERO_1`16
 }
+
