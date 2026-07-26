@@ -11,9 +11,7 @@
 typedef uint32_t sig_t;
 
 typedef enum {
-    ALU_ADD = 0,
     ALU_ADC,
-    ALU_SUB,
     ALU_SBB,
     ALU_SHL,
     ALU_SHR,
@@ -106,8 +104,6 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
             alu_carry = cpu->flags.flags.carry;
         }
         return a+b+alu_carry;
-    case ALU_SUB:
-        return a-b;
     case ALU_SBB:
         alu_carry = uc.signals.alu_carry_value;
         if (uc.signals.alu_carry_mux) {
