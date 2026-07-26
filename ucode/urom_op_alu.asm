@@ -14,55 +14,33 @@
         uc SIG_RAM_READ
         uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | SIG_UPC_RESET
     }
+
+    __alu_bin_dir({alu_op}) => asm {
+        uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
+        uc SIG_RAM_READ
+        uc SIG_MAR_IN | SIG_MDR_OUT
+        uc SIG_RAM_READ
+        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | SIG_UPC_RESET
+    }
 }
 
 ; Register ACC -> Op A
 ; Register MDR -> Op B
 
 op_addi: __alu_bin_imm(SIG_ALU_OP_ADD)
-
-op_add:
-    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MAR_IN | SIG_MDR_OUT
-    uc SIG_RAM_READ
-    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_ADD | SIG_UPC_RESET
+op_add: __alu_bin_dir(SIG_ALU_OP_ADD)
 
 op_subi: __alu_bin_imm(SIG_ALU_OP_SUB)
-
-op_sub:
-    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MAR_IN | SIG_MDR_OUT
-    uc SIG_RAM_READ
-    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_SUB | SIG_UPC_RESET
+op_sub: __alu_bin_dir(SIG_ALU_OP_SUB)
 
 op_shli: __alu_bin_imm(SIG_ALU_OP_SHL)
-
-op_shl:
-    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MAR_IN | SIG_MDR_OUT
-    uc SIG_RAM_READ
-    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_SHL | SIG_UPC_RESET
+op_shl: __alu_bin_dir(SIG_ALU_OP_SHL)
 
 op_shri: __alu_bin_imm(SIG_ALU_OP_SHR)
-
-op_shr:
-    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MAR_IN | SIG_MDR_OUT
-    uc SIG_RAM_READ
-    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_SHR | SIG_UPC_RESET
+op_shr: __alu_bin_dir(SIG_ALU_OP_SHR)
 
 op_andi: __alu_bin_imm(SIG_ALU_OP_AND)
-
-op_and:
-    uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MAR_IN | SIG_MDR_OUT
-    uc SIG_RAM_READ
-    uc SIG_ALU_OUT | SIG_ACC_IN | SIG_ALU_OP_AND | SIG_UPC_RESET
+op_and: __alu_bin_dir(SIG_ALU_OP_AND)
 
 
 
