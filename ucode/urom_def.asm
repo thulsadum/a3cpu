@@ -49,8 +49,8 @@ RAM_END = RAM_OFFSET + 2
 
 ; CPU CONTROL
 CPU_OFFSET = RAM_END
-SIG_CPU_HALT = 1 << CPU_OFFSET + 0
-CPU_END = CPU_OFFSET + 1
+; currently empty, halt moved to flag control below.
+CPU_END = CPU_OFFSET + 0
 
 ; ALU CONTROL
 ALU_OFFSET = CPU_END
@@ -70,6 +70,7 @@ SIG_FLAG_CHANGE = 1 << FLAGS_OFFSET    ; signals CPU to update a single flag
 SIG_FLAG_VALUE = 0 << FLAGS_OFFSET+1   ; the value to update to, will be determined later
 FLAG_SEL_OFFSET = FLAGS_OFFSET + 2
 FLAG_SEL_LEN = 2
+SIG_FLAG_SEL_HALT = 0b00 << FLAG_SEL_OFFSET
 SIG_FLAG_SEL_CARRY = 0b01 << FLAG_SEL_OFFSET
 FLAGS_END = FLAGS_OFFSET + FLAG_SEL_LEN
 

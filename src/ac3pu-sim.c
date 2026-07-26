@@ -38,7 +38,6 @@ typedef struct {
     sig_t pc_inc : 1;
     sig_t ram_read : 1;
     sig_t ram_write : 1;
-    sig_t cpu_halt : 1;
     alu_op_t alu_op : 4;
     sig_t flag_change : 1;
     sig_t flag_value : 1;
@@ -125,7 +124,6 @@ void tick(cpu_t *cpu) {
     if (cpu->flags.flags.halt) return;
 
     /* flag manipulation */
-    if(uc.signals.cpu_halt) cpu->flags.flags.halt = 1;
     if(uc.signals.flag_change) {
         if(uc.signals.flag_value) {
             // flag set
