@@ -8,47 +8,47 @@ clc
 sez
 clz
 
-sec
 ldi  0x01
+sec
 adci.16 0x01
 ;; should give: 0x03
 
 
-sec
 ldi 0x01
+sec
 adc foobar
 ;; should give: 0x44
 
-clc
 ldi  0x01
+clc
 adci.16 0x01
 ;; should give: 0x02
 
-clc
 ldi 0x01
+clc
 adc foobar
 ;; should give: 0x43
 
 
 
-sec
 ldi  0x03
+sec
 sbbi.16 0x01
 ;; should give: 0x02
 
 
-sec
 ldi 0x49
+sec
 sbb foobar
 ;; should give: 0x07
 
-clc
 ldi  0x03
+clc
 sbbi.16 0x01
 ;; should give: 0x02
 
-clc
 ldi 0x49
+clc
 sbb foobar
 ;; should give: 0x07
 
