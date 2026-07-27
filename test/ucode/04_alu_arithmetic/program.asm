@@ -10,10 +10,10 @@ addi.16 5
 ldi 3
 add answer
 
-lda answer
+lda.l answer
 addi.16 3
 
-lda answer
+lda.l answer
 add answer
 
 

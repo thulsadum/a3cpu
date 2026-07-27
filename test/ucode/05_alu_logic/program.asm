@@ -8,10 +8,10 @@ andi 0x8000
 ldi 0x8001
 and mask
 
-lda mask
+lda.l mask
 andi 0x1234
 
-lda mask
+lda.l mask
 and mask
 
 
@@ -22,10 +22,10 @@ ori 0x8000
 ldi 0x8001
 or mask
 
-lda mask
+lda.l mask
 ori 0x1234
 
-lda mask
+lda.l mask
 or mask
 
 
@@ -36,10 +36,10 @@ xori 0x8000
 ldi 0x8001
 xor mask
 
-lda mask
+lda.l mask
 xori 0x1234
 
-lda mask
+lda.l mask
 xor mask
 
 halt
