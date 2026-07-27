@@ -4,13 +4,13 @@
 
 ; test lda
 
-lda A
-sta C
-lda B
+lda.l A
+sta.l C
+lda.l B
 ldi 0x1337
-sta D
-lda C
-lda D
+sta.l D
+lda.l C
+lda.l D
 halt
 
 A:
