@@ -49,3 +49,16 @@ op_taf:
 #addr OC_TAF
 #d16 op_taf
 
+
+
+;;;
+;;; tst: Test
+;;;
+
+#bank acpu
+op_tst:
+    uc SIG_FLAGS_UPDATE | SIG_ACC_OUT | SIG_UPC_RESET
+
+#bank mrom
+#addr OC_TST
+#d16 op_tst

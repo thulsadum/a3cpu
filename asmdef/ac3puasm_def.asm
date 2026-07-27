@@ -143,3 +143,18 @@ OP_TAF = OC_TAF << OP_OFFSET
     sei => OP_FLAG_INTERRUPT_EN_1`16
 }
 
+OP_TST = OC_TST << OP_OFFSET
+OP_CMPI8 = OC_CMPI8 << OP_OFFSET
+OP_CMPI = OC_CMPI << OP_OFFSET
+OP_CMP = OC_CMP << OP_OFFSET
+
+#ruledef comparison {
+    tst  => OP_TST`16
+
+    cmpi.8 {imm:u8} => (OP_CMPI8 | imm)`16
+    cmpi.16 {imm:u8} => OP_CMPI`16 @ imm`16
+    cmpi {imm:u8} => asm { cmpi.8 {imm} }
+    cmpi {imm:u16} => asm { cmpi.16 {imm} }
+
+    cmp {addr:u16} => OP_CMP`16 @ addr`16
+}

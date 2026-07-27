@@ -11,18 +11,26 @@
 #bank acpu
 
 #ruledef alu_helper {
-    __alu_bin_imm({alu_op},{alu_carry}) => asm {
+    __alu_bin_imm({alu_op},{alu_carry},{write_back}) => asm {
         uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
+        uc {write_back} | SIG_ALU_OUT | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
     }
 
-    __alu_bin_dir({alu_op},{alu_carry}) => asm {
+    __alu_bin_dir({alu_op},{alu_carry},{write_back}) => asm {
         uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
         uc SIG_RAM_READ
         uc SIG_MAR_IN | SIG_MDR_OUT
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
+        uc {write_back} | SIG_ALU_OUT | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
+    }
+
+    __alu_bin_imm({alu_op},{alu_carry}) => asm {
+        __alu_bin_imm({alu_op},{alu_carry},SIG_ACC_IN)
+    }
+
+    __alu_bin_dir({alu_op},{alu_carry}) => asm {
+        __alu_bin_dir({alu_op},{alu_carry},SIG_ACC_IN)
     }
 
     __alu_bin_imm({alu_op}) => asm {
@@ -177,4 +185,21 @@ op_xor: __alu_bin_dir(SIG_ALU_OP_XOR)
 #d16 op_xori
 #addr OC_XOR
 #d16 op_xor
+
+
+
+;;;
+;;; CMPI / CMP
+;;;
+#bank acpu
+op_cmpi: __alu_bin_imm(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,0)
+op_cmp: __alu_bin_dir(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,0)
+
+#bank mrom
+#addr OC_CMPI
+#d16 op_cmpi
+#addr OC_CMP
+#d16 op_cmp
+
+
 

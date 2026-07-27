@@ -3,12 +3,15 @@
 #bank ac3pu_program
 
 ldi 5
+sec  ;; set carry flag to make update visible
 tst  ;; flags: none
 
 ldi 0xffff
+sec
 tst  ;; flags: neg
 
 ldi 0
+sec
 tst ;; flags: zero
 
 ldi 0x5
