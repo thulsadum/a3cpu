@@ -12,6 +12,7 @@ op_nop:
     uc SIG_UPC_RESET
 
 op_halt:
+    uc SIG_FLAGS_CLEAR
     uc set_flag(SIG_FLAG_SEL_HALT,1)
 
 

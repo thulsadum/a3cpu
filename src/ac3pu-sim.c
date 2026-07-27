@@ -42,6 +42,7 @@ typedef struct {
     alu_op_t alu_op : 4;
     sig_t alu_carry_value : 1;
     sig_t alu_carry_mux : 1;
+    sig_t flags_clear  : 1;
     sig_t flag_change : 1;
     sig_t flag_value : 1;
     flag_sel_t flag_sel : 2;
@@ -63,8 +64,9 @@ typedef union {
 } cinstruction_t;
 
 typedef struct {
-    uint16_t halt:1;
-    uint16_t carry:1;
+    uint8_t halt:1;
+    uint8_t carry:1;
+    uint8_t zero:1;
 } flags_t;
 
 typedef union {
@@ -137,6 +139,10 @@ void tick(cpu_t *cpu) {
     if (cpu->flags.flags.halt) return;
 
     /* flag manipulation */
+    if(uc.signals.flags_clear) {
+        cpu->flags.raw = 0;
+    }
+
     if(uc.signals.flag_change) {
         if(uc.signals.flag_value) {
             // flag set
