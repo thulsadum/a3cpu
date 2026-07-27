@@ -70,14 +70,17 @@ ALU_END = ALU_OFFSET + ALU_OP_SEL_LEN + 2
 
 ; FLAGS CONTROL
 FLAGS_OFFSET = ALU_END
-SIG_FLAGS_CLEAR = 1 << FLAGS_OFFSET + 0    ; signals CPU to update a single flag
-SIG_FLAG_CHANGE = 1 << FLAGS_OFFSET + 1    ; signals CPU to update a single flag
-SIG_FLAG_VALUE  = 0 << FLAGS_OFFSET + 2   ; the value to update to, will be determined later
-FLAG_SEL_OFFSET = FLAGS_OFFSET + 3
-FLAG_SEL_LEN = 2
+SIG_FLAGS_CLEAR  = 1 << FLAGS_OFFSET + 0   ; signals CPU to clear flags
+SIG_FLAGS_UPDATE = 1 << FLAGS_OFFSET + 1   ; signals CPU to update alu flags according to data on bus
+SIG_FLAG_CHANGE  = 1 << FLAGS_OFFSET + 2   ; signals CPU to update a single flag
+SIG_FLAG_VALUE   = 0 << FLAGS_OFFSET + 3   ; the value to update to, will be determined later
+FLAG_SEL_OFFSET  =      FLAGS_OFFSET + 4
+FLAG_SEL_LEN = 3
 SIG_FLAG_SEL_HALT  = 0 << FLAG_SEL_OFFSET
-SIG_FLAG_SEL_CARRY = 1 << FLAG_SEL_OFFSET
-SIG_FLAG_SEL_ZERO  = 2 << FLAG_SEL_OFFSET
+;SIG_FLAG_SEL_IE    = 1 << FLAG_SEL_OFFSET
+SIG_FLAG_SEL_CARRY = 4 << FLAG_SEL_OFFSET
+SIG_FLAG_SEL_ZERO  = 5 << FLAG_SEL_OFFSET
+;SIG_FLAG_SEL_NEG   = 7 << FLAG_SEL_OFFSET
 FLAGS_END = FLAGS_OFFSET + FLAG_SEL_LEN
 
 

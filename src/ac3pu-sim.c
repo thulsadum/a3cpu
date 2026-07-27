@@ -20,11 +20,8 @@ typedef enum {
     ALU_XOR,
 } alu_op_t;
 
-typedef enum {
-    FLAG_CARRY = 0,
-} flag_sel_t;
-
 typedef struct {
+
     sig_t pc_out : 1;
     sig_t mar_in : 1;
     sig_t mdr_in : 1;
@@ -34,18 +31,24 @@ typedef struct {
     sig_t acc_in : 1;
     sig_t acc_out : 1;
     sig_t alu_out : 1;
+
     sig_t upc_reset :1;
     sig_t upc_from_mrom :1;
     sig_t pc_inc : 1;
+
     sig_t ram_read : 1;
     sig_t ram_write : 1;
+
     alu_op_t alu_op : 4;
     sig_t alu_carry_value : 1;
     sig_t alu_carry_mux : 1;
+
     sig_t flags_clear  : 1;
-    sig_t flag_change : 1;
-    sig_t flag_value : 1;
-    flag_sel_t flag_sel : 2;
+    sig_t flags_update : 1;
+    sig_t flag_change  : 1;
+    sig_t flag_value   : 1;
+    sig_t flag_sel     : 3;
+
 } cbits_t;
 
 typedef union {
@@ -64,14 +67,24 @@ typedef union {
 } cinstruction_t;
 
 typedef struct {
-    uint8_t halt:1;
-    uint8_t carry:1;
-    uint8_t zero:1;
+    uint8_t halt  : 1;
+    uint8_t ie    : 1;
+    uint8_t       : 2;
+    uint8_t carry : 1;
+    uint8_t zero  : 1;
+    uint8_t       : 1;
+    uint8_t neg   : 1;
 } flags_t;
+
+typedef struct {
+    uint8_t low  : 4;
+    uint8_t high : 4;
+} nibble_t;
 
 typedef union {
     uint16_t raw;
-    flags_t flags;
+    nibble_t nibbles;
+    flags_t  flags;
 } flag_register_t;
 
 typedef struct {
@@ -144,12 +157,13 @@ void tick(cpu_t *cpu) {
     }
 
     if(uc.signals.flag_change) {
+
         if(uc.signals.flag_value) {
             // flag set
             cpu->flags.raw |= 1 << uc.signals.flag_sel;
         } else {
             // flag cleared
-            cpu->flags.raw &= 0xffff ^ (1 << uc.signals.flag_sel);
+            cpu->flags.raw &= 0xff ^ (1 << uc.signals.flag_sel);
         }
     }
 

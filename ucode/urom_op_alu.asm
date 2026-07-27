@@ -14,7 +14,7 @@
     __alu_bin_imm({alu_op},{alu_carry}) => asm {
         uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | {alu_carry} | SIG_UPC_RESET
+        uc SIG_ALU_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
     }
 
     __alu_bin_dir({alu_op},{alu_carry}) => asm {
@@ -22,7 +22,7 @@
         uc SIG_RAM_READ
         uc SIG_MAR_IN | SIG_MDR_OUT
         uc SIG_RAM_READ
-        uc SIG_ALU_OUT | SIG_ACC_IN | {alu_op} | {alu_carry} | SIG_UPC_RESET
+        uc SIG_ALU_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
     }
 
     __alu_bin_imm({alu_op}) => asm {
