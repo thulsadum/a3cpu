@@ -29,7 +29,8 @@ test-ucode: test-ucode-01_decode \
 			test-ucode-06_alu_carry \
 			test-ucode-07_alu_short \
 			test-ucode-08_alu_arith_extended \
-			test-ucode-09_cpu_flags
+			test-ucode-09_cpu_flags \
+			test-ucode-10_comparison
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
