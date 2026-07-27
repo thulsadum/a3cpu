@@ -24,16 +24,18 @@ typedef struct {
 
     sig_t pc_out : 1;
     sig_t mar_in : 1;
-    sig_t mdr_in : 1;
+    sig_t mdr_in  : 1;
     sig_t mdr_out : 1;
     sig_t ir_in : 1;
     sig_t ir_imm8_out : 1;
-    sig_t acc_in : 1;
+    sig_t acc_in  : 1;
     sig_t acc_out : 1;
     sig_t alu_out : 1;
+    sig_t flags_in  : 1;
+    sig_t flags_out : 1;
 
-    sig_t upc_reset :1;
-    sig_t upc_from_mrom :1;
+    sig_t upc_reset : 1;
+    sig_t upc_from_mrom : 1;
     sig_t pc_inc : 1;
 
     sig_t ram_read : 1;
@@ -82,7 +84,7 @@ typedef struct {
 } nibble_t;
 
 typedef union {
-    uint16_t raw;
+    uint8_t raw;
     nibble_t nibbles;
     flags_t  flags;
 } flag_register_t;
@@ -106,9 +108,10 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
            cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir.raw, cpu->acc, cpu->flags.raw);
 }
 
-int16_t alu(cpu_t *cpu, uinstruction_t uc) {
+int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
     uint16_t a,b;
     uint16_t alu_carry;
+    uint32_t result = 0;
 
     a = cpu->acc;
     b = cpu->mdr;
@@ -119,13 +122,17 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc) {
         if (uc.signals.alu_carry_mux) {
             alu_carry = cpu->flags.flags.carry;
         }
-        return a+b+alu_carry;
+        result = a+b+alu_carry;
+        *carry_out = (result > 0xffff);
+        return result;
     case ALU_SBB:
         alu_carry = uc.signals.alu_carry_value;
         if (uc.signals.alu_carry_mux) {
             alu_carry = cpu->flags.flags.carry;
         }
-        return a + ~b + alu_carry;
+        result = a + (0xffff & ~b) + alu_carry;
+        *carry_out = (result > 0xffff);
+        return result;
     case ALU_SHL:
         return a<<b;
     case ALU_SHR:
@@ -147,13 +154,31 @@ void tick(cpu_t *cpu) {
     uint16_t bus = 0;
     int bus_drivers = 0;
     uinstruction_t uc = cpu->urom[cpu->upc];
+    uint8_t alu_carry_out = 0;
 
     /* handling cpu signals */
     if (cpu->flags.flags.halt) return;
 
+    /* write to bus */
+    if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
+    if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
+    if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
+    if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
+    if (uc.signals.alu_out) { bus = alu(cpu, uc, &alu_carry_out); bus_drivers++; }
+    if (uc.signals.flags_out) { bus = cpu->flags.raw & 0xff; bus_drivers++; }
+
+    /* check for bus conflicts */
+    assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
+
     /* flag manipulation */
     if(uc.signals.flags_clear) {
         cpu->flags.raw = 0;
+    }
+
+    if(uc.signals.flags_update) {
+        cpu->flags.flags.zero = (bus == 0);
+        cpu->flags.flags.carry = alu_carry_out;
+        cpu->flags.flags.neg = ((bus & 0x8000) != 0);
     }
 
     if(uc.signals.flag_change) {
@@ -167,21 +192,12 @@ void tick(cpu_t *cpu) {
         }
     }
 
-    /* write to bus */
-    if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
-    if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
-    if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
-    if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
-    if (uc.signals.alu_out) { bus = alu(cpu, uc); bus_drivers++; }
-
-    /* check for bus conflicts */
-    assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
-
     /* read from bus */
     if (uc.signals.mar_in) cpu->mar = bus;
     if (uc.signals.ir_in) cpu->ir = (cinstruction_t)bus;
     if (uc.signals.acc_in) cpu->acc = bus;
     if (uc.signals.mdr_in) cpu->mdr = bus;
+    if (uc.signals.flags_in) cpu->flags.raw = (bus & 0xff);
 
     /* misc */
     if (uc.signals.ram_read) {

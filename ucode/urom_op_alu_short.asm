@@ -9,7 +9,7 @@
 #ruledef alu_short_words {
   __alu_bin_imm8({alu_op},{alu_carry}) => asm {
     uc SIG_MDR_IN | SIG_IR_IMM8_OUT
-    uc SIG_ACC_IN | SIG_ALU_OUT | {alu_op} | {alu_carry} | SIG_UPC_RESET
+    uc SIG_ACC_IN | SIG_ALU_OUT | SIG_FLAGS_UPDATE | {alu_op} | {alu_carry} | SIG_UPC_RESET
   }
 }
 
