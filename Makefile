@@ -21,7 +21,14 @@ ucode/%.bin: ucode/%.asm ucode/urom_def.asm
 
 test: test-ucode
 
-test-ucode: test-ucode-01_decode test-ucode-02_pipe test-ucode-03_load_store test-ucode-04_alu_arithmetic test-ucode-05_alu_logic test-ucode-06_alu_flags test-ucode-07_alu_short test-ucode-08_alu_arith_extended
+test-ucode: test-ucode-01_decode \
+			test-ucode-02_pipe \
+			test-ucode-03_load_store \
+			test-ucode-04_alu_arithmetic \
+			test-ucode-05_alu_logic \
+			test-ucode-06_alu_carry \
+			test-ucode-07_alu_short \
+			test-ucode-08_alu_arith_extended
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
