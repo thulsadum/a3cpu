@@ -16,16 +16,23 @@ OP_NOP = OC_NOP << OP_OFFSET
 
 
 OP_LDA = OC_LDA << OP_OFFSET
+OP_LDAZ = OC_LDAZ << OP_OFFSET
 OP_LDI = OC_LDI << OP_OFFSET
 OP_STA = OC_STA << OP_OFFSET
+OP_STAZ = OC_STAZ << OP_OFFSET
 
 #ruledef load_store {
+    lda {addr:u8} => asm { lda.zp {addr} }
     lda {addr:u16} => asm { lda.l {addr} }
     lda.l {addr:u16} => OP_LDA`16 @ addr`16
+    lda.zp {addr:u8} => (OP_LDAZ | addr)`16
+
     ldi {imm:u16} => OP_LDI`16 @ imm`16
 
+    sta {addr:u8} => asm { sta.zp {addr} }
     sta {addr:u16} => asm { sta.l {addr} }
     sta.l {addr:u16} => OP_STA`16 @ addr`16
+    sta.zp {addr:u8} => (OP_STAZ | addr)`16
 }
 
 
