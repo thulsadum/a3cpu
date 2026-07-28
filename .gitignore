@@ -3,3 +3,4 @@ src/ac3pu-sim
 
 **/*/ram.bin
 **/*/actual.txt
+**/*.d
