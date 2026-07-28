@@ -45,12 +45,12 @@ sbb.l foobar
 ldi  0x03
 clc
 sbbi.16 0x01
-;; should give: 0x02
+;; should give: 0x01
 
 ldi 0x49
 clc
 sbb.l foobar
-;; should give: 0x07
+;; should give: 0x06
 
 halt
 

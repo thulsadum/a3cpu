@@ -5,7 +5,7 @@ CASM = customasm
 CASMFLAGS = 
 
 SIM = src/ac3pu-sim
-DEFAULT_UROM = ucode/urom_full.bin
+DEFAULT_UROM = ucode/urom.bin
 
 .PHONY: all test clean test-ucode test-asm
 
@@ -31,7 +31,8 @@ test-ucode: test-ucode-01_decode \
 			test-ucode-08_alu_arith_extended \
 			test-ucode-09_cpu_flags \
 			test-ucode-10_comparison \
-			test-ucode-11_load_store_zp
+			test-ucode-11_load_store_zp \
+			test-ucode-12_full_zp
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
