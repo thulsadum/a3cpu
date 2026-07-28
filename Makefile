@@ -48,7 +48,8 @@ test-ucode: test-ucode-01_decode \
 			test-ucode-10_comparison \
 			test-ucode-11_load_store_zp \
 			test-ucode-12_full_zp \
-			test-ucode-13_dynamic_long_word_selection
+			test-ucode-13_dynamic_long_word_selection \
+			test-ucode-14_jump
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
