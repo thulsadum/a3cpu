@@ -1,5 +1,4 @@
-; Just the Fetch-Phase
-
+#once
 #include "urom_def.asm"
 #include "urom_fetch.asm"
 #include "urom_op_simple.asm"
@@ -23,6 +22,9 @@ op_ldi:
     uc SIG_PC_INC | SIG_PC_OUT | SIG_MAR_IN
     uc SIG_RAM_READ
     uc SIG_MDR_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | SIG_UPC_RESET
+
+op_ldi8:
+    uc SIG_IR_IMM8_OUT | SIG_ACC_IN | SIG_FLAGS_UPDATE | SIG_UPC_RESET
 
 
 op_sta:
@@ -50,6 +52,9 @@ op_staz:
 
 #addr OC_LDI
 #d16 op_ldi
+
+#addr OC_LDI8
+#d16 op_ldi8
 
 #addr OC_STA
 #d16 op_sta

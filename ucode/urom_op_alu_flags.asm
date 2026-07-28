@@ -1,3 +1,4 @@
+#once
 #include "urom_def.asm"
 #include "urom_fetch.asm"
 #include "urom_op_simple.asm"
