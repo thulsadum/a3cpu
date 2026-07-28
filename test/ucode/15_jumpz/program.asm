@@ -8,7 +8,7 @@ end:    halt
 
 sub_routine: #res 1 ; reserve a word for return address
     xori 0xf0f0
-    ret.l sub_routine
+    ret sub_routine
 
 
 #addr 0x200
@@ -16,5 +16,5 @@ far_away:
     ldi 0xf0
     shli 8
     ori 0xf0
-    jal.l sub_routine
+    jal sub_routine
     jmp end
