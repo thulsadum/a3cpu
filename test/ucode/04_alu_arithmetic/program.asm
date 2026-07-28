@@ -4,10 +4,10 @@
 
 ; test lda
 
-ldi 3
+ldi.16 3
 addi.16 5
 
-ldi 3
+ldi.16 3
 add.l answer
 
 lda.l answer
@@ -17,22 +17,22 @@ lda.l answer
 add.l answer
 
 
-ldi 5
+ldi.16 5
 subi.16 3
 
-ldi 0x44
+ldi.16 0x44
 sub.l answer
 
-ldi 1
+ldi.16 1
 shli.16 3
 
-ldi 1
+ldi.16 1
 shl.l two
 
-ldi 16
+ldi.16 16
 shri.16 3
 
-ldi 16
+ldi.16 16
 shr.l two
 
 

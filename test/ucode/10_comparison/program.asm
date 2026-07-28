@@ -2,30 +2,30 @@
 
 #bank ac3pu_program
 
-ldi 5
+ldi.16 5
 sec  ;; set carry flag to make update visible
 tst  ;; flags: none
 
-ldi 0xffff
+ldi.16 0xffff
 sec
 tst  ;; flags: neg
 
-ldi 0
+ldi.16 0
 sec
 tst ;; flags: zero
 
-ldi 0x5
+ldi.16 0x5
 cmpi 0x5 ;; flags: zero, carry (EQ)
 cmpi 0x6 ;; flags: neg (LT)
 cmpi 0x3 ;; flags: carry (GT)
 
-ldi 0x100
+ldi.16 0x100
 cmp.l memory ;; flags: carry
 
-ldi 0x000
+ldi.16 0x000
 cmp.l memory ;; flags: neg
 
-ldi 0xff
+ldi.16 0xff
 cmp.l memory ;; flags: zero,carry
 
 halt

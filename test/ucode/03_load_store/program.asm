@@ -7,7 +7,7 @@
 lda.l A
 sta.l C
 lda.l B
-ldi 0x1337
+ldi   0x1337
 sta.l D
 lda.l C
 lda.l D

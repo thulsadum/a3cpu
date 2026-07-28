@@ -2,7 +2,7 @@
 
 #bank ac3pu_program
 
-ldi 0
+ldi.16 0
 ;; should set zero flag
 
 dec
@@ -17,13 +17,13 @@ sei
 cli
 ;; should clear intrrupt flag
 
-ldi 0
+ldi.16 0
 sec
 tfa
 
 ;; ACC should contain flags
 
-ldi 1
+ldi.16 1
 taf
 ;; flags schould be 0x01 (halt)
 
