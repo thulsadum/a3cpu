@@ -20,13 +20,13 @@ cmpi 0x6 ;; flags: neg (LT)
 cmpi 0x3 ;; flags: carry (GT)
 
 ldi 0x100
-cmp memory ;; flags: carry
+cmp.l memory ;; flags: carry
 
 ldi 0x000
-cmp memory ;; flags: neg
+cmp.l memory ;; flags: neg
 
 ldi 0xff
-cmp memory ;; flags: zero,carry
+cmp.l memory ;; flags: zero,carry
 
 halt
 

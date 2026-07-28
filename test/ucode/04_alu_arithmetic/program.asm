@@ -8,32 +8,32 @@ ldi 3
 addi.16 5
 
 ldi 3
-add answer
+add.l answer
 
 lda.l answer
 addi.16 3
 
 lda.l answer
-add answer
+add.l answer
 
 
 ldi 5
 subi.16 3
 
 ldi 0x44
-sub answer
+sub.l answer
 
 ldi 1
 shli.16 3
 
 ldi 1
-shl two
+shl.l two
 
 ldi 16
 shri.16 3
 
 ldi 16
-shr two
+shr.l two
 
 
 halt

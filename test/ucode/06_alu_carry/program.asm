@@ -16,7 +16,7 @@ adci.16 0x01
 
 ldi 0x01
 sec
-adc foobar
+adc.l foobar
 ;; should give: 0x44
 
 ldi  0x01
@@ -26,7 +26,7 @@ adci.16 0x01
 
 ldi 0x01
 clc
-adc foobar
+adc.l foobar
 ;; should give: 0x43
 
 
@@ -39,7 +39,7 @@ sbbi.16 0x01
 
 ldi 0x49
 sec
-sbb foobar
+sbb.l foobar
 ;; should give: 0x07
 
 ldi  0x03
@@ -49,7 +49,7 @@ sbbi.16 0x01
 
 ldi 0x49
 clc
-sbb foobar
+sbb.l foobar
 ;; should give: 0x07
 
 halt
