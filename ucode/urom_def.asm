@@ -19,18 +19,19 @@
 
 ; BUS CONTROL
 BUS_OFFSET = 0 ; offset of bus control signals 
-SIG_PC_OUT  = 1 << BUS_OFFSET + 0 ; PC to bus
-SIG_MAR_IN  = 1 << BUS_OFFSET + 1 ; MAR from bus
-SIG_MDR_IN = 1 << BUS_OFFSET + 2 ; MDR from bus
-SIG_MDR_OUT = 1 << BUS_OFFSET + 3 ; MDR to bus
-SIG_IR_IN   = 1 << BUS_OFFSET + 4 ; IR from bus
-SIG_IR_IMM8_OUT = 1 << BUS_OFFSET + 5 ; IR from bus
-SIG_ACC_IN  = 1 << BUS_OFFSET + 6 ; ACC from bus
-SIG_ACC_OUT  = 1 << BUS_OFFSET + 7 ; ACC to bus
-SIG_ALU_OUT  = 1 << BUS_OFFSET + 8 ; ALU to bus
-SIG_FLAGS_IN  = 1 << BUS_OFFSET + 9 ; ALU to bus
-SIG_FLAGS_OUT  = 1 << BUS_OFFSET + 10 ; ALU to bus
-BUS_END = BUS_OFFSET + 11
+SIG_PC_IN   = 1 << BUS_OFFSET + 0 ; PC from bus
+SIG_PC_OUT  = 1 << BUS_OFFSET + 1 ; PC to bus
+SIG_MAR_IN  = 1 << BUS_OFFSET + 2 ; MAR from bus
+SIG_MDR_IN = 1 << BUS_OFFSET + 3 ; MDR from bus
+SIG_MDR_OUT = 1 << BUS_OFFSET + 4 ; MDR to bus
+SIG_IR_IN   = 1 << BUS_OFFSET + 5 ; IR from bus
+SIG_IR_IMM8_OUT = 1 << BUS_OFFSET + 6 ; IR from bus
+SIG_ACC_IN  = 1 << BUS_OFFSET + 7 ; ACC from bus
+SIG_ACC_OUT  = 1 << BUS_OFFSET + 8 ; ACC to bus
+SIG_ALU_OUT  = 1 << BUS_OFFSET + 9 ; ALU to bus
+SIG_FLAGS_IN  = 1 << BUS_OFFSET + 10 ; ALU to bus
+SIG_FLAGS_OUT  = 1 << BUS_OFFSET + 11 ; ALU to bus
+BUS_END = BUS_OFFSET + 12
 
 ; uPC CONTOL
 UPC_OFFSET = BUS_END

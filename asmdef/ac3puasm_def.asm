@@ -300,3 +300,18 @@ OP_CMPZ = OC_CMPZ << OP_OFFSET
     cmp.zp {addr:u8} => (OP_CMPZ | addr)`16
     cmp.l {addr:u16} => OP_CMP`16 @ addr`16
 }
+
+
+OP_JMPZ = OC_JMPZ << OP_OFFSET
+OP_JMP  = OC_JMP  << OP_OFFSET
+
+#ruledef jumps {
+    jmp {addr:u8} => {
+        assert(addr <= 0xff)
+        asm { jmp.zp {addr} }
+    }
+    jmp {addr:u16} => asm { jmp.l {addr} }
+
+    jmp.zp {addr:u8} => (OP_JMPZ | addr)`16
+    jmp.l  {addr:u16} => OP_JMP`16 @ addr`16
+}

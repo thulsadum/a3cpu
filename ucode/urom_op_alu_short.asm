@@ -57,8 +57,8 @@ op_cmpi8: __alu_bin_imm8(SIG_ALU_OP_SBB, SIG_ALU_CARRY_1, 0)
 
 
 #bank acpu
-op_shli8: __alu_bin_imm8(SIG_ALU_OP_SHL,0)
-op_shri8: __alu_bin_imm8(SIG_ALU_OP_SHR,0)
+op_shli8: __alu_bin_imm8(SIG_ALU_OP_SHL,SIG_ALU_CARRY_0)
+op_shri8: __alu_bin_imm8(SIG_ALU_OP_SHR,SIG_ALU_CARRY_0)
 
 #bank mrom
 #addr OC_SHLI8

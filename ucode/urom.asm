@@ -6,4 +6,5 @@
 #include "urom_op_alu_flags.asm"
 #include "urom_op_alu_short.asm"
 #include "urom_op_cpu_flags.asm"
+#include "urom_op_jumps.asm"
 

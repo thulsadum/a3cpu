@@ -22,6 +22,7 @@ typedef enum {
 
 typedef struct {
 
+    sig_t pc_in  : 1;
     sig_t pc_out : 1;
     sig_t mar_in : 1;
     sig_t mdr_in  : 1;
@@ -198,6 +199,7 @@ void tick(cpu_t *cpu) {
     if (uc.signals.acc_in) cpu->acc = bus;
     if (uc.signals.mdr_in) cpu->mdr = bus;
     if (uc.signals.flags_in) cpu->flags.raw = (bus & 0xff);
+    if (uc.signals.pc_in) cpu->pc = bus;
 
     /* misc */
     if (uc.signals.ram_read) {
