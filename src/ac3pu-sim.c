@@ -5,8 +5,8 @@
 #include <arpa/inet.h>
 
 #define MAP_ROM_SIZE 256
-#define RAM_SIZE 256
-#define UPROGRAM_SIZE 512
+#define RAM_SIZE 0x10000
+#define UPROGRAM_SIZE 1024
 
 typedef uint32_t sig_t;
 

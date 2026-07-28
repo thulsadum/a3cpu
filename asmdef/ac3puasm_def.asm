@@ -24,7 +24,10 @@ OP_STA = OC_STA << OP_OFFSET
 OP_STAZ = OC_STAZ << OP_OFFSET
 
 #ruledef load_store {
-    lda {addr:u8} => asm { lda.zp {addr} }
+    lda {addr:u8} => {
+        assert(addr<=0xff)
+        asm { lda.zp {addr} }
+    }
     lda {addr:u16} => asm { lda.l {addr} }
     lda.l {addr:u16} => OP_LDA`16 @ addr`16
     lda.zp {addr:u8} => (OP_LDAZ | addr)`16
@@ -34,11 +37,13 @@ OP_STAZ = OC_STAZ << OP_OFFSET
         asm { ldi.8 {imm}`8 }
     }
     ldi {imm:u16} => asm { ldi.16 {imm} }
-    ldi.8  {imm:u8} => 
-    (OP_LDI8 | (imm & 0xff))`16
+    ldi.8  {imm:u8} => (OP_LDI8 | (imm & 0xff))`16
     ldi.16 {imm:u16} => OP_LDI`16 @ imm`16
 
-    sta {addr:u8} => asm { sta.zp {addr} }
+    sta {addr:u8} => {
+        assert(addr<=0xff)
+        asm { sta.zp {addr} }
+    }
     sta {addr:u16} => asm { sta.l {addr} }
     sta.l {addr:u16} => OP_STA`16 @ addr`16
     sta.zp {addr:u8} => (OP_STAZ | addr)`16
@@ -59,22 +64,46 @@ OP_ALU_SHR  = OC_SHR  << OP_OFFSET
 OP_ALU_SHRZ  = OC_SHRZ  << OP_OFFSET
 
 #ruledef alu_arithmetic {
-    addi {imm:u8}  => asm { addi.8  {imm} }
+    addi {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { addi.8  {imm} }
+    }
     addi {imm:u16} => asm { addi.16 {imm} }
-    subi {imm:u8}  => asm { subi.8  {imm} }
+    subi {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { subi.8  {imm} }
+    }
     subi {imm:u16} => asm { subi.16 {imm} }
-    shli {imm:u8}  => asm { shli.8  {imm} }
+    shli {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { shli.8  {imm} }
+    }
     shli {imm:u16} => asm { shli.16 {imm} }
-    shri {imm:u8}  => asm { shri.8  {imm} }
+    shri {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { shri.8  {imm} }
+    }
     shri {imm:u16} => asm { shri.16 {imm} }
 
-    add {addr:u8}  => asm { add.zp {addr} }
+    add {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { add.zp {addr} }
+    }
     add {addr:u16} => asm { add.l  {addr} }
-    sub {addr:u8}  => asm { sub.zp {addr} }
+    sub {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { sub.zp {addr} }
+    }
     sub {addr:u16} => asm { sub.l  {addr} }
-    shl {addr:u8}  => asm { shl.zp {addr} }
+    shl {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { shl.zp {addr} }
+    }
     shl {addr:u16} => asm { shl.l  {addr} }
-    shr {addr:u8}  => asm { shr.zp {addr} }
+    shr {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { shr.zp {addr} }
+    }
     shr {addr:u16} => asm { shr.l  {addr} }
 
 
@@ -97,14 +126,26 @@ OP_ALU_SBB  = OC_SBB  << OP_OFFSET
 OP_ALU_SBBZ  = OC_SBBZ  << OP_OFFSET
 
 #ruledef alu_arithmetic_with_carry {
-    adci {imm:u8}  => asm { adci.8  {imm} }
+    adci {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { adci.8  {imm} }
+    }
     adci {imm:u16} => asm { adci.16 {imm} }
-    sbbi {imm:u8}  => asm { sbbi.8  {imm} }
+    sbbi {imm:u8}  => {
+        assert(imm<=0xff)
+        asm { sbbi.8  {imm} }
+    }
     sbbi {imm:u16} => asm { sbbi.16 {imm} }
 
-    adc {addr:u8}  => asm { adc.zp {addr} }
+    adc {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { adc.zp {addr} }
+    }
     adc {addr:u16} => asm { adc.l  {addr} }
-    sbb {addr:u8}  => asm { sbb.zp {addr} }
+    sbb {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { sbb.zp {addr} }
+    }
     sbb {addr:u16} => asm { sbb.l  {addr} }
 
     adc.zp {addr:u8} => (OP_ALU_ADCZ | addr)`16
@@ -147,29 +188,56 @@ OP_ALU_SHRI8 = OC_SHRI8 << OP_OFFSET
 
 
 OP_ALU_ANDI = OC_ANDI  << OP_OFFSET
+OP_ALU_ANDI8 = OC_ANDI8  << OP_OFFSET
 OP_ALU_AND  = OC_AND   << OP_OFFSET
 OP_ALU_ANDZ  = OC_ANDZ << OP_OFFSET
 OP_ALU_ORI = OC_ORI  << OP_OFFSET
+OP_ALU_ORI8 = OC_ORI8  << OP_OFFSET
 OP_ALU_OR  = OC_OR   << OP_OFFSET
 OP_ALU_ORZ  = OC_ORZ << OP_OFFSET
 OP_ALU_XORI = OC_XORI  << OP_OFFSET
+OP_ALU_XORI8 = OC_XORI8  << OP_OFFSET
 OP_ALU_XOR  = OC_XOR   << OP_OFFSET
 OP_ALU_XORZ  = OC_XORZ << OP_OFFSET
 
 #ruledef alu_logic {
+    andi {imm:u8} =>  {
+        assert(imm<=0xff)
+        asm { andi.8 {imm} }
+    }
+    ori {imm:u8} =>  {
+        assert(imm<=0xff)
+        asm { ori.8 {imm} }
+    }
+    xori {imm:u8} =>  {
+        assert(imm<=0xff)
+        asm { xori.8 {imm} }
+    }
     andi {imm:u16} => asm { andi.16 {imm} }
     ori {imm:u16} => asm { ori.16 {imm} }
     xori {imm:u16} => asm { xori.16 {imm} }
 
+    andi.8 {imm:u8} => (OP_ALU_ANDI8 | imm)`16
+    ori.8 {imm:u8} => (OP_ALU_ORI8 | imm)`16
+    xori.8 {imm:u8} => (OP_ALU_XORI8 | imm)`16
     andi.16 {imm:u16} => OP_ALU_ANDI`16 @ imm`16
     ori.16 {imm:u16} => OP_ALU_ORI`16 @ imm`16
     xori.16 {imm:u16} => OP_ALU_XORI`16 @ imm`16
 
-    and {addr:u8}  => asm { and.zp {addr} }
+    and {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { and.zp {addr} }
+    }
     and {addr:u16} => asm { and.l  {addr} }
-    or {addr:u8}  => asm { or.zp {addr} }
+    or {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { or.zp {addr} }
+    }
     or {addr:u16} => asm { or.l  {addr} }
-    xor {addr:u8}  => asm { xor.zp {addr} }
+    xor {addr:u8}  => {
+        assert(addr<=0xff)
+        asm { xor.zp {addr} }
+    }
     xor {addr:u16} => asm { xor.l  {addr} }
 
     and.zp {addr:u8} => (OP_ALU_ANDZ | addr)`16
@@ -217,10 +285,16 @@ OP_CMPZ = OC_CMPZ << OP_OFFSET
 
     cmpi.8 {imm:u8} => (OP_CMPI8 | imm)`16
     cmpi.16 {imm:u16} => OP_CMPI`16 @ imm`16
-    cmpi {imm:u8} => asm { cmpi.8 {imm} }
+    cmpi {imm:u8} => {
+        assert(imm<=0xff)
+        asm { cmpi.8 {imm} }
+    }
     cmpi {imm:u16} => asm { cmpi.16 {imm} }
 
-    cmp {addr:u8} => asm { cmp.zp {addr} }
+    cmp {addr:u8} => {
+        assert(addr<=0xff)
+        asm { cmp.zp {addr} }
+    }
     cmp {addr:u16} => asm { cmp.l {addr} }
 
     cmp.zp {addr:u8} => (OP_CMPZ | addr)`16

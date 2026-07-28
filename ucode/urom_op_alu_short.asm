@@ -114,3 +114,16 @@ op_xorz: __alu_bin_dir_zp(SIG_ALU_OP_XOR,SIG_ALU_CARRY_0)
 #d16 op_orz
 #addr OC_XORZ
 #d16 op_xorz
+
+#bank acpu
+op_andi8: __alu_bin_imm8(SIG_ALU_OP_AND,SIG_ALU_CARRY_0)
+op_ori8: __alu_bin_imm8(SIG_ALU_OP_OR,SIG_ALU_CARRY_0)
+op_xori8: __alu_bin_imm8(SIG_ALU_OP_XOR,SIG_ALU_CARRY_0)
+
+#bank mrom
+#addr OC_ANDI8
+#d16 op_andi8
+#addr OC_ORI8
+#d16 op_ori8
+#addr OC_XORI8
+#d16 op_xori8
