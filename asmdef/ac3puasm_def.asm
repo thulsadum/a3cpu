@@ -304,6 +304,10 @@ OP_CMPZ = OC_CMPZ << OP_OFFSET
 
 OP_JMPZ = OC_JMPZ << OP_OFFSET
 OP_JMP  = OC_JMP  << OP_OFFSET
+OP_JALZ = OC_JALZ << OP_OFFSET
+OP_JAL  = OC_JAL  << OP_OFFSET
+OP_RETZ = OC_RETZ << OP_OFFSET
+OP_RET  = OC_RET  << OP_OFFSET
 
 #ruledef jumps {
     jmp {addr:u8} => {
@@ -314,4 +318,22 @@ OP_JMP  = OC_JMP  << OP_OFFSET
 
     jmp.zp {addr:u8} => (OP_JMPZ | addr)`16
     jmp.l  {addr:u16} => OP_JMP`16 @ addr`16
+
+
+    jal {addr:u8} => {
+        assert(addr <= 0xff)
+        asm { jal.zp {addr} }
+    }
+    jal {addr:u16} => asm { jal.l {addr} }
+    jal.zp {addr:u8} => (OP_JALZ | addr)`16
+    jal.l  {addr:u16} => OP_JAL`16 @ addr`16
+
+
+    ret {addr:u8} => {
+        assert(addr <= 0xff)
+        asm { ret.zp {addr} }
+    }
+    ret {addr:u16} => asm { ret.l {addr} }
+    ret.zp {addr:u8} => (OP_RETZ | addr)`16
+    ret.l  {addr:u16} => OP_RET`16 @ addr`16
 }

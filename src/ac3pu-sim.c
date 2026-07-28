@@ -25,6 +25,7 @@ typedef struct {
     sig_t pc_in  : 1;
     sig_t pc_out : 1;
     sig_t mar_in : 1;
+    sig_t mar_out : 1;
     sig_t mdr_in  : 1;
     sig_t mdr_out : 1;
     sig_t ir_in : 1;
@@ -162,6 +163,7 @@ void tick(cpu_t *cpu) {
 
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
+    if (uc.signals.mar_out) { bus = cpu->mar; bus_drivers++; }
     if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
     if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
     if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
