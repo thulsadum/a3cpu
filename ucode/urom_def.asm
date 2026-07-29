@@ -12,7 +12,7 @@
 
 #bankdef acpu
 {
-  bits = 32
+  bits = 64
   outp = 16*256
   addr = 0x0000
 }
@@ -87,6 +87,16 @@ SIG_FLAG_SEL_ZERO  = 5 << FLAG_SEL_OFFSET
 ;SIG_FLAG_SEL_NEG   = 7 << FLAG_SEL_OFFSET
 FLAGS_END = FLAGS_OFFSET + FLAG_SEL_LEN
 
+; EXECUTION CONTROL
+EXEC_SEL_LEN = 3
+EXEC_OFFSET = FLAGS_END
+SIG_EXEC_SEL_ALWAYS = 0 << EXEC_OFFSET ; execute always
+SIG_EXEC_SEL_CARRY  = 1 << EXEC_OFFSET ; execute, if carry is set
+SIG_EXEC_SEL_ZERO   = 2 << EXEC_OFFSET ; execute, if zero is set
+SIG_EXEC_SEL_NEG    = 3 << EXEC_OFFSET ; execute, if neg(ative) is set
+SIG_EXEC_INV        = 1 << EXEC_OFFSET + FLAG_SEL_LEN
+EXEC_END = EXEC_OFFSET + FLAG_SEL_LEN + 1
+
 
 
 #fn set_flag(flag,value) => SIG_FLAG_CHANGE | {flag} | {value} << (FLAG_SEL_OFFSET-1)
@@ -95,5 +105,5 @@ FLAGS_END = FLAGS_OFFSET + FLAG_SEL_LEN
 
 #ruledef ucode
 {
-    uc {signals} => signals`32
+    uc {signals} => signals`64
 }

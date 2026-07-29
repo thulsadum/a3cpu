@@ -4,11 +4,21 @@
 #include <assert.h>
 #include <arpa/inet.h>
 
+#include <stdint.h>
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    #define ntohll(x) __builtin_bswap64(x)
+    #define htonll(x) __builtin_bswap64(x)
+#else
+    #define ntohll(x) (x)
+    #define htonll(x) (x)
+#endif
+
 #define MAP_ROM_SIZE 256
 #define RAM_SIZE 0x10000
 #define UPROGRAM_SIZE 1024
 
-typedef uint32_t sig_t;
+typedef uint64_t sig_t;
 
 typedef enum {
     ALU_ADC,
@@ -19,6 +29,13 @@ typedef enum {
     ALU_OR,
     ALU_XOR,
 } alu_op_t;
+
+typedef enum {
+    EXEC_ALWAYS = 0,
+    EXEC_IF_CARRY = 1,
+    EXEC_IF_ZERO = 2,
+    EXEC_IF_NEG = 7,
+} exec_sel_t;
 
 typedef struct {
 
@@ -53,6 +70,8 @@ typedef struct {
     sig_t flag_value   : 1;
     sig_t flag_sel     : 3;
 
+    exec_sel_t exec_sel : 3;
+    sig_t exec_inv : 1;
 } cbits_t;
 
 typedef union {
@@ -157,9 +176,25 @@ void tick(cpu_t *cpu) {
     int bus_drivers = 0;
     uinstruction_t uc = cpu->urom[cpu->upc];
     uint8_t alu_carry_out = 0;
+    uint8_t exec_enable = 1;
 
     /* handling cpu signals */
+
     if (cpu->flags.flags.halt) return;
+
+    switch (uc.signals.exec_sel) {
+        case EXEC_ALWAYS:
+            exec_enable = 1 ^ uc.signals.exec_inv;
+            break;
+        default:
+            assert(false && "Undefined exec conditional code");
+            exec_enable = 0;
+    }
+
+    if (!exec_enable) {
+        cpu->upc++;
+        return;
+    }
 
     /* write to bus */
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
@@ -257,7 +292,7 @@ int main(int argc, const char ** argv) {
         cpu.mrom[i] = ntohs(cpu.mrom[i]);
     }
     for(int i = 0; i < ucode_len; i++) {
-        cpu.urom[i].raw = ntohl(cpu.urom[i].raw);
+        cpu.urom[i].raw = ntohll(cpu.urom[i].raw);
     }
 
     /* load ram from file */
