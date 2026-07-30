@@ -47,6 +47,35 @@ OP_STAZ = OC_STAZ << OP_OFFSET
     sta {addr:u16} => asm { sta.l {addr} }
     sta.l {addr:u16} => OP_STA`16 @ addr`16
     sta.zp {addr:u8} => (OP_STAZ | addr)`16
+
+}
+
+OP_LIA = OC_LIA << OP_OFFSET
+OP_LDIA = OC_LDIA << OP_OFFSET
+OP_LDIAZ = OC_LDIAZ << OP_OFFSET
+OP_STIA = OC_STIA << OP_OFFSET
+OP_STIAZ = OC_STIAZ << OP_OFFSET
+
+
+#ruledef load_store_indirect {
+    lia  => OP_LIA`16
+
+    ldia {addr:u8} => {
+        assert(addr<=0xff)
+        asm { ldia.zp {addr} }
+    }
+    ldia {addr:u16} => asm { ldia.l {addr} }
+    ldia.l {addr:u16} => OP_LDIA`16 @ addr`16
+    ldia.zp {addr:u8} => (OP_LDIAZ | addr)`16
+
+    stia {addr:u8} => {
+        assert(addr<=0xff)
+        asm { stia.zp {addr} }
+    }
+    stia {addr:u16} => asm { stia.l {addr} }
+    stia.l {addr:u16} => OP_STIA`16 @ addr`16
+    stia.zp {addr:u8} => (OP_STIAZ | addr)`16
+
 }
 
 
