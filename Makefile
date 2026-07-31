@@ -51,8 +51,8 @@ test-ucode: test-ucode-01_decode \
 			test-ucode-13_dynamic_long_word_selection \
 			test-ucode-14_jump \
 			test-ucode-15_jumpz \
-			test-ucode-16_indirect_addressing
-#			test-ucode-17_branching
+			test-ucode-16_indirect_addressing \
+			test-ucode-17_branching
 
 test-ucode-%: all
 	@echo "Testing ucode $* ..."
