@@ -366,3 +366,18 @@ OP_RET  = OC_RET  << OP_OFFSET
     ret.zp {addr:u8} => (OP_RETZ | addr)`16
     ret.l  {addr:u16} => OP_RET`16 @ addr`16
 }
+
+
+OP_BEQ = OC_BEQ << OP_OFFSET
+OP_BNE = OC_BNE << OP_OFFSET
+
+#ruledef branching {
+    beq {target: u16} => {
+        rel_addr = (target - ($ + 1)) & 0xff
+        (OP_BEQ | rel_addr)`16
+    }
+    bne {target: u16} => {
+        rel_addr = (target - ($ + 1)) & 0xff
+        (OP_BNE | rel_addr)`16
+    }
+}

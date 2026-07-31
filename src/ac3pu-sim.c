@@ -56,6 +56,7 @@ typedef struct {
     sig_t upc_reset : 1;
     sig_t upc_from_mrom : 1;
     sig_t pc_inc : 1;
+    sig_t pc_add_offset : 1;
 
     sig_t ram_read : 1;
     sig_t ram_write : 1;
@@ -186,6 +187,9 @@ void tick(cpu_t *cpu) {
         case EXEC_ALWAYS:
             exec_enable = 1 ^ uc.signals.exec_inv;
             break;
+        case EXEC_IF_ZERO:
+            exec_enable = cpu->flags.flags.zero ^ uc.signals.exec_inv;
+            break;
         default:
             assert(false && "Undefined exec conditional code");
             exec_enable = 0;
@@ -249,6 +253,9 @@ void tick(cpu_t *cpu) {
     /* branch logic */
     if (uc.signals.pc_inc) {
         cpu->pc++;
+    }
+    if (uc.signals.pc_add_offset) {
+        cpu->pc += (int8_t) cpu->ir.simple.immediate;
     }
 
     /* upc management */

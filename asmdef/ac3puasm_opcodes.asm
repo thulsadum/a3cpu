@@ -79,3 +79,6 @@ OC_JAL = 0x44
 OC_JALZ = 0x80 | OC_JAL
 OC_RET = 0x48
 OC_RETZ = 0x80 | OC_RET
+
+OC_BEQ = 0x80 | 0x52 ;; b0101 <inv:1> <ccode_sel:3>
+OC_BNE = 0x80 | 0x56
