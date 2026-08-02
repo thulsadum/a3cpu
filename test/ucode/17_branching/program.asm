@@ -171,7 +171,6 @@ test_blt_2:
     .success:
         ldi 0x00
     .end:
-halt
 
 
 
@@ -192,6 +191,7 @@ _aliases:
     .b:    bcc aliases
 
 aliases:
+
     .test:
 
         lda eq_zs.a
@@ -213,12 +213,15 @@ aliases:
         xor lt_cc.b
         andi 0xff00
         bne .failure
+        bra .success
 
     .failure:
         ldi 0xff
         jmp .end
+
     .success:
         ldi 0x00
+
     .end:
 
 halt
