@@ -95,6 +95,7 @@ SIG_EXEC_SEL_ALWAYS = 0 << EXEC_OFFSET ; execute always
 SIG_EXEC_SEL_CARRY  = 1 << EXEC_OFFSET ; execute, if carry is set
 SIG_EXEC_SEL_ZERO   = 2 << EXEC_OFFSET ; execute, if zero is set
 SIG_EXEC_SEL_NEG    = 7 << EXEC_OFFSET ; execute, if neg(ative) is set
+SIG_EXEC_SEL_ZERO_NOBORROW   = 3 << EXEC_OFFSET ; execute, if zero is set
 SIG_EXEC_INV        = 1 << EXEC_OFFSET + FLAG_SEL_LEN
 EXEC_END = EXEC_OFFSET + FLAG_SEL_LEN + 1
 

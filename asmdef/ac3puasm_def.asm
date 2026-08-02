@@ -370,14 +370,33 @@ OP_RET  = OC_RET  << OP_OFFSET
 
 OP_BEQ = OC_BEQ << OP_OFFSET
 OP_BNE = OC_BNE << OP_OFFSET
+OP_BPL = OC_BPL << OP_OFFSET
+OP_BMI = OC_BMI << OP_OFFSET
+
+OP_BLS = OC_BLS << OP_OFFSET
+OP_BHI = OC_BHI << OP_OFFSET
+
+OP_BGE = OC_BGE << OP_OFFSET
+OP_BLT = OC_BLT << OP_OFFSET
 
 #ruledef branching {
-    beq {target: u16} => {
+    __branch({op:u16},{target:u16}) => {
         rel_addr = (target - ($ + 1)) & 0xff
-        (OP_BEQ | rel_addr)`16
+        (op | rel_addr)`16
     }
-    bne {target: u16} => {
-        rel_addr = (target - ($ + 1)) & 0xff
-        (OP_BNE | rel_addr)`16
-    }
+    beq {target: u16} => asm { __branch(OP_BEQ,{target}) }
+    bne {target: u16} => asm { __branch(OP_BNE,{target}) }
+    blt {target: u16} => asm { __branch(OP_BLT,{target}) }
+    bls {target: u16} => asm { __branch(OP_BLS,{target}) }
+    bge {target: u16} => asm { __branch(OP_BGE,{target}) }
+    bhi {target: u16} => asm { __branch(OP_BHI,{target}) }
+    bpl {target: u16} => asm { __branch(OP_BPL,{target}) }
+    bmi {target: u16} => asm { __branch(OP_BMI,{target}) }
+}
+
+#ruledef branching_aliases {
+    bcc {target:u16} => asm { blt {target} }
+    bcs {target:u16} => asm { bge {target} }
+    bzc {target:u16} => asm { bne {target} }
+    bzs {target:u16} => asm { beq {target} }
 }

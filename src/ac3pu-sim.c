@@ -34,6 +34,7 @@ typedef enum {
     EXEC_ALWAYS = 0,
     EXEC_IF_CARRY = 1,
     EXEC_IF_ZERO = 2,
+    EXEC_IF_ZERO_OR_NO_BORROW = 3,
     EXEC_IF_NEG = 7,
 } exec_sel_t;
 
@@ -187,8 +188,17 @@ void tick(cpu_t *cpu) {
         case EXEC_ALWAYS:
             exec_enable = 1 ^ uc.signals.exec_inv;
             break;
+        case EXEC_IF_CARRY:
+            exec_enable = cpu->flags.flags.carry ^ uc.signals.exec_inv;
+            break;
         case EXEC_IF_ZERO:
             exec_enable = cpu->flags.flags.zero ^ uc.signals.exec_inv;
+            break;
+        case EXEC_IF_NEG:
+            exec_enable = cpu->flags.flags.neg ^ uc.signals.exec_inv;
+            break;
+        case EXEC_IF_ZERO_OR_NO_BORROW:
+            exec_enable = (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
             break;
         default:
             assert(false && "Undefined exec conditional code");
