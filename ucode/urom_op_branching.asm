@@ -5,6 +5,23 @@
 
 #fn __branch_impl(selector,inverse) => selector | inverse | SIG_PC_ADD_OFFSET | SIG_UPC_RESET
 
+
+;;;
+;;; bra - branch always (aka relative jump)
+;;;
+
+#bank acpu
+
+op_bra:
+    uc __branch_impl(SIG_EXEC_SEL_ALWAYS, 0)
+
+
+#bank mrom
+#addr OC_BRA
+#d16 op_bra
+
+
+
 ;;;
 ;;; beq / bne - branch if equal, and branch if not equal (aka bz, bnz)
 ;;;

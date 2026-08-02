@@ -368,8 +368,11 @@ OP_RET  = OC_RET  << OP_OFFSET
 }
 
 
+OP_BRA = OC_BRA << OP_OFFSET
+
 OP_BEQ = OC_BEQ << OP_OFFSET
 OP_BNE = OC_BNE << OP_OFFSET
+
 OP_BPL = OC_BPL << OP_OFFSET
 OP_BMI = OC_BMI << OP_OFFSET
 
@@ -384,6 +387,7 @@ OP_BLT = OC_BLT << OP_OFFSET
         rel_addr = (target - ($ + 1)) & 0xff
         (op | rel_addr)`16
     }
+    bra {target: u16} => asm { __branch(OP_BRA,{target}) }
     beq {target: u16} => asm { __branch(OP_BEQ,{target}) }
     bne {target: u16} => asm { __branch(OP_BNE,{target}) }
     blt {target: u16} => asm { __branch(OP_BLT,{target}) }
