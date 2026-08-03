@@ -23,7 +23,7 @@ MMIO_BEGIN := 0x8000
 all: $(SIM) $(UROM)
 	echo $(UCODE_TESTS)
 
-$(SIM): src/*.c
+$(SIM): src/*.c src/devices/*.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 ucode/%.bin: ucode/%.asm
@@ -56,8 +56,8 @@ test/asm/%: test/asm/%/actual.txt
 test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM)
 	$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) > $@
 
-test/asm/%/sim: test/asm/%/sim.c src/*.c
-	$(CC) $(CFLAGS) -o $@ $^
+test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
+	$(CC) $(CFLAGS) -I src -o $@ $^
 
 
 test-ucode: $(UCODE_TESTS)

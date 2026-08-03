@@ -7,6 +7,10 @@
 
 #include <stdint.h>
 
+#include "ac3dev.h"
+
+#include "devices/dev_simif.h"
+
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     #define ntohll(x) __builtin_bswap64(x)
     #define htonll(x) __builtin_bswap64(x)
@@ -23,6 +27,8 @@ static uint16_t PRINT_TRACE_BEGIN = 0xffff;
 static uint16_t PRINT_TRACE_END   = 0xffff;
 static uint16_t MMIO_BEGIN   = 0x8000;
 static int SILENT = 0;
+static int REGISTER_DEFAULT_DEVICES = 1;
+
 
 typedef uint64_t sig_t;
 
@@ -261,8 +267,13 @@ void tick(cpu_t *cpu) {
 
     /* misc */
     if (uc.signals.ram_read) {
-        if(cpu->mar <= MMIO_BEGIN)
+        if(cpu->mar < MMIO_BEGIN) {
             cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
+        } else {
+            if (handle_read(cpu->mar, &(cpu->mdr))) {
+                /* do panic! */
+            }
+        }
         if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
             printf("mem[0x%04X]> 0x%04X\n", cpu->mar, cpu->mdr);
         }
@@ -271,8 +282,13 @@ void tick(cpu_t *cpu) {
         if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
             printf("mem[0x%04X]< 0x%04X\n", cpu->mar, cpu->mdr);
         }
-        if(cpu->mar <= MMIO_BEGIN)
+        if(cpu->mar < MMIO_BEGIN) {
             cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
+        } else {
+            if (handle_write(cpu->mar, cpu->mdr)) {
+                /* do panic! */
+            }
+        }
     }
 
     /* branch logic */
@@ -311,6 +327,15 @@ int parse_args(int argc, const char ** argv) {
     return 0;
 }
 
+int register_default_devices() {
+    device_handler_t *hdl;
+    hdl = simif_init();
+    if(!hdl) return 1;
+    register_device(hdl);
+
+    return 0;
+}
+
 int main(int argc, const char ** argv) {
 
     if(argc < 3) {
@@ -319,6 +344,9 @@ int main(int argc, const char ** argv) {
     }
 
     int ret = parse_args(argc - 3, argv + 3);
+    if(ret) return ret;
+
+    if(REGISTER_DEFAULT_DEVICES) ret = register_default_devices();
     if(ret) return ret;
 
     cpu_t cpu = {0};
@@ -368,7 +396,12 @@ int main(int argc, const char ** argv) {
     }
 
     if(cpu.flags.flags.halt) {
-        printf("--- CPU HALTED ---");
+        if ((cpu.flags.raw & 0xf0) > 3) {
+            printf("!!! CPU PANIC !!!");
+            return 1;
+        } else {
+            printf("--- CPU HALTED ---");
+        }
     }
 
     return 0;
