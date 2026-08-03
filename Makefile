@@ -1,5 +1,5 @@
 
-CFLAGS = -Wall -Wextra -O2 -g
+CFLAGS = -Wall -Wextra -O2 -g -I src
 
 CASM = customasm
 CASMFLAGS = 
