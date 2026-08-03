@@ -264,12 +264,12 @@ void tick(cpu_t *cpu) {
         if(cpu->mar <= MMIO_BEGIN)
             cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
         if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
-            printf("mem[0x%04X]> 0x%04X (%2c)\n", cpu->mar, cpu->mdr, cpu->mdr);
+            printf("mem[0x%04X]> 0x%04X\n", cpu->mar, cpu->mdr);
         }
     }
     if (uc.signals.ram_write) {
         if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
-            printf("mem[0x%04X]< 0x%04X (%2c)\n", cpu->mar, cpu->mdr, cpu->mdr);
+            printf("mem[0x%04X]< 0x%04X\n", cpu->mar, cpu->mdr);
         }
         if(cpu->mar <= MMIO_BEGIN)
             cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
