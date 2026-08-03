@@ -14,6 +14,9 @@ UCODE_DEPS := $(UCODE_SRCS:.asm=.d)
 UCODE_TEST_PROGRAMS := $(wildcard test/ucode/*/program.asm)
 UCODE_TESTS := $(patsubst test/ucode/%/program.asm,test/ucode/%,$(UCODE_TEST_PROGRAMS))
 
+ASM_TEST_PROGRAMS := $(wildcard test/asm/*/program.asm)
+ASM_TESTS := $(patsubst test/asm/%/program.asm,test/asm/%,$(ASM_TEST_PROGRAMS))
+
 .PHONY: all test clean test-ucode test-asm
 
 all: $(SIM) $(UROM)
@@ -40,18 +43,27 @@ ucode/%.d: ucode/%.asm
 
 test: test-ucode #test-asm
 
-#test-asm: test-asm-01_mmio
+#test-asm: $(ASM_TESTS)
+
+#test/asm/%: $(UROM) test/asm/%/ram.bin test/asm/%/sim
+#	@echo "Testing asm $* ..."
+#	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
+#
 
 test-ucode: $(UCODE_TESTS)
 
-test/ucode/%: all
-	@echo "Testing ucode $* ..."
-	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
+test/ucode/%: all test/ucode/%/ram.bin test/ucode/%/actual.txt
+	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || echo "Test ucode $* ... FAIL!"
+	@rm -f test/ucode/$*/{ram.bin,actual.txt}
+
+test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM)
 	@UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)") && \
 	$(MAKE) $$UROM && \
 	$(SIM) $$UROM test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
-	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok"
-	@rm -f test/ucode/$*/{ram.bin,actual.txt}
+
+
+test/ucode/%/ram.bin: test/ucode/%/program.asm
+	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
 
 clean:
 	rm -f $(SIM) ucode/*.bin ucode/*.hex $(UCODE_DEPS)
