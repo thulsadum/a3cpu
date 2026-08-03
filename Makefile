@@ -11,9 +11,13 @@ UROM ?= $(DEFAULT_UROM)
 UCODE_SRCS := $(wildcard ucode/*.asm)
 UCODE_DEPS := $(UCODE_SRCS:.asm=.d)
 
+UCODE_TEST_PROGRAMS := $(wildcard test/ucode/*/program.asm)
+UCODE_TESTS := $(patsubst test/ucode/%/program.asm,test/ucode/%,$(UCODE_TEST_PROGRAMS))
+
 .PHONY: all test clean test-ucode test-asm
 
 all: $(SIM) $(UROM)
+	echo $(UCODE_TESTS)
 
 $(SIM): src/*.c
 	$(CC) $(CFLAGS) $^ -o $@
@@ -34,27 +38,13 @@ ucode/%.d: ucode/%.asm
 
 -include $(UCODE_DEPS)
 
-test: test-ucode
+test: test-ucode #test-asm
 
-test-ucode: test-ucode-01_decode \
-			test-ucode-02_pipe \
-			test-ucode-03_load_store \
-			test-ucode-04_alu_arithmetic \
-			test-ucode-05_alu_logic \
-			test-ucode-06_alu_carry \
-			test-ucode-07_alu_short \
-			test-ucode-08_alu_arith_extended \
-			test-ucode-09_cpu_flags \
-			test-ucode-10_comparison \
-			test-ucode-11_load_store_zp \
-			test-ucode-12_full_zp \
-			test-ucode-13_dynamic_long_word_selection \
-			test-ucode-14_jump \
-			test-ucode-15_jumpz \
-			test-ucode-16_indirect_addressing \
-			test-ucode-17_branching
+#test-asm: test-asm-01_mmio
 
-test-ucode-%: all
+test-ucode: $(UCODE_TESTS)
+
+test/ucode/%: all
 	@echo "Testing ucode $* ..."
 	$(CASM) $(CASMFLAGS) -f binary -o test/ucode/$*/ram.bin test/ucode/$*/program.asm
 	@UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)") && \
