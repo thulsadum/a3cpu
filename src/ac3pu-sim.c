@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include <arpa/inet.h>
 
@@ -17,6 +18,11 @@
 #define MAP_ROM_SIZE 256
 #define RAM_SIZE 0x10000
 #define UPROGRAM_SIZE 1024
+
+static uint16_t PRINT_TRACE_BEGIN = 0xffff;
+static uint16_t PRINT_TRACE_END   = 0xffff;
+static uint16_t MMIO_BEGIN   = 0x8000;
+static int SILENT = 0;
 
 typedef uint64_t sig_t;
 
@@ -127,6 +133,7 @@ typedef struct {
 
 
 void print_cpu_state(int cycle, cpu_t *cpu) {
+    if(SILENT) return;
     printf("CYCLE:%03d | PC:0x%04X | MAR:0x%04X | MDR:0x%04X | IR:0x%04X | ACC:0x%04X | FLAGS:0x%04X\n",
            cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir.raw, cpu->acc, cpu->flags.raw);
 }
@@ -254,10 +261,18 @@ void tick(cpu_t *cpu) {
 
     /* misc */
     if (uc.signals.ram_read) {
-        cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
+        if(cpu->mar <= MMIO_BEGIN)
+            cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
+        if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
+            printf("mem[0x%04X]> 0x%04X (%2c)\n", cpu->mar, cpu->mdr, cpu->mdr);
+        }
     }
     if (uc.signals.ram_write) {
-        cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
+        if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
+            printf("mem[0x%04X]< 0x%04X (%2c)\n", cpu->mar, cpu->mdr, cpu->mdr);
+        }
+        if(cpu->mar <= MMIO_BEGIN)
+            cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
     }
 
     /* branch logic */
@@ -281,12 +296,30 @@ void tick(cpu_t *cpu) {
 }
 
 
+int parse_args(int argc, const char ** argv) {
+    for(int i = 0; i < argc; i++) {
+        if(strcmp("--silent", argv[i]) == 0) SILENT = 1;
+        if(strcmp("--mt-begin",argv[i]) == 0 && i + 1 < argc) {
+            PRINT_TRACE_BEGIN = strtol(argv[i+1], NULL, 0);
+            i++;
+        }
+        if(strcmp("--mt-end",argv[i]) == 0 && i + 1 < argc) {
+            PRINT_TRACE_END = strtol(argv[i+1], NULL, 0);
+            i++;
+        }
+    }
+    return 0;
+}
+
 int main(int argc, const char ** argv) {
 
     if(argc < 3) {
         fprintf(stderr, "usage: %s <ucode-file.bin> <ram-file.bin>\n", argv[0]);
         return 1;
     }
+
+    int ret = parse_args(argc - 3, argv + 3);
+    if(ret) return ret;
 
     cpu_t cpu = {0};
     int ucode_len = 0;
