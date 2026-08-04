@@ -55,3 +55,7 @@ int handle_write(uint16_t addr, uint16_t val) {
 
     return -1;
 }
+
+int devdesc2int(device_descriptor_t desc) {
+    return ((desc.can_write & 1) << 5 | (desc.can_read & 1) << 4 | desc.length_exp) & 0xff;
+}

@@ -9,7 +9,7 @@ device_handler_t simif_hdl = {0};
 
 
 device_handler_t *simif_init() {
-    simif_hdl.desc.length_exp = 3;
+    simif_hdl.desc.length_exp = SIMIF_LENGTH_EXP;
     simif_hdl.desc.can_read = 1;
     simif_hdl.desc.can_write = 1;
 
@@ -19,11 +19,14 @@ device_handler_t *simif_init() {
 }
 
 uint16_t simif_read(uint16_t offset) {
-    if(!offset) {
-    /* status register read */
-        return 0x5333;
+    switch(offset) {
+        case SIMIF_STATUS:
+            return (SIMIF_MAGIC<<8) | devdesc2int(simif_hdl.desc);
+        case SIMIF_GETC:
+            return getchar();
+        default:
+            return 0xDEAD;
     }
-    return 0xDEAD;
 }
 
 void simif_write(uint16_t offset, uint16_t val) {

@@ -28,6 +28,8 @@ typedef struct {
 } device_handler_t;
 
 
+int devdesc2int(device_descriptor_t desc);
+
 int register_device(device_handler_t * hdl);
 int handle_read (uint16_t addr, uint16_t *val);
 int handle_write(uint16_t addr, uint16_t val);

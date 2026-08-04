@@ -3,6 +3,9 @@
 
 #include "ac3dev.h"
 
+#define SIMIF_MAGIC 0x53
+#define SIMIF_LENGTH_EXP 4
+
 extern device_handler_t simif_hdl;
 
 device_handler_t *simif_init(void);
@@ -14,6 +17,7 @@ typedef enum {
     SIMIF_STATUS = 0,
     SIMIF_EXIT = 1,
     SIMIF_PUTC = 2,
+    SIMIF_GETC = 3,
 } simif_offset_t;
 
 #endif

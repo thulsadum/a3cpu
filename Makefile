@@ -15,6 +15,7 @@ UCODE_TEST_PROGRAMS := $(wildcard test/ucode/*/program.asm)
 UCODE_TESTS := $(patsubst test/ucode/%/program.asm,test/ucode/%,$(UCODE_TEST_PROGRAMS))
 
 ASM_TEST_PROGRAMS := $(wildcard test/asm/*/program.asm)
+ASM_TEST_EXPECTED_TXTS := $(ASM_TEST_PROGRAMS:program.asm=expected.txt)
 ASM_TESTS := $(patsubst test/asm/%/program.asm,test/asm/%,$(ASM_TEST_PROGRAMS))
 MMIO_BEGIN := 0x8000
 
@@ -43,6 +44,12 @@ ucode/%.d: ucode/%.asm
 -include $(UCODE_DEPS)
 
 
+update-expected.txts: update-asm-expected.txts
+
+update-asm-expected.txts: $(ASM_TEST_EXPECTED_TXTS)
+
+test/asm/%/expected.txt: test/asm/%/actual.txt
+	mv $< $@
 
 test: test-ucode test-asm
 
