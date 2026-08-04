@@ -333,6 +333,7 @@ OP_CMPZ = OC_CMPZ << OP_OFFSET
 
 OP_JMPZ = OC_JMPZ << OP_OFFSET
 OP_JMP  = OC_JMP  << OP_OFFSET
+OP_JPA  = OC_JPA  << OP_OFFSET
 OP_JALZ = OC_JALZ << OP_OFFSET
 OP_JAL  = OC_JAL  << OP_OFFSET
 OP_RETZ = OC_RETZ << OP_OFFSET
@@ -348,6 +349,7 @@ OP_RET  = OC_RET  << OP_OFFSET
     jmp.zp {addr:u8} => (OP_JMPZ | addr)`16
     jmp.l  {addr:u16} => OP_JMP`16 @ addr`16
 
+    jpa => OP_JPA`16
 
     jal {addr:u8} => {
         assert(addr <= 0xff)

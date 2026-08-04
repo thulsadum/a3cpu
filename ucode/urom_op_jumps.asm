@@ -16,11 +16,16 @@ op_jmp:
 op_jmpz:
     uc SIG_IR_IMM8_OUT | SIG_PC_IN | SIG_UPC_RESET
 
+op_jpa:
+    uc SIG_ACC_OUT | SIG_PC_IN | SIG_UPC_RESET
+
 #bank mrom
 #addr OC_JMP
 #d16 op_jmp
 #addr OC_JMPZ
 #d16 op_jmpz
+#addr OC_JPA
+#d16 op_jpa
 
 
 ;;;
