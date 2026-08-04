@@ -43,10 +43,8 @@ op_jal:
 
 op_jalz:
     uc SIG_IR_IMM8_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MDR_OUT | SIG_MAR_IN
     uc SIG_MDR_IN  | SIG_PC_OUT
-    uc SIG_RAM_WRITE | SIG_MAR_OUT | SIG_PC_IN
+    uc SIG_RAM_WRITE | SIG_IR_IMM8_OUT | SIG_PC_IN
     uc SIG_PC_INC | SIG_UPC_RESET
 
 #bank mrom
@@ -71,8 +69,6 @@ op_ret:
 
 op_retz:
     uc SIG_IR_IMM8_OUT | SIG_MAR_IN
-    uc SIG_RAM_READ
-    uc SIG_MDR_OUT | SIG_MAR_IN
     uc SIG_RAM_READ
     uc SIG_MDR_OUT  | SIG_PC_IN | SIG_UPC_RESET
 
