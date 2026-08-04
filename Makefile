@@ -21,13 +21,15 @@ MMIO_BEGIN := 0x8000
 
 .PHONY: all test clean test-ucode test-asm
 
+.PRECIOUS: %.txt
+
 all: $(SIM) $(UROM)
 	echo $(UCODE_TESTS)
 
 $(SIM): src/*.c src/devices/*.c
 	$(CC) $(CFLAGS) $^ -o $@
 
-ucode/%.bin: ucode/%.asm
+ucode/%.bin: ucode/%.asm asmdef/*.asm ucode/*.asm
 	$(CASM) $(CASMFLAGS) -o $@ $<
 
 ucode/%.d: ucode/%.asm
