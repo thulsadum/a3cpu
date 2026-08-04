@@ -23,12 +23,17 @@
 #define RAM_SIZE 0x10000
 #define UPROGRAM_SIZE 1024
 
+#define UROM_FETCH 0x0000
+#define UROM_IRQ   0x0010
+
+#define RAM_ISR_RET_VEC 0x0002
+#define RAM_ISR_ENTRY   0x0003
+
 static uint16_t PRINT_TRACE_BEGIN = 0xffff;
 static uint16_t PRINT_TRACE_END   = 0xffff;
 static uint16_t MMIO_BEGIN   = 0x8000;
 static int SILENT = 0;
 static int REGISTER_DEFAULT_DEVICES = 1;
-
 
 typedef uint64_t sig_t;
 
@@ -65,6 +70,8 @@ typedef struct {
     sig_t alu_out : 1;
     sig_t flags_in  : 1;
     sig_t flags_out : 1;
+    sig_t const_addr_vec_out : 1;
+    sig_t const_addr_isr_out : 1;
 
     sig_t upc_reset : 1;
     sig_t upc_from_mrom : 1;
@@ -186,7 +193,7 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
     return 0;
 }
 
-void tick(cpu_t *cpu) {
+void tick(cpu_t *cpu, int cycle) {
     uint16_t bus = 0;
     int bus_drivers = 0;
     uinstruction_t uc = cpu->urom[cpu->upc];
@@ -196,6 +203,9 @@ void tick(cpu_t *cpu) {
     /* handling cpu signals */
 
     if (cpu->flags.flags.halt) return;
+
+    /* tick hw */
+    handle_tick(cycle);
 
     switch (uc.signals.exec_sel) {
         case EXEC_ALWAYS:
@@ -231,6 +241,8 @@ void tick(cpu_t *cpu) {
     if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
     if (uc.signals.alu_out) { bus = alu(cpu, uc, &alu_carry_out); bus_drivers++; }
     if (uc.signals.flags_out) { bus = cpu->flags.raw & 0xff; bus_drivers++; }
+    if (uc.signals.const_addr_vec_out) { bus = RAM_ISR_RET_VEC; bus_drivers++; }
+    if (uc.signals.const_addr_isr_out) { bus = RAM_ISR_ENTRY; bus_drivers++; }
 
     /* check for bus conflicts */
     assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
@@ -302,8 +314,9 @@ void tick(cpu_t *cpu) {
     /* upc management */
     cpu->upc++;
     if (uc.signals.upc_reset) {
-        /* reset upc -> jump to fetch */
-        cpu->upc = 0;
+        /* reset upc -> jump to fetch or irq*/
+        int pending_irq = is_pending_irq();
+        cpu->upc = (cpu->flags.flags.ie && pending_irq) ? UROM_IRQ : UROM_FETCH;
     }
     if (uc.signals.upc_from_mrom) {
         /* load upc from mapping rom */
@@ -391,7 +404,7 @@ int main(int argc, const char ** argv) {
 
     for (cpu.upc = 0; cpu.upc < ucode_len && cpu.flags.flags.halt == 0; ) {
         cycle++;
-        tick(&cpu);
+        tick(&cpu, cycle);
         print_cpu_state(cycle, &cpu);
     }
 

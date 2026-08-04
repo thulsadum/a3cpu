@@ -12,12 +12,14 @@ device_handler_t *simif_init(void);
 
 uint16_t simif_read(uint16_t offset);
 void simif_write(uint16_t offset, uint16_t val);
+int simif_tick(int);
 
 typedef enum {
     SIMIF_STATUS = 0,
-    SIMIF_EXIT = 1,
-    SIMIF_PUTC = 2,
-    SIMIF_GETC = 3,
+    SIMIF_EXIT,
+    SIMIF_PUTC,
+    SIMIF_GETC,
+    SIMIF_TIMER,
 } simif_offset_t;
 
 #endif

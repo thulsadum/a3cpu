@@ -56,6 +56,29 @@ int handle_write(uint16_t addr, uint16_t val) {
     return -1;
 }
 
-int devdesc2int(device_descriptor_t desc) {
-    return ((desc.can_write & 1) << 5 | (desc.can_read & 1) << 4 | desc.length_exp) & 0xff;
+int hdl2stat(device_handler_t *hdl) {
+    device_descriptor_t desc = hdl->desc;
+    return ((hdl->irq & 1)<<7 | (desc.can_write & 1) << 5 | (desc.can_read & 1) << 4 | desc.length_exp) & 0xff;
+}
+
+int handle_tick(int cycle) {
+    const device_handler_t *hdl;
+    for(int i = 0; i < devices_count; i++) {
+        hdl = devices[i];
+        if(hdl->tick) {
+            hdl->tick(cycle);
+        }
+    }
+    return 0;
+}
+
+int is_pending_irq() {
+    const device_handler_t *hdl;
+    for(int i = 0; i < devices_count; i++) {
+        hdl = devices[i];
+        if(hdl->irq) {
+            return 1;
+        }
+    }
+    return 0;
 }

@@ -20,6 +20,8 @@ OP_LDA = OC_LDA << OP_OFFSET
 OP_LDAZ = OC_LDAZ << OP_OFFSET
 OP_LDI = OC_LDI << OP_OFFSET
 OP_LDI8 = OC_LDI8 << OP_OFFSET
+OP_LNF = OC_LNF << OP_OFFSET
+OP_LNFZ = OC_LNFZ << OP_OFFSET
 OP_STA = OC_STA << OP_OFFSET
 OP_STAZ = OC_STAZ << OP_OFFSET
 
@@ -31,6 +33,14 @@ OP_STAZ = OC_STAZ << OP_OFFSET
     lda {addr:u16} => asm { lda.l {addr} }
     lda.l {addr:u16} => OP_LDA`16 @ addr`16
     lda.zp {addr:u8} => (OP_LDAZ | addr)`16
+
+    lnf {addr:u8} => {
+        assert(addr <= 0xff)
+        asm{ lnf.zp {addr} }
+    }
+    lnf {addr:u16} => asm { lnf.l {addr} }
+    lnf.zp {addr:u8} => (OP_LNFZ | addr)`16
+    lnf.l {addr:u16} => OP_LNF`16 @ addr`16
 
     ldi {imm:u8}  => {
         assert(imm<=0xff)
@@ -367,6 +377,11 @@ OP_RET  = OC_RET  << OP_OFFSET
     ret {addr:u16} => asm { ret.l {addr} }
     ret.zp {addr:u8} => (OP_RETZ | addr)`16
     ret.l  {addr:u16} => OP_RET`16 @ addr`16
+
+    reti {addr} => asm {
+        sei
+        ret {addr}
+    }
 }
 
 
