@@ -54,7 +54,9 @@ test/asm/%: test/asm/%/actual.txt
 	@rm -f test/asm/$*/{ram.bin,actual.txt,sim}
 
 test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM)
-	$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) > $@
+	[ -f "test/asm/$*/INPUT" ] && \
+		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) < "test/asm/$*/INPUT" > $@ || \
+		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) > $@
 
 test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
 	$(CC) $(CFLAGS) -I src -o $@ $^
