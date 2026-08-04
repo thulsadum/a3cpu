@@ -13,6 +13,7 @@ void simif_write(uint16_t offset, uint16_t val);
 typedef enum {
     SIMIF_STATUS = 0,
     SIMIF_EXIT = 1,
+    SIMIF_PUTC = 2,
 } simif_offset_t;
 
 #endif

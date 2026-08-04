@@ -32,6 +32,9 @@ void simif_write(uint16_t offset, uint16_t val) {
             printf("simulator exit with %d by program.\n", val);
             exit(val);
             break;
+        case SIMIF_PUTC:
+            printf("putc('%c');\n", (uint8_t) val);
+            break;
         default:
         // ignore
     }
