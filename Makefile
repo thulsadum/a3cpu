@@ -50,7 +50,7 @@ test: test-ucode test-asm
 test-asm: $(ASM_TESTS)
 
 test/asm/%: test/asm/%/actual.txt
-	@diff -u test/asm/$*/expected.txt test/asm/$*/actual.txt && echo "Test asm $* ... ok." || echo "Test asm $* ... FAIL!"
+	@diff -u test/asm/$*/expected.txt test/asm/$*/actual.txt && echo "Test asm $* ... ok." ||( echo "Test asm $* ... FAIL!" && false)
 	@rm -f test/asm/$*/{ram.bin,actual.txt,sim}
 
 test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM)
@@ -63,7 +63,7 @@ test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
 test-ucode: $(UCODE_TESTS)
 
 test/ucode/%: all test/ucode/%/ram.bin test/ucode/%/actual.txt
-	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || echo "Test ucode $* ... FAIL!"
+	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
 	@rm -f test/ucode/$*/{ram.bin,actual.txt}
 
 test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM)
