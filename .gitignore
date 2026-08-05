@@ -5,3 +5,5 @@ src/ac3pu-sim
 **/*/actual.txt
 **/*.d
 test/asm/**/*/sim
+ucode_analyze/uca
+ucode_analyze/urom-h.bin
