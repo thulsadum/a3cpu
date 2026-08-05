@@ -7,27 +7,10 @@
 
 #include <stdint.h>
 
+#include "ac3pu-sim.h"
 #include "ac3dev.h"
 
 #include "devices/dev_simif.h"
-
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    #define ntohll(x) __builtin_bswap64(x)
-    #define htonll(x) __builtin_bswap64(x)
-#else
-    #define ntohll(x) (x)
-    #define htonll(x) (x)
-#endif
-
-#define MAP_ROM_SIZE 256
-#define RAM_SIZE 0x10000
-#define UPROGRAM_SIZE 1024
-
-#define UROM_FETCH 0x0000
-#define UROM_IRQ   0x0010
-
-#define RAM_ISR_RET_VEC 0x0002
-#define RAM_ISR_ENTRY   0x0003
 
 static uint16_t PRINT_TRACE_BEGIN = 0xffff;
 static uint16_t PRINT_TRACE_END   = 0xffff;
@@ -35,114 +18,7 @@ static uint16_t MMIO_BEGIN   = 0x8000;
 static int SILENT = 0;
 static int REGISTER_DEFAULT_DEVICES = 1;
 
-typedef uint64_t sig_t;
 
-typedef enum {
-    ALU_ADC,
-    ALU_SBB,
-    ALU_SHL,
-    ALU_SHR,
-    ALU_AND,
-    ALU_OR,
-    ALU_XOR,
-} alu_op_t;
-
-typedef enum {
-    EXEC_ALWAYS = 0,
-    EXEC_IF_CARRY = 1,
-    EXEC_IF_ZERO = 2,
-    EXEC_IF_ZERO_OR_NO_BORROW = 3,
-    EXEC_IF_NEG = 7,
-} exec_sel_t;
-
-typedef struct {
-
-    sig_t pc_in  : 1;
-    sig_t pc_out : 1;
-    sig_t mar_in : 1;
-    sig_t mar_out : 1;
-    sig_t mdr_in  : 1;
-    sig_t mdr_out : 1;
-    sig_t ir_in : 1;
-    sig_t ir_imm8_out : 1;
-    sig_t acc_in  : 1;
-    sig_t acc_out : 1;
-    sig_t alu_out : 1;
-    sig_t flags_in  : 1;
-    sig_t flags_out : 1;
-    sig_t const_addr_vec_out : 1;
-    sig_t const_addr_isr_out : 1;
-
-    sig_t upc_reset : 1;
-    sig_t upc_from_mrom : 1;
-    sig_t pc_inc : 1;
-    sig_t pc_add_offset : 1;
-
-    sig_t ram_read : 1;
-    sig_t ram_write : 1;
-
-    alu_op_t alu_op : 4;
-    sig_t alu_carry_value : 1;
-    sig_t alu_carry_mux : 1;
-
-    sig_t flags_clear  : 1;
-    sig_t flags_update : 1;
-    sig_t flag_change  : 1;
-    sig_t flag_value   : 1;
-    sig_t flag_sel     : 3;
-
-    exec_sel_t exec_sel : 3;
-    sig_t exec_inv : 1;
-} cbits_t;
-
-typedef union {
-    sig_t raw;
-    cbits_t signals;
-} uinstruction_t;
-
-typedef struct {
-    uint8_t immediate : 8;
-    uint8_t opcode : 8;
-} sinst_t;
-
-typedef union {
-    uint16_t raw;
-    sinst_t simple;
-} cinstruction_t;
-
-typedef struct {
-    uint8_t halt  : 1;
-    uint8_t ie    : 1;
-    uint8_t       : 2;
-    uint8_t carry : 1;
-    uint8_t zero  : 1;
-    uint8_t       : 1;
-    uint8_t neg   : 1;
-} flags_t;
-
-typedef struct {
-    uint8_t low  : 4;
-    uint8_t high : 4;
-} nibble_t;
-
-typedef union {
-    uint8_t raw;
-    nibble_t nibbles;
-    flags_t  flags;
-} flag_register_t;
-
-typedef struct {
-    uint16_t pc;
-    uint16_t mar;
-    uint16_t mdr;
-    cinstruction_t ir;
-    uint16_t acc;
-    uint16_t upc;
-    flag_register_t flags;
-    uint16_t  mrom[MAP_ROM_SIZE];
-    uinstruction_t urom[UPROGRAM_SIZE];
-    uint16_t ram[RAM_SIZE];
-} cpu_t;
 
 
 void print_cpu_state(int cycle, cpu_t *cpu) {
@@ -150,6 +26,8 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
     printf("CYCLE:%03d | PC:0x%04X | MAR:0x%04X | MDR:0x%04X | IR:0x%04X | ACC:0x%04X | FLAGS:0x%04X\n",
            cycle, cpu->pc, cpu->mar, cpu->mdr, cpu->ir.raw, cpu->acc, cpu->flags.raw);
 }
+
+
 
 int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
     uint16_t a,b;
@@ -193,61 +71,50 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
     return 0;
 }
 
-void tick(cpu_t *cpu, int cycle) {
-    uint16_t bus = 0;
-    int bus_drivers = 0;
-    uinstruction_t uc = cpu->urom[cpu->upc];
-    uint8_t alu_carry_out = 0;
-    uint8_t exec_enable = 1;
 
-    /* handling cpu signals */
 
-    if (cpu->flags.flags.halt) return;
-
-    /* tick hw */
-    handle_tick(cycle);
-
+static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
     switch (uc.signals.exec_sel) {
         case EXEC_ALWAYS:
-            exec_enable = 1 ^ uc.signals.exec_inv;
-            break;
+            return 1 ^ uc.signals.exec_inv;
         case EXEC_IF_CARRY:
-            exec_enable = cpu->flags.flags.carry ^ uc.signals.exec_inv;
-            break;
+            return cpu->flags.flags.carry ^ uc.signals.exec_inv;
         case EXEC_IF_ZERO:
-            exec_enable = cpu->flags.flags.zero ^ uc.signals.exec_inv;
-            break;
+            return cpu->flags.flags.zero ^ uc.signals.exec_inv;
         case EXEC_IF_NEG:
-            exec_enable = cpu->flags.flags.neg ^ uc.signals.exec_inv;
-            break;
+            return cpu->flags.flags.neg ^ uc.signals.exec_inv;
         case EXEC_IF_ZERO_OR_NO_BORROW:
-            exec_enable = (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
-            break;
+            return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
         default:
             assert(false && "Undefined exec conditional code");
-            exec_enable = 0;
+            return 0;
     }
+}
 
-    if (!exec_enable) {
-        cpu->upc++;
-        return;
-    }
 
-    /* write to bus */
+
+static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu_carry_out) {
+    int bus_drivers = 0;
+    int bus = 0;
+
     if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
     if (uc.signals.mar_out) { bus = cpu->mar; bus_drivers++; }
     if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
     if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
     if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
-    if (uc.signals.alu_out) { bus = alu(cpu, uc, &alu_carry_out); bus_drivers++; }
+    if (uc.signals.alu_out) { bus = alu(cpu, uc, alu_carry_out); bus_drivers++; }
     if (uc.signals.flags_out) { bus = cpu->flags.raw & 0xff; bus_drivers++; }
     if (uc.signals.const_addr_vec_out) { bus = RAM_ISR_RET_VEC; bus_drivers++; }
     if (uc.signals.const_addr_isr_out) { bus = RAM_ISR_ENTRY; bus_drivers++; }
 
-    /* check for bus conflicts */
-    assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
+    *pbus = bus;
 
-    /* flag manipulation */
+    return bus_drivers;
+}
+
+
+
+static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, uint16_t bus) {
     if(uc.signals.flags_clear) {
         cpu->flags.raw = 0;
     }
@@ -268,45 +135,105 @@ void tick(cpu_t *cpu, int cycle) {
             cpu->flags.raw &= 0xff ^ (1 << uc.signals.flag_sel);
         }
     }
+}
 
-    /* read from bus */
+
+
+static void bus_read(cpu_t *cpu, uinstruction_t uc, uint16_t bus) {
     if (uc.signals.mar_in) cpu->mar = bus;
     if (uc.signals.ir_in) cpu->ir = (cinstruction_t)bus;
     if (uc.signals.acc_in) cpu->acc = bus;
     if (uc.signals.mdr_in) cpu->mdr = bus;
     if (uc.signals.flags_in) cpu->flags.raw = (bus & 0xff);
     if (uc.signals.pc_in) cpu->pc = bus;
+}
+
+
+
+static void handle_memory_read(cpu_t *cpu) {
+    if(cpu->mar < MMIO_BEGIN) {
+        cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
+    } else {
+        if (handle_read(cpu->mar, &(cpu->mdr))) {
+            /* do panic! */
+        }
+    }
+
+    if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
+        printf("mem[0x%04X]> 0x%04X\n", cpu->mar, cpu->mdr);
+    }
+}
+
+
+
+static void handle_memory_write(cpu_t *cpu) {
+    if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
+        printf("mem[0x%04X]< 0x%04X\n", cpu->mar, cpu->mdr);
+    }
+    if(cpu->mar < MMIO_BEGIN) {
+        cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
+    } else {
+        if (handle_write(cpu->mar, cpu->mdr)) {
+            /* do panic! */
+        }
+    }
+}
+
+
+
+static void handle_memory_access(cpu_t *cpu, uinstruction_t uc) {
+
+    if (uc.signals.ram_read) {
+        handle_memory_read(cpu);
+    }
+
+    if (uc.signals.ram_write) {
+        handle_memory_write(cpu);
+    }
+
+}
+
+
+
+void tick(cpu_t *cpu, int cycle) {
+
+    uint16_t bus = 0;
+    uinstruction_t uc = cpu->urom[cpu->upc];
+    uint8_t alu_carry_out = 0;
+
+    /* handling cpu signals */
+
+    if (cpu->flags.flags.halt) return;
+
+
+    /* determine if ucode is executred */
+    if (!is_exec_enable(cpu,uc)) {
+        cpu->upc++;
+        return;
+    }
+
+    /* write to bus */
+    int bus_drivers = write_bus(cpu, uc, &bus, &alu_carry_out);
+    /* check for bus conflicts */
+    assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
+
+    /* flag manipulation */
+    handle_flags(cpu, uc, alu_carry_out, bus);
+
+    /* read from bus */
+    bus_read(cpu, uc, bus);
 
     /* misc */
-    if (uc.signals.ram_read) {
-        if(cpu->mar < MMIO_BEGIN) {
-            cpu->mdr = cpu->ram[cpu->mar & (RAM_SIZE - 1)];
-        } else {
-            if (handle_read(cpu->mar, &(cpu->mdr))) {
-                /* do panic! */
-            }
-        }
-        if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
-            printf("mem[0x%04X]> 0x%04X\n", cpu->mar, cpu->mdr);
-        }
-    }
-    if (uc.signals.ram_write) {
-        if(PRINT_TRACE_BEGIN <= cpu->mar && cpu->mar <= PRINT_TRACE_END) {
-            printf("mem[0x%04X]< 0x%04X\n", cpu->mar, cpu->mdr);
-        }
-        if(cpu->mar < MMIO_BEGIN) {
-            cpu->ram[cpu->mar & (RAM_SIZE - 1)] = cpu->mdr;
-        } else {
-            if (handle_write(cpu->mar, cpu->mdr)) {
-                /* do panic! */
-            }
-        }
-    }
+    /* tick hw */
+    handle_tick(cycle);
+    /* handle memory access */
+    handle_memory_access(cpu, uc);
 
-    /* branch logic */
+    /* branch logic (i.e. relative jumps) */
     if (uc.signals.pc_inc) {
         cpu->pc++;
     }
+
     if (uc.signals.pc_add_offset) {
         cpu->pc += (int8_t) cpu->ir.simple.immediate;
     }
@@ -314,8 +241,9 @@ void tick(cpu_t *cpu, int cycle) {
     /* upc management */
     cpu->upc++;
     if (uc.signals.upc_reset) {
-        /* reset upc -> jump to fetch or irq*/
+        /* reset upc -> jump to fetch or irq */
         int pending_irq = is_pending_irq();
+        /* hardware intercept for IRQ */
         cpu->upc = (cpu->flags.flags.ie && pending_irq) ? UROM_IRQ : UROM_FETCH;
     }
     if (uc.signals.upc_from_mrom) {
@@ -325,7 +253,7 @@ void tick(cpu_t *cpu, int cycle) {
 }
 
 
-int parse_args(int argc, const char ** argv) {
+static int parse_args(int argc, const char ** argv) {
     for(int i = 0; i < argc; i++) {
         if(strcmp("--silent", argv[i]) == 0) SILENT = 1;
         if(strcmp("--mt-begin",argv[i]) == 0 && i + 1 < argc) {
@@ -340,7 +268,9 @@ int parse_args(int argc, const char ** argv) {
     return 0;
 }
 
-int register_default_devices() {
+
+
+static int register_default_devices() {
     device_handler_t *hdl;
     hdl = simif_init();
     if(!hdl) return 1;
@@ -348,6 +278,8 @@ int register_default_devices() {
 
     return 0;
 }
+
+
 
 int main(int argc, const char ** argv) {
 
