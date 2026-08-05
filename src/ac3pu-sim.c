@@ -65,7 +65,7 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
     case ALU_XOR:
         return a ^ b;
     default:
-        assert(false && "Undefined ALU operation");
+        assert(0 && "Undefined ALU operation");
     }
 
     return 0;
@@ -86,7 +86,7 @@ static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
         case EXEC_IF_ZERO_OR_NO_BORROW:
             return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
         default:
-            assert(false && "Undefined exec conditional code");
+            assert(0 && "Undefined exec conditional code");
             return 0;
     }
 }
@@ -306,6 +306,7 @@ int main(int argc, const char ** argv) {
     /* read mapping rom first */
     if (fread(cpu.mrom, sizeof(uint16_t), MAP_ROM_SIZE, u_file) < MAP_ROM_SIZE) {
         fprintf(stderr, "error reading ucode file: %s\n", "end of file reached unexpectedly.");
+        fclose(u_file);
         return 1;
     }
     ucode_len = fread(cpu.urom, sizeof(uinstruction_t), UPROGRAM_SIZE, u_file);
