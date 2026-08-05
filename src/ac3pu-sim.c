@@ -343,7 +343,7 @@ int main(int argc, const char ** argv) {
         cpu.mrom[i] = ntohs(cpu.mrom[i]);
     }
     for(int i = 0; i < ucode_len; i++) {
-        cpu.urom[i].raw = ntohll(cpu.urom[i].raw);
+        cpu.urom[i].raw = to_be(cpu.urom[i].raw);
     }
 
     /* load ram from file */

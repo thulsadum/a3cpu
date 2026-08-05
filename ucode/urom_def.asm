@@ -12,7 +12,7 @@
 
 #bankdef acpu
 {
-  bits = 64
+  bits = 32
   outp = 16*256
   addr = 0x0000
 }
@@ -114,7 +114,7 @@ EXEC_END = EXEC_OFFSET + EXEC_SEL_LEN + 1
 
 #ruledef ucode
 {
-    uc {signals} => signals`64
+    uc {signals} => signals`32
 }
 
 

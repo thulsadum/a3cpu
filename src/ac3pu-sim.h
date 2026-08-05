@@ -9,6 +9,8 @@
     #define htonll(x) (x)
 #endif
 
+#define to_be(x) ntohl(x)
+
 #define MAP_ROM_SIZE 256
 #define RAM_SIZE 0x10000
 #define UPROGRAM_SIZE 1024
@@ -19,7 +21,7 @@
 #define RAM_ISR_RET_VEC 0x0002
 #define RAM_ISR_ENTRY   0x0003
 
-typedef uint64_t sig_t;
+typedef uint32_t sig_t;
 
 typedef enum {
     ALU_ADC,
