@@ -98,15 +98,21 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
     int bus_drivers = 0;
     int bus = 0;
 
-    if (uc.signals.pc_out) { bus = cpu->pc; bus_drivers++; }
-    if (uc.signals.mar_out) { bus = cpu->mar; bus_drivers++; }
-    if (uc.signals.mdr_out) { bus = cpu->mdr; bus_drivers++; }
-    if (uc.signals.acc_out) { bus = cpu->acc; bus_drivers++; }
-    if (uc.signals.ir_imm8_out) { bus = cpu->ir.simple.immediate; bus_drivers++; }
-    if (uc.signals.alu_out) { bus = alu(cpu, uc, alu_carry_out); bus_drivers++; }
-    if (uc.signals.flags_out) { bus = cpu->flags.raw & 0xff; bus_drivers++; }
-    if (uc.signals.const_addr_vec_out) { bus = RAM_ISR_RET_VEC; bus_drivers++; }
-    if (uc.signals.const_addr_isr_out) { bus = RAM_ISR_ENTRY; bus_drivers++; }
+    if (!uc.signals.bus_write_en) return 0;
+
+    switch (uc.signals.bus_write_sel) {
+        case BUS_WRITE_SEL_PC: bus = cpu->pc; bus_drivers++; break;
+        case BUS_WRITE_SEL_MAR: bus = cpu->mar; bus_drivers++; break;
+        case BUS_WRITE_SEL_MDR: bus = cpu->mdr; bus_drivers++; break;
+        case BUS_WRITE_SEL_ACC: bus = cpu->acc; bus_drivers++; break;
+        case BUS_WRITE_SEL_IR: bus = cpu->ir.simple.immediate; bus_drivers++; break;
+        case BUS_WRITE_SEL_ALU: bus = alu(cpu, uc, alu_carry_out); bus_drivers++; break;
+        case BUS_WRITE_SEL_FLAGS: bus = cpu->flags.raw & 0xff; bus_drivers++; break;
+        case BUS_WRITE_SEL_ADDR_VEC: bus = RAM_ISR_RET_VEC; bus_drivers++; break;
+        case BUS_WRITE_SEL_ADDR_ISR: bus = RAM_ISR_ENTRY; bus_drivers++; break;
+        default:
+            assert(0 && "Illegal bus_write_sel value.");
+    }
 
     *pbus = bus;
 
@@ -144,12 +150,29 @@ static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, u
 
 
 static void bus_read(cpu_t *cpu, uinstruction_t uc, uint16_t bus) {
-    if (uc.signals.mar_in) cpu->mar = bus;
-    if (uc.signals.ir_in) cpu->ir = (cinstruction_t)bus;
-    if (uc.signals.acc_in) cpu->acc = bus;
-    if (uc.signals.mdr_in) cpu->mdr = bus;
-    if (uc.signals.flags_in) cpu->flags.raw = (bus & 0xff);
-    if (uc.signals.pc_in) cpu->pc = bus;
+    if(!uc.signals.bus_read_en) return;
+    switch(uc.signals.bus_read_sel) {
+        case BUS_READ_SEL_PC:
+            cpu->pc = bus;
+            break;
+        case BUS_READ_SEL_MAR:
+            cpu->mar = bus;
+            break;
+        case BUS_READ_SEL_MDR:
+            cpu->mdr = bus;
+            break;
+        case BUS_READ_SEL_IR:
+            cpu->ir = (cinstruction_t)bus;
+            break;
+        case BUS_READ_SEL_ACC:
+            cpu->acc = bus;
+            break;
+        case BUS_READ_SEL_FLAGS:
+            cpu->flags.raw = (bus & 0xff);
+            break;
+        default:
+            assert(0 && "Illegal bus_read_sel value.");
+    }
 }
 
 

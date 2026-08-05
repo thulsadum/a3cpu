@@ -39,23 +39,34 @@ typedef enum {
     EXEC_IF_NEG = 7,
 } exec_sel_t;
 
+typedef enum {
+    BUS_READ_SEL_PC = 0,
+    BUS_READ_SEL_MAR,
+    BUS_READ_SEL_MDR,
+    BUS_READ_SEL_IR,
+    BUS_READ_SEL_ACC,
+    BUS_READ_SEL_FLAGS,
+} bus_read_sel_t;
+
+typedef enum {
+    BUS_WRITE_SEL_PC = 0,
+    BUS_WRITE_SEL_MAR,
+    BUS_WRITE_SEL_MDR,
+    BUS_WRITE_SEL_IR,
+    BUS_WRITE_SEL_ACC,
+    BUS_WRITE_SEL_ALU,
+    BUS_WRITE_SEL_FLAGS,
+    BUS_WRITE_SEL_ADDR_VEC,
+    BUS_WRITE_SEL_ADDR_ISR,
+} bus_write_sel_t;
+
 typedef struct {
 
-    sig_t pc_in  : 1;
-    sig_t pc_out : 1;
-    sig_t mar_in : 1;
-    sig_t mar_out : 1;
-    sig_t mdr_in  : 1;
-    sig_t mdr_out : 1;
-    sig_t ir_in : 1;
-    sig_t ir_imm8_out : 1;
-    sig_t acc_in  : 1;
-    sig_t acc_out : 1;
-    sig_t alu_out : 1;
-    sig_t flags_in  : 1;
-    sig_t flags_out : 1;
-    sig_t const_addr_vec_out : 1;
-    sig_t const_addr_isr_out : 1;
+    sig_t bus_read_sel : 3;
+    sig_t bus_read_en : 1;
+
+    sig_t bus_write_sel : 4;
+    sig_t bus_write_en : 1;
 
     sig_t upc_reset : 1;
     sig_t upc_from_mrom : 1;
@@ -65,7 +76,7 @@ typedef struct {
     sig_t ram_read : 1;
     sig_t ram_write : 1;
 
-    alu_op_t alu_op : 3;
+    sig_t alu_op : 3;
     sig_t alu_carry_value : 1;
     sig_t alu_carry_mux : 1;
 
@@ -75,7 +86,7 @@ typedef struct {
     sig_t flag_value   : 1;
     sig_t flag_sel     : 2;
 
-    exec_sel_t exec_sel : 3;
+    sig_t exec_sel : 3;
     sig_t exec_inv : 1;
 } cbits_t;
 
