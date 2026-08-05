@@ -1,5 +1,5 @@
-#ifndef A3CPU_SIM_H
-#define A3CPU_SIM_H 1
+#ifndef AC3PU_SIM_H
+#define AC3PU_SIM_H 1
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     #define ntohll(x) __builtin_bswap64(x)
