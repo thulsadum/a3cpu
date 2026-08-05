@@ -1,13 +1,16 @@
-
 CFLAGS = -Wall -Wextra -O2 -g -I src
+CFLAGS_UCODE = $(CFLAGS) -I config/sim/ucode
+CFLAGS_ASM = $(CFLAGS) -I config/sim/asm
 
 CASM = customasm
-CASMFLAGS = 
+CASMFLAGS = -q
 
 SIM = src/ac3pu-sim
 DEFAULT_UROM = ucode/urom.bin
 UROM ?= $(DEFAULT_UROM)
 UCA = ucode_analyze/uca
+FORTH = forth/forth.bin
+FORTH_SRC := $(wildcard forth/*.asm)
 
 UCA_SRCS := $(wildcard ucode_analyze/*.c)
 UCA_ROM := ucode_analyze/urom-h.bin
@@ -23,14 +26,20 @@ ASM_TEST_EXPECTED_TXTS := $(ASM_TEST_PROGRAMS:program.asm=expected.txt)
 ASM_TESTS := $(patsubst test/asm/%/program.asm,test/asm/%,$(ASM_TEST_PROGRAMS))
 MMIO_BEGIN := 0x8000
 
-.PHONY: all test clean test-ucode test-asm analyze-ucode
+.PHONY: all test clean test-ucode test-asm analyze-ucode $(SIM)-ucode
 
 .PRECIOUS: %.txt
 
-all: $(SIM) $(UROM) $(UCA)
+all: $(SIM) $(UROM) $(UCA) $(FORTH)
+
+$(FORTH): $(FORTH_SRC)
+	customasm -o $@ -f binary $^
 
 $(SIM): src/*.c src/devices/*.c
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) -I config/sim/asm $^ -o $@
+
+$(SIM)-ucode: src/*.c src/devices/*.c
+	$(CC) $(CFLAGS_UCODE) $^ -o $(SIM)
 
 $(UCA): $(UCA_SRCS)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -46,7 +55,6 @@ ucode/%.bin: ucode/%.asm asmdef/*.asm ucode/*.asm
 	$(CASM) $(CASMFLAGS) -o $@ $<
 
 ucode/%.d: ucode/%.asm
-	@echo -n Create $@ ...
 	@echo -n "ucode/$*.bin $@: $< " > $@
 	@(grep "#include" $<  || true) | \
 	sed -e 's/[[:space:]]*#include[[:space:]]*"/ucode\//;s/"[[:space:]]*//;' | \
@@ -54,7 +62,6 @@ ucode/%.d: ucode/%.asm
 		echo -n "$$dep "; \
 	done >> $@
 	@echo "" >> $@
-	@echo done.
 
 -include $(UCODE_DEPS)
 
@@ -81,12 +88,12 @@ test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM)
 		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) > $@
 
 test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
-	$(CC) $(CFLAGS) -I src -o $@ $^
+	$(CC) $(CFLAGS_ASM) -o $@ $^
 
 
 test-ucode: $(UCODE_TESTS)
 
-test/ucode/%: all test/ucode/%/ram.bin test/ucode/%/actual.txt
+test/ucode/%: $(SIM)-ucode test/ucode/%/ram.bin test/ucode/%/actual.txt
 	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
 	@rm -f test/ucode/$*/{ram.bin,actual.txt}
 
