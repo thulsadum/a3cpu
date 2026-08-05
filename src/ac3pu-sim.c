@@ -11,8 +11,7 @@
 
 #include "ac3pu-sim.h"
 #include "ac3dev.h"
-
-#include "devices/dev_simif.h"
+#include "devices/all.h"
 
 static uint16_t PRINT_TRACE_BEGIN = 0xffff;
 static uint16_t PRINT_TRACE_END   = 0xffff;
@@ -313,6 +312,10 @@ static int register_default_devices() {
     if(!hdl) return 1;
     register_device(hdl);
 
+#endif
+
+#ifdef CFG_DEVICE_REGISTRATION
+CFG_DEVICE_REGISTRATION
 #endif
 
     return 0;

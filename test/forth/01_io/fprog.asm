@@ -1,7 +1,9 @@
-
 #include "../../../forth/forth.asm"
 
 #bank forth_text
+
+    ldi "H"
+    jal fputc
+    jal fgetc
+    jal fputc
     jal fexit
-    lda 0xff
-    taf ; should not be reached

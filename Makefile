@@ -117,18 +117,30 @@ test-forth: $(FORTH_TESTS)
 test/forth/%/ram.bin: test/forth/%/fprog.asm test/forth/%/program.asm
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $^
 
-test/forth/%/ram.bin: test/forth/%/fprog.asm
+test/forth/%/ram.bin: test/forth/%/fprog.asm  $(FORTH_SRC)
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
 
-test/forth/00_boot: test/forth/00_boot/ram.bin $(SIM)-forth $(UROM)
+test/forth/00_boot: test/forth/00_boot/ram.bin $(SIM)-forth $(UROM) $(FORTH_SRC)
 	$(SIM) $(UROM) $< --silent
 
 test/forth/%/fprog.asm: test/forth/%/program.f
 	$(FORTH) $(FORTH_FLAGS) -o $@ $<
 
-test/forth/%:  test/forth/%/ram.bin
-	# ...
+test/forth/%/actual.txt: test/forth/%/ram.bin $(SIM)-forth $(UROM) test/forth/%/INPUT
+	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT > $@
+
+test/forth/%/actual.txt: test/forth/%/ram.bin $(SIM)-forth $(UROM)
+	$(SIM) $(UROM) $< --silent > $@
+
+test/forth/%: test/forth/%/expected.txt test/forth/%/actual.txt
+	diff test/forth/$*/actual.txt $<
+
+test/forth/%: test/forth/%/ram.bin test/forth/%/INPUT $(SIM)-forth $(UROM)
+	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT
+
+test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
+	$(SIM) $(UROM) $< --silent
 
 clean:
-	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA)
+	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA) test/forth/*/ram.bin test/forth/*/actual.txt
 
