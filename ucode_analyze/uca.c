@@ -23,6 +23,21 @@ static void create_hit_matrix() {
     }
 }
 
+// Beispiel: Prüfen, ob eine Gruppe von Bits sich paarweise komplett ausschließt
+bool is_exclusive_group(uint64_t bit_mask) {
+    for (int i = 0; i < 64; i++) {
+        if (!(bit_mask & (1ULL << i))) continue;
+        for (int j = i + 1; j < 64; j++) {
+            if (!(bit_mask & (1ULL << j))) continue;
+            // Wenn Bit j in Zeile i gesetzt ist, traten sie gemeinsam auf -> Nicht exklusiv!
+            if (hit_matrix[i] & (1ULL << j)) {
+                return false;
+            }
+        }
+    }
+    return true; // Alle Bits in bit_mask schließen sich paarweise aus!
+}
+
 int main(int argc, const char **argv) {
 
     if(argc < 2) {
