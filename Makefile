@@ -7,6 +7,10 @@ CASMFLAGS =
 SIM = src/ac3pu-sim
 DEFAULT_UROM = ucode/urom.bin
 UROM ?= $(DEFAULT_UROM)
+UCA = ucode_analyze/uca
+
+UCA_SRCS := $(wildcard ucode_analyze/*.c)
+UCA_ROM := ucode_analyze/urom-h.bin
 
 UCODE_SRCS := $(wildcard ucode/*.asm)
 UCODE_DEPS := $(UCODE_SRCS:.asm=.d)
@@ -19,15 +23,24 @@ ASM_TEST_EXPECTED_TXTS := $(ASM_TEST_PROGRAMS:program.asm=expected.txt)
 ASM_TESTS := $(patsubst test/asm/%/program.asm,test/asm/%,$(ASM_TEST_PROGRAMS))
 MMIO_BEGIN := 0x8000
 
-.PHONY: all test clean test-ucode test-asm
+.PHONY: all test clean test-ucode test-asm analyze-ucode
 
 .PRECIOUS: %.txt
 
-all: $(SIM) $(UROM)
-	echo $(UCODE_TESTS)
+all: $(SIM) $(UROM) $(UCA)
 
 $(SIM): src/*.c src/devices/*.c
 	$(CC) $(CFLAGS) $^ -o $@
+
+$(UCA): $(UCA_SRCS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(UCA_ROM): $(UROM)
+	cp $(UROM) $(UCA_ROM)
+
+analyze-ucode: $(UCA) $(UCA_ROM)
+	$(UCA) $(UCA_ROM)
+
 
 ucode/%.bin: ucode/%.asm asmdef/*.asm ucode/*.asm
 	$(CASM) $(CASMFLAGS) -o $@ $<
@@ -87,5 +100,5 @@ test/%/ram.bin: test/%/program.asm
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
 
 clean:
-	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS)
+	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA)
 
