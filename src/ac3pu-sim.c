@@ -86,6 +86,7 @@ static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
         case EXEC_IF_ZERO_OR_NO_BORROW:
             return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
         default:
+            fprintf(stderr, "uc.signals.exec_sel: %03b (%d)\n",uc.signals.exec_sel, uc.signals.exec_sel);
             assert(0 && "Undefined exec conditional code");
             return 0;
     }
