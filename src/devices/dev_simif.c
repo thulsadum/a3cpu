@@ -52,6 +52,7 @@ void simif_write(uint16_t offset, uint16_t val) {
 }
 
 int simif_tick(int cycle) {
+    (void)(cycle);
     if(timer) {
         timer--;
         if(!timer) {

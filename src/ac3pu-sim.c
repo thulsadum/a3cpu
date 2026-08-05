@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+#include "config.h"
+
 #include "ac3pu-sim.h"
 #include "ac3dev.h"
 
@@ -302,10 +304,15 @@ static int parse_args(int argc, const char ** argv) {
 
 
 static int register_default_devices() {
+
+#ifdef CFG_DEFAULT_DEVICES
     device_handler_t *hdl;
+
     hdl = simif_init();
     if(!hdl) return 1;
     register_device(hdl);
+
+#endif
 
     return 0;
 }
