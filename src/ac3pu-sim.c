@@ -116,6 +116,9 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
 
 
 static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, uint16_t bus) {
+
+    const uint8_t flag_offsets[4] = { 0, 1, 4, 5 };
+
     if(uc.signals.flags_clear) {
         cpu->flags.raw = 0;
     }
@@ -130,10 +133,10 @@ static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, u
 
         if(uc.signals.flag_value) {
             // flag set
-            cpu->flags.raw |= 1 << uc.signals.flag_sel;
+            cpu->flags.raw |= 1 << flag_offsets[uc.signals.flag_sel];
         } else {
             // flag cleared
-            cpu->flags.raw &= 0xff ^ (1 << uc.signals.flag_sel);
+            cpu->flags.raw &= 0xff ^ (1 << flag_offsets[uc.signals.flag_sel]);
         }
     }
 }

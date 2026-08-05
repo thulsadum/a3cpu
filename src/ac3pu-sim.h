@@ -65,7 +65,7 @@ typedef struct {
     sig_t ram_read : 1;
     sig_t ram_write : 1;
 
-    alu_op_t alu_op : 4;
+    alu_op_t alu_op : 3;
     sig_t alu_carry_value : 1;
     sig_t alu_carry_mux : 1;
 
@@ -73,7 +73,7 @@ typedef struct {
     sig_t flags_update : 1;
     sig_t flag_change  : 1;
     sig_t flag_value   : 1;
-    sig_t flag_sel     : 3;
+    sig_t flag_sel     : 2;
 
     exec_sel_t exec_sel : 3;
     sig_t exec_inv : 1;
