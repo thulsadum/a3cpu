@@ -29,7 +29,7 @@ MMIO_BEGIN := 0x8000
 
 all: $(SIM) $(UROM) $(UCA)
 
-$(SIM): src/*.c src/devices/*.c src/*.h
+$(SIM): src/*.c src/devices/*.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(UCA): $(UCA_SRCS)
