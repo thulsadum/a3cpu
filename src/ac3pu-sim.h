@@ -79,21 +79,12 @@ typedef struct {
     sig_t ram_read  : 1;
     sig_t ram_write : 1;
     sig_t           : 3; // padding for ALU
-
-    sig_t flags_clear  : 1;
-    sig_t flags_update : 1;
-    sig_t flag_change  : 1;
-    sig_t flag_value   : 1;
-    sig_t flag_sel     : 2;
-
-    sig_t exec_sel : 3;
-    sig_t exec_inv : 1;
+    sig_t           : 6; // flags and exec
 } cbits_ram_t;
 
 typedef struct {
 
     sig_t bus_read_sel : 3;
-
     sig_t bus_write_sel : 4;
     sig_t bus_access : 1;
 
@@ -106,21 +97,27 @@ typedef struct {
     sig_t alu_carry_value : 1;
     sig_t alu_carry_mux   : 1;
 
-    sig_t flags_clear  : 1;
+    sig_t flags_clear  : 1; // and exec : 4, cf. cbits_exec_t and uinstruction_t
     sig_t flags_update : 1;
     sig_t flag_change  : 1;
     sig_t flag_value   : 1;
     sig_t flag_sel     : 2;
 
-    sig_t exec_sel : 3;
-    sig_t exec_inv : 1;
 } cbits_alu_t;
 
+typedef struct {
+    sig_t : 11; // offset
+    sig_t pc_add_offset : 1;
+    sig_t : 5; // padding
+    sig_t exec_sel : 3;
+    sig_t exec_inv : 1;
+} cbits_exec_t;
 
 typedef union {
-    sig_t raw;
-    cbits_ram_t ram;
-    cbits_alu_t signals; // named signals for backwards compability
+    sig_t        raw;
+    cbits_ram_t  ram;
+    cbits_exec_t exec;
+    cbits_alu_t  signals; // named signals for backwards compability
 } uinstruction_t;
 
 typedef struct {

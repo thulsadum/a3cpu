@@ -74,19 +74,19 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
 
 
 static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
-    switch (uc.signals.exec_sel) {
+    switch (uc.exec.exec_sel) {
         case EXEC_ALWAYS:
-            return 1 ^ uc.signals.exec_inv;
+            return 1 ^ uc.exec.exec_inv;
         case EXEC_IF_CARRY:
-            return cpu->flags.flags.carry ^ uc.signals.exec_inv;
+            return cpu->flags.flags.carry ^ uc.exec.exec_inv;
         case EXEC_IF_ZERO:
-            return cpu->flags.flags.zero ^ uc.signals.exec_inv;
+            return cpu->flags.flags.zero ^ uc.exec.exec_inv;
         case EXEC_IF_NEG:
-            return cpu->flags.flags.neg ^ uc.signals.exec_inv;
+            return cpu->flags.flags.neg ^ uc.exec.exec_inv;
         case EXEC_IF_ZERO_OR_NO_BORROW:
-            return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.signals.exec_inv;
+            return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.exec.exec_inv;
         default:
-            fprintf(stderr, "uc.signals.exec_sel: %03b (%d)\n",uc.signals.exec_sel, uc.signals.exec_sel);
+            fprintf(stderr, "uc.exec.exec_sel: %03b (%d)\n",uc.exec.exec_sel, uc.exec.exec_sel);
             assert(0 && "Undefined exec conditional code");
             return 0;
     }
@@ -234,7 +234,7 @@ void tick(cpu_t *cpu, int cycle) {
 
 
     /* determine if ucode is executred */
-    if (!is_exec_enable(cpu,uc)) {
+    if (uc.exec.pc_add_offset && !is_exec_enable(cpu,uc)) {
         cpu->upc++;
         return;
     }
@@ -245,7 +245,7 @@ void tick(cpu_t *cpu, int cycle) {
     assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
 
     /* flag manipulation */
-    handle_flags(cpu, uc, alu_carry_out, bus);
+    if (!uc.exec.pc_add_offset) handle_flags(cpu, uc, alu_carry_out, bus);
 
     /* read from bus */
     bus_read(cpu, uc, bus);
