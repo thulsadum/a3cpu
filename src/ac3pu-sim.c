@@ -210,11 +210,11 @@ static void handle_memory_write(cpu_t *cpu) {
 
 static void handle_memory_access(cpu_t *cpu, uinstruction_t uc) {
 
-    if (uc.signals.ram_read) {
+    if (uc.ram.ram_read) {
         handle_memory_read(cpu);
     }
 
-    if (uc.signals.ram_write) {
+    if (uc.ram.ram_write) {
         handle_memory_write(cpu);
     }
 
@@ -254,7 +254,7 @@ void tick(cpu_t *cpu, int cycle) {
     /* tick hw */
     handle_tick(cycle);
     /* handle memory access */
-    handle_memory_access(cpu, uc);
+    if (uc.signals.bus_write_sel != BUS_WRITE_SEL_ALU) handle_memory_access(cpu, uc);
 
     /* branch logic (i.e. relative jumps) */
     if (uc.signals.pc_inc) {

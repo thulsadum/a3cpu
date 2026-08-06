@@ -54,19 +54,17 @@ SIG_PC_INC  = 1 << PC_OFFSET + 0 ; PC increment
 SIG_PC_ADD_OFFSET  = 1 << PC_OFFSET + 1 ; PC increment
 PC_END = PC_OFFSET + 2
 
-; RAM CONTROL
+
+
+; RAM CONTROL 
+; (layered with ALU CONTROL, MUXed by SIG_BUS_WRITE_SEL_ALU (set -> alu_sel, cleared -> ram_ctrl)
 RAM_OFFSET = PC_END ; offset of ram control signals
 SIG_RAM_READ = 1 << RAM_OFFSET + 0 ; read from RAM (to MDR)
 SIG_RAM_WRITE = 1 << RAM_OFFSET + 1 ; write to RAM (from MDR)
 RAM_END = RAM_OFFSET + 2
 
-; CPU CONTROL
-CPU_OFFSET = RAM_END
-; currently empty, halt moved to flag control below.
-CPU_END = CPU_OFFSET + 0
-
 ; ALU CONTROL
-ALU_OFFSET = CPU_END
+ALU_OFFSET = RAM_OFFSET
 ALU_OP_SEL_LEN = 3
 SIG_ALU_OP_ADC = 0 << ALU_OFFSET  ; ALU: A + B [A <- ACC, B <- MDR]
 SIG_ALU_OP_SBB = 1 << ALU_OFFSET  ; ALU: A - B [A <- ACC, B <- MDR]

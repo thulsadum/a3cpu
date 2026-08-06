@@ -62,6 +62,8 @@ typedef enum {
     BUS_WRITE_SEL_ADDR_ISR,
 } bus_write_sel_t;
 
+
+
 typedef struct {
 
     sig_t bus_read_sel : 3;
@@ -74,12 +76,9 @@ typedef struct {
     sig_t pc_inc : 1;
     sig_t pc_add_offset : 1;
 
-    sig_t ram_read : 1;
+    sig_t ram_read  : 1;
     sig_t ram_write : 1;
-
-    sig_t alu_op : 3;
-    sig_t alu_carry_value : 1;
-    sig_t alu_carry_mux : 1;
+    sig_t           : 3; // padding for ALU
 
     sig_t flags_clear  : 1;
     sig_t flags_update : 1;
@@ -89,11 +88,39 @@ typedef struct {
 
     sig_t exec_sel : 3;
     sig_t exec_inv : 1;
-} cbits_t;
+} cbits_ram_t;
+
+typedef struct {
+
+    sig_t bus_read_sel : 3;
+
+    sig_t bus_write_sel : 4;
+    sig_t bus_access : 1;
+
+    sig_t upc_reset : 1;
+    sig_t upc_from_mrom : 1;
+    sig_t pc_inc : 1;
+    sig_t pc_add_offset : 1;
+
+    sig_t alu_op          : 3;
+    sig_t alu_carry_value : 1;
+    sig_t alu_carry_mux   : 1;
+
+    sig_t flags_clear  : 1;
+    sig_t flags_update : 1;
+    sig_t flag_change  : 1;
+    sig_t flag_value   : 1;
+    sig_t flag_sel     : 2;
+
+    sig_t exec_sel : 3;
+    sig_t exec_inv : 1;
+} cbits_alu_t;
+
 
 typedef union {
     sig_t raw;
-    cbits_t signals;
+    cbits_ram_t ram;
+    cbits_alu_t signals; // named signals for backwards compability
 } uinstruction_t;
 
 typedef struct {
