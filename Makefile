@@ -6,8 +6,7 @@ CASM = customasm
 CASMFLAGS = -q
 
 SIM = src/ac3pu-sim
-DEFAULT_UROM = ucode/urom.bin
-UROM ?= $(DEFAULT_UROM)
+UROM = ucode/urom.bin
 UCA = ucode_analyze/uca
 FORTH = forth/forth.bin
 FORTH_SRC := $(wildcard forth/*.asm)
@@ -97,10 +96,8 @@ test/ucode/%: $(SIM)-ucode test/ucode/%/ram.bin test/ucode/%/actual.txt
 	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
 	@rm -f test/ucode/$*/{ram.bin,actual.txt}
 
-test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM)
-	@UROM=$$(cat test/ucode/$*/UROM 2>/dev/null || echo "$(DEFAULT_UROM)") && \
-	$(MAKE) $$UROM && \
-	$(SIM) $$UROM test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
+test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM) $(UROM)
+	$(SIM) $(UROM) test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
 
 
 test/%/ram.bin: test/%/program.asm
