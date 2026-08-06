@@ -192,8 +192,8 @@ op_xor: __alu_bin_dir(SIG_ALU_OP_XOR)
 ;;; CMPI / CMP
 ;;;
 #bank acpu
-op_cmpi: __alu_bin_imm(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,0)
-op_cmp: __alu_bin_dir(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,0)
+op_cmpi: __alu_bin_imm(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,SIG_MAR_IN)
+op_cmp: __alu_bin_dir(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,SIG_MAR_IN)
 
 #bank mrom
 #addr OC_CMPI

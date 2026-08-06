@@ -65,10 +65,9 @@ typedef enum {
 typedef struct {
 
     sig_t bus_read_sel : 3;
-    sig_t bus_read_en : 1;
 
     sig_t bus_write_sel : 4;
-    sig_t bus_write_en : 1;
+    sig_t bus_access : 1;
 
     sig_t upc_reset : 1;
     sig_t upc_from_mrom : 1;

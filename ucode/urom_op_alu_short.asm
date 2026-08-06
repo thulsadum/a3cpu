@@ -45,7 +45,7 @@ op_adci8: __alu_bin_imm8(SIG_ALU_OP_ADC,SIG_ALU_CARRY_FLAG)
 #bank acpu
 op_subi8: __alu_bin_imm8(SIG_ALU_OP_SBB, SIG_ALU_CARRY_1)
 op_sbbi8: __alu_bin_imm8(SIG_ALU_OP_SBB, SIG_ALU_CARRY_FLAG)
-op_cmpi8: __alu_bin_imm8(SIG_ALU_OP_SBB, SIG_ALU_CARRY_1, 0)
+op_cmpi8: __alu_bin_imm8(SIG_ALU_OP_SBB, SIG_ALU_CARRY_1, SIG_MAR_IN)
 
 #bank mrom
 #addr OC_SUBI8
@@ -80,7 +80,7 @@ op_adcz: __alu_bin_dir_zp(SIG_ALU_OP_ADC,SIG_ALU_CARRY_FLAG)
 #bank acpu
 op_subz: __alu_bin_dir_zp(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1)
 op_sbbz: __alu_bin_dir_zp(SIG_ALU_OP_SBB,SIG_ALU_CARRY_FLAG)
-op_cmpz: __alu_bin_dir_zp(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,0)
+op_cmpz: __alu_bin_dir_zp(SIG_ALU_OP_SBB,SIG_ALU_CARRY_1,SIG_MAR_IN)
 
 #bank mrom
 #addr OC_SUBZ

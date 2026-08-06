@@ -57,7 +57,7 @@ op_taf:
 
 #bank acpu
 op_tst:
-    uc SIG_FLAGS_UPDATE | SIG_ACC_OUT | SIG_UPC_RESET
+    uc SIG_FLAGS_UPDATE | SIG_ACC_OUT | SIG_MAR_IN | SIG_UPC_RESET
 
 #bank mrom
 #addr OC_TST

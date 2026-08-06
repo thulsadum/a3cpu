@@ -98,7 +98,7 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
     int bus_drivers = 0;
     int bus = 0;
 
-    if (!uc.signals.bus_write_en) return 0;
+    if (!uc.signals.bus_access) return 0;
 
     switch (uc.signals.bus_write_sel) {
         case BUS_WRITE_SEL_PC: bus = cpu->pc; bus_drivers++; break;
@@ -150,7 +150,7 @@ static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, u
 
 
 static void bus_read(cpu_t *cpu, uinstruction_t uc, uint16_t bus) {
-    if(!uc.signals.bus_read_en) return;
+    if(!uc.signals.bus_access) return;
     switch(uc.signals.bus_read_sel) {
         case BUS_READ_SEL_PC:
             cpu->pc = bus;
