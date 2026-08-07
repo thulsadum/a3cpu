@@ -170,6 +170,10 @@ static void bus_read(cpu_t *cpu, uinstruction_t uc, uint16_t bus) {
         case BUS_READ_SEL_FLAGS:
             cpu->flags.raw = (bus & 0xff);
             break;
+        case BUS_READ_SEL_MAR_PC:
+            cpu->mar = bus;
+            cpu->pc = bus;
+            break;
         default:
             assert(0 && "Illegal bus_read_sel value.");
     }

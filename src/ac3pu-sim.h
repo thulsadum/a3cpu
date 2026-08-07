@@ -48,6 +48,7 @@ typedef enum {
     BUS_READ_SEL_IR,
     BUS_READ_SEL_ACC,
     BUS_READ_SEL_FLAGS,
+    BUS_READ_SEL_MAR_PC,
 } bus_read_sel_t;
 
 typedef enum {

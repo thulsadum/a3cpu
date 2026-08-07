@@ -47,11 +47,18 @@ op_jalz:
     uc SIG_RAM_WRITE | SIG_IR_IMM8_OUT | SIG_PC_IN
     uc SIG_PC_INC | SIG_UPC_RESET
 
+op_jla:
+    uc SIG_PC_OUT | SIG_MDR_IN
+    uc SIG_ACC_OUT | SIG_MAR_AND_PC_IN
+    uc SIG_RAM_WRITE | SIG_PC_INC | SIG_UPC_RESET
+
 #bank mrom
 #addr OC_JAL
 #d16 op_jal
 #addr OC_JALZ
 #d16 op_jalz
+#addr OC_JLA
+#d16 op_jla
 
 
 
