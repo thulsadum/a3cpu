@@ -1,6 +1,5 @@
 #include "../../../asmdef/ac3puasm_def.asm"
 
-#bank ac3pu_program
 
 jal.zp sub_routine
 xori 0x0f0f

@@ -1,4 +1,12 @@
-#include "../asmdef/ac3puasm_def.asm"
+#include "../asmdef/ac3puasm_def_no_bank.asm"
+
+#bankdef zp {
+    bits = 16
+    outp = 0
+    addr = 0x00
+    addr_end = 0x100
+}
+
 
 ISR_RET_VEC = 0x02
 
