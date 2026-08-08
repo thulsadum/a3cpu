@@ -1,6 +1,7 @@
 CFLAGS = -Wall -Wextra -O2 -g -I src
 CFLAGS_UCODE = $(CFLAGS) -I config/sim/ucode
 CFLAGS_ASM = $(CFLAGS) -I config/sim/asm
+CFLAGS_FORTH = $(CFLAGS) -I config/sim/forth
 
 CASM = customasm
 CASMFLAGS = -q
@@ -23,6 +24,9 @@ UCODE_TESTS := $(patsubst test/ucode/%/program.asm,test/ucode/%,$(UCODE_TEST_PRO
 ASM_TEST_PROGRAMS := $(wildcard test/asm/*/program.asm)
 ASM_TEST_EXPECTED_TXTS := $(ASM_TEST_PROGRAMS:program.asm=expected.txt)
 ASM_TESTS := $(patsubst test/asm/%/program.asm,test/asm/%,$(ASM_TEST_PROGRAMS))
+
+FORTH_TESTS := $(wildcard test/forth/*)
+
 MMIO_BEGIN := 0x8000
 
 .PHONY: all test clean test-ucode test-asm analyze-ucode $(SIM)-ucode
@@ -39,6 +43,9 @@ $(SIM): src/*.c src/devices/*.c
 
 $(SIM)-ucode: src/*.c src/devices/*.c
 	$(CC) $(CFLAGS_UCODE) $^ -o $(SIM)
+
+$(SIM)-forth: src/*.c src/devices/*.c
+	$(CC) $(CFLAGS_FORTH) $^ -o $(SIM)
 
 $(UCA): $(UCA_SRCS)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -72,7 +79,7 @@ update-asm-expected.txts: $(ASM_TEST_EXPECTED_TXTS)
 test/asm/%/expected.txt: test/asm/%/actual.txt
 	mv $< $@
 
-test: test-ucode test-asm
+test: test-ucode test-asm test-forth
 
 
 test-asm: $(ASM_TESTS)
@@ -92,16 +99,35 @@ test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
 
 test-ucode: $(UCODE_TESTS)
 
-test/ucode/%: $(SIM)-ucode test/ucode/%/ram.bin test/ucode/%/actual.txt
+test/ucode/%: test/ucode/%/ram.bin test/ucode/%/actual.txt
 	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
 	@rm -f test/ucode/$*/{ram.bin,actual.txt}
 
-test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM) $(UROM)
+test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM)-ucode $(UROM)
 	$(SIM) $(UROM) test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
 
 
 test/%/ram.bin: test/%/program.asm
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
+
+
+
+test-forth: $(FORTH_TESTS)
+
+test/forth/%/ram.bin: test/forth/%/fprog.asm test/forth/%/program.asm
+	$(CASM) $(CASMFLAGS) -f binary -o $@ $^
+
+test/forth/%/ram.bin: test/forth/%/fprog.asm
+	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
+
+test/forth/00_boot: test/forth/00_boot/ram.bin $(SIM)-forth $(UROM)
+	$(SIM) $(UROM) $< --silent
+
+test/forth/%/fprog.asm: test/forth/%/program.f
+	$(FORTH) $(FORTH_FLAGS) -o $@ $<
+
+test/forth/%:  test/forth/%/ram.bin
+	# ...
 
 clean:
 	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA)
