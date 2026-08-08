@@ -381,10 +381,10 @@ int main(int argc, const char ** argv) {
 
     if(cpu.flags.flags.halt) {
         if ((cpu.flags.raw & 0xf0) > 3) {
-            printf("!!! CPU PANIC !!!");
+            if(!SILENT) printf("!!! CPU PANIC !!!");
             return 1;
         } else {
-            printf("--- CPU HALTED ---");
+            if(!SILENT) printf("--- CPU HALTED ---");
         }
     }
 
