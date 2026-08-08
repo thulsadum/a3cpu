@@ -1,9 +1,8 @@
-ucode/*.bin
-src/ac3pu-sim
-
-**/*/ram.bin
 **/*/actual.txt
 **/*.d
+**/*.bin
+
 test/asm/**/*/sim
+
+src/ac3pu-sim
 ucode_analyze/uca
-ucode_analyze/urom-h.bin
