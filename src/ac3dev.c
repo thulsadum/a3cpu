@@ -12,7 +12,7 @@ int register_device(device_handler_t * hdl) {
     } else {
         hdl->begin = AC3DEV_MMIO_BEGIN;
     }
-    hdl->end = hdl->begin + (1 << hdl->desc.length_exp);
+    hdl->end = hdl->begin + (1 << hdl->desc.length_exp) - 1;
 
     devices[devices_count] = hdl;
     devices_count++;
