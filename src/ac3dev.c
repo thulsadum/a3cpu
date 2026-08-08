@@ -34,7 +34,10 @@ int handle_read(uint16_t addr, uint16_t *val) {
             }
         }
     }
-
+    if(hdl && hdl->end+1 == addr) {
+        *val = 0;
+        return 0;
+    }
     return -1;
 }
 
