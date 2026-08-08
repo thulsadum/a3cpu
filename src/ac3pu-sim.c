@@ -305,8 +305,9 @@ static int parse_args(int argc, const char ** argv) {
 
 static int register_default_devices() {
 
-#ifdef CFG_DEFAULT_DEVICES
     device_handler_t *hdl;
+
+#if defined(CFG_DEFAULT_DEVICES) && CFG_DEFAULT_DEVICES
 
     hdl = simif_init();
     if(!hdl) return 1;
