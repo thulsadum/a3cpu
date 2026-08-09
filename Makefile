@@ -143,4 +143,5 @@ test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
 
 clean:
 	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA) test/forth/*/ram.bin test/forth/*/actual.txt
+	find . -type f -name symbols.txt -delete
 

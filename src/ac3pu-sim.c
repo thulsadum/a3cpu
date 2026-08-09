@@ -15,6 +15,7 @@
 
 static uint16_t PRINT_TRACE_BEGIN = 0xffff;
 static uint16_t PRINT_TRACE_END   = 0xffff;
+static uint16_t PRINT_ACC_TRACE   = 0;
 static uint16_t MMIO_BEGIN   = 0x8000;
 static int SILENT = 0;
 static int REGISTER_DEFAULT_DEVICES = 1;
@@ -105,7 +106,11 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
         case BUS_WRITE_SEL_PC: bus = cpu->pc; bus_drivers++; break;
         case BUS_WRITE_SEL_MAR: bus = cpu->mar; bus_drivers++; break;
         case BUS_WRITE_SEL_MDR: bus = cpu->mdr; bus_drivers++; break;
-        case BUS_WRITE_SEL_ACC: bus = cpu->acc; bus_drivers++; break;
+        case BUS_WRITE_SEL_ACC: 
+            bus = cpu->acc; 
+            if(PRINT_ACC_TRACE) printf(" ACC -> BUS: 0x%04X\n", bus);
+            bus_drivers++;
+            break;
         case BUS_WRITE_SEL_IR: bus = cpu->ir.simple.immediate; bus_drivers++; break;
         case BUS_WRITE_SEL_ALU: bus = alu(cpu, uc, alu_carry_out); bus_drivers++; break;
         case BUS_WRITE_SEL_FLAGS: bus = cpu->flags.raw & 0xff; bus_drivers++; break;
@@ -166,6 +171,7 @@ static void bus_read(cpu_t *cpu, uinstruction_t uc, uint16_t bus) {
             cpu->ir = (cinstruction_t)bus;
             break;
         case BUS_READ_SEL_ACC:
+            if(PRINT_ACC_TRACE) printf("  BUS -> ACC: 0x%04X\n", bus);
             cpu->acc = bus;
             break;
         case BUS_READ_SEL_FLAGS:
@@ -288,6 +294,7 @@ void tick(cpu_t *cpu, int cycle) {
 static int parse_args(int argc, const char ** argv) {
     for(int i = 0; i < argc; i++) {
         if(strcmp("--silent", argv[i]) == 0) SILENT = 1;
+        if(strcmp("--acc-trace", argv[i]) == 0) PRINT_ACC_TRACE = 1;
         if(strcmp("--mt-begin",argv[i]) == 0 && i + 1 < argc) {
             PRINT_TRACE_BEGIN = strtol(argv[i+1], NULL, 0);
             i++;
