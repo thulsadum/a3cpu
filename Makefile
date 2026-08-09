@@ -127,19 +127,19 @@ test/forth/%/fprog.asm: test/forth/%/program.f
 	$(FORTH) $(FORTH_FLAGS) -o $@ $<
 
 test/forth/%/actual.txt: test/forth/%/ram.bin $(SIM)-forth $(UROM) test/forth/%/INPUT
-	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT > $@
+	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT > $@ || (echo 'Test forth $*.. FAILED.'; false)
 
 test/forth/%/actual.txt: test/forth/%/ram.bin $(SIM)-forth $(UROM)
-	$(SIM) $(UROM) $< --silent > $@
+	$(SIM) $(UROM) $< --silent > $@ || (echo 'Test forth $*.. FAILED.'; false)
 
 test/forth/%: test/forth/%/expected.txt test/forth/%/actual.txt
-	diff test/forth/$*/actual.txt $<
+	diff test/forth/$*/actual.txt $<  && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 
 test/forth/%: test/forth/%/ram.bin test/forth/%/INPUT $(SIM)-forth $(UROM)
-	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT
+	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 
 test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
-	$(SIM) $(UROM) $< --silent
+	$(SIM) $(UROM) $< --silent && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 
 clean:
 	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA) test/forth/*/ram.bin test/forth/*/actual.txt
