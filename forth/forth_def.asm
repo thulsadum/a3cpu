@@ -19,6 +19,6 @@
     addr_end = 0x10000
 }
 
-#const DSP_ADDR = 0x7f
-#const RSP_ADDR = 0x80
+#const DSP_ADDR = 0x20
+#const RSP_ADDR = 0xff
 

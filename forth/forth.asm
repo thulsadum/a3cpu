@@ -7,8 +7,9 @@
 #addr 0x10
 DSP: #d16 DSP_ADDR
 RSP: #d16 RSP_ADDR
-TMP: #res 1
-INPUT: #res 1
+arg0:   #res 1
+TMP:    #res 1
+INPUT:  #res 1
 OUTPUT: #res 1
 
 #bank forth_system
@@ -78,6 +79,30 @@ fgetc:
     #res 1
     ldia INPUT
     ret fgetc
+
+
+xt_push: ; ( -- arg0 )
+    #res 1
+    stia DSP ; TOP is always ACC
+    lda DSP  ; update DSP
+    inc
+    sta DSP
+    lda arg0
+    ret xt_push
+
+
+
+xt_drop: ; ( x -- )
+    #res 1
+    lda DSP
+    dec
+    sta DSP
+    lia
+    ret xt_drop
+
+
+
+
 
 #bank forth_text
 __forth_start:
