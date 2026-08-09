@@ -111,6 +111,72 @@ xt_drop: ; ( x -- ), no_tmp, atomic
     ret xt_drop
 
 
+xt_add: ; ( a b -- a+b )
+    #res 1
+
+    sta arg0 ; save acc
+    jal xt_drop
+
+    add arg0 ; add
+    sta arg0
+    jal xt_drop
+
+    jal xt_push
+
+    ret xt_add
+
+
+
+xt_sub: ; ( a b -- a-b )
+    #res 1
+
+    sta arg0    ; save acc
+    jal xt_drop
+
+    sub arg0    ; sub
+    sta arg0
+    jal xt_drop
+
+    jal xt_push
+
+    ret xt_sub
+
+
+
+
+
+xt_and: ; ( a b -- a&b )
+    #res 1
+
+    sta arg0    ; save acc
+    jal xt_drop
+
+    and arg0    ; and
+    sta arg0
+    jal xt_drop
+
+    jal xt_push
+
+    ret xt_and
+
+
+
+
+
+xt_or: ; ( a b -- a|b )
+    #res 1
+
+    sta arg0    ; save acc
+    jal xt_drop
+
+    or arg0    ; or
+    sta arg0
+    jal xt_drop
+
+    jal xt_push
+
+    ret xt_or
+
 
 
 
