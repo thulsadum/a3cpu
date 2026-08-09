@@ -1,6 +1,16 @@
 #include "forth_def.asm"
 #include "../lib/zp.asm"
 
+#ruledef forth {
+    push({value}) => asm {
+        sta TMP
+        ldi {value}
+        sta arg0
+        lda TMP
+        jal xt_push
+    }
+}
+
 
 #bank zp
 ; global var
@@ -81,7 +91,7 @@ fgetc:
     ret fgetc
 
 
-xt_push: ; ( -- arg0 )
+xt_push: ; ( -- arg0 ), no_tmp, atomic
     #res 1
     stia DSP ; TOP is always ACC
     lda DSP  ; update DSP
@@ -92,7 +102,7 @@ xt_push: ; ( -- arg0 )
 
 
 
-xt_drop: ; ( x -- )
+xt_drop: ; ( x -- ), no_tmp, atomic
     #res 1
     lda DSP
     dec
