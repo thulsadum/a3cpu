@@ -179,6 +179,27 @@ xt_or: ; ( a b -- a|b )
 
 
 
+xt_fetch:   ;; ( addr -- x )
+    #res 1
+
+    lia
+    sta arg0
+    jal xt_drop
+    jal xt_push
+
+    ret xt_fetch
+
+
+
+xt_store:   ;; ( x addr -- )
+    #res 1
+
+    sta TMP
+    jal xt_drop
+    stia TMP
+    jal xt_drop
+
+    ret xt_store
 
 #bank forth_text
 __forth_start:
