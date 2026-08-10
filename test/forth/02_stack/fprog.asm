@@ -4,16 +4,10 @@
 
     jal _assert.stack_init
 
-    ldi "H"
-    sta arg0
-    jal xt_push
+    push("H")
     jal _assert.stack_pushed
 
-    sta TMP
-    ldi "i"
-    sta arg0
-    lda TMP
-    jal xt_push
+    push("i")
     jal _assert.stack_pushed2
 
     jal xt_drop

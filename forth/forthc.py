@@ -5,6 +5,10 @@ import sys
 
 
 ASM = {
+    "DROP": "jal xt_drop",
+    "DUP": "jal xt_dup",
+    "SWAP": "jal xt_swap",
+    "OVER": "jal xt_over",
     "+": "jal xt_add",
     "-": "jal xt_sub",
     "SHL": "jal xt_shl",

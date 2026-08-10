@@ -3,11 +3,11 @@
 
 #ruledef forth {
     push({value}) => asm {
-        sta TMP
+        stia DSP
+        lda DSP
+        inc
+        sta DSP
         ldi {value}
-        sta arg0
-        lda TMP
-        jal xt_push
     }
 }
 
@@ -15,10 +15,10 @@
 #bank zp
 ; global var
 #addr 0x10
-DSP: #d16 DSP_ADDR
-RSP: #d16 RSP_ADDR
-arg0:   #res 1
+DSP:    #d16 DSP_ADDR
+RSP:    #d16 RSP_ADDR
 TMP:    #res 1
+TMP2:   #res 1
 INPUT:  #res 1
 OUTPUT: #res 1
 
@@ -91,37 +91,75 @@ fgetc:
     ret fgetc
 
 
-xt_push: ; ( -- arg0 ), no_tmp, atomic
-    #res 1
-    stia DSP ; TOP is always ACC
-    lda DSP  ; update DSP
-    inc
-    sta DSP
-    lda arg0
-    ret xt_push
-
 
 
 xt_drop: ; ( x -- ), no_tmp, atomic
     #res 1
+
     lda DSP
     dec
     sta DSP
     lia
+
     ret xt_drop
+
+
+
+xt_dup: ; ( x -- xx ), no_tmp, atomic
+    #res 1
+
+    stia DSP
+    lda DSP
+    inc
+    sta DSP
+    dec
+    lia
+
+    ret xt_dup
+
+
+
+xt_swap: ; ( a b -- b a ), no_tmp, atomic
+    #res 1
+
+    sta TMP
+    lda DSP
+    dec
+    sta TMP2
+    lia
+    stia DSP
+    lda TMP
+    stia TMP2
+    ldia DSP
+
+    ret xt_swap
+
+
+
+
+xt_over: ; ( a b -- a b a ), no_tmp, atomic
+    #res 1
+
+    stia DSP
+    lda DSP
+    inc
+    sta DSP
+    subi 2
+    lia
+
+    ret xt_over
 
 
 xt_add: ; ( a b -- a+b )
     #res 1
 
-    sta arg0 ; save acc
-    jal xt_drop
-
-    add arg0 ; add
-    sta arg0
-    jal xt_drop
-
-    jal xt_push
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    add TMP
+    stia DSP
 
     ret xt_add
 
@@ -130,14 +168,13 @@ xt_add: ; ( a b -- a+b )
 xt_sub: ; ( a b -- a-b )
     #res 1
 
-    sta arg0    ; save acc
-    jal xt_drop
-
-    sub arg0    ; sub
-    sta arg0
-    jal xt_drop
-
-    jal xt_push
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    sub TMP
+    stia DSP
 
     ret xt_sub
 
@@ -148,14 +185,13 @@ xt_sub: ; ( a b -- a-b )
 xt_shl: ; ( a b -- a<<b )
     #res 1
 
-    sta arg0    ; save acc
-    jal xt_drop
-
-    shl arg0    ; sub
-    sta arg0
-    jal xt_drop
-
-    jal xt_push
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    shl TMP
+    stia DSP
 
     ret xt_shl
 
@@ -166,14 +202,13 @@ xt_shl: ; ( a b -- a<<b )
 xt_and: ; ( a b -- a&b )
     #res 1
 
-    sta arg0    ; save acc
-    jal xt_drop
-
-    and arg0    ; and
-    sta arg0
-    jal xt_drop
-
-    jal xt_push
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    and TMP
+    stia DSP
 
     ret xt_and
 
@@ -184,14 +219,13 @@ xt_and: ; ( a b -- a&b )
 xt_or: ; ( a b -- a|b )
     #res 1
 
-    sta arg0    ; save acc
-    jal xt_drop
-
-    or arg0    ; or
-    sta arg0
-    jal xt_drop
-
-    jal xt_push
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    or TMP
+    stia DSP
 
     ret xt_or
 
@@ -201,9 +235,6 @@ xt_fetch:   ;; ( addr -- x )
     #res 1
 
     lia
-    sta arg0
-    jal xt_drop
-    jal xt_push
 
     ret xt_fetch
 
@@ -212,10 +243,13 @@ xt_fetch:   ;; ( addr -- x )
 xt_store:   ;; ( x addr -- )
     #res 1
 
-    sta TMP
-    jal xt_drop
+    sta TMP ; addr -> TMP
+    lda DSP ; DSP -= 2
+    subi 2
+    sta DSP
+    inc     ; fetch NOS
+    lia
     stia TMP
-    jal xt_drop
 
     ret xt_store
 

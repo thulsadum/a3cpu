@@ -6,6 +6,8 @@ CFLAGS_FORTH = $(CFLAGS) -I config/sim/forth
 CASM = customasm
 CASMFLAGS = -q
 
+UTILS_DISASM = utils/trace_symbol_filter.py
+
 SIM = src/ac3pu-sim
 UROM = ucode/urom.bin
 UCA = ucode_analyze/uca
@@ -146,6 +148,9 @@ test/forth/%: test/forth/%/ram.bin test/forth/%/INPUT $(SIM)-forth $(UROM)
 
 test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
 	$(SIM) $(UROM) $< --silent && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
+
+test/forth/%-debug: test/forth/%/ram.bin test/forth/%/symbols.txt $(SIM)-forth $(UROM)
+	$(SIM) $(UROM) $< --silent --acc-trace --mt-begin 0x1000 | $(UTILS_DISASM) test/forth/$*/symbols.txt
 
 clean:
 	rm -f $(SIM) $(UROM) ucode/*.bin ucode/*.hex $(UCODE_DEPS) $(UCA_ROM) $(UCA) test/forth/*/ram.bin test/forth/*/actual.txt
