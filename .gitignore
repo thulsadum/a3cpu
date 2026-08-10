@@ -7,3 +7,4 @@ test/asm/**/*/sim
 src/ac3pu-sim
 ucode_analyze/uca
 **/*/symbols.txt
+test/forth/**/*/program.asm
