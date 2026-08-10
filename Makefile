@@ -9,7 +9,7 @@ CASMFLAGS = -q
 SIM = src/ac3pu-sim
 UROM = ucode/urom.bin
 UCA = ucode_analyze/uca
-FORTH = forth/forth.bin
+FORTHC = forth/forthc.py
 FORTH_SRC := $(wildcard forth/*.asm)
 
 UCA_SRCS := $(wildcard ucode_analyze/*.c)
@@ -114,17 +114,23 @@ test/%/ram.bin: test/%/program.asm
 
 test-forth: $(FORTH_TESTS)
 
-test/forth/%/ram.bin: test/forth/%/fprog.asm test/forth/%/program.asm
-	$(CASM) $(CASMFLAGS) -f binary -o $@ $^
+test/forth/%/program.asm: test/forth/%/program.f $(FORTHC)
+	$(FORTHC) $(FORTH_FLAGS) -o $@ $<
+
+
+test/forth/%/ram.bin: test/forth/%/fprog.asm test/forth/%/program.f  $(FORTH_SRC)
+	$(MAKE) test/forth/$*/program.asm
+	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
 
 test/forth/%/ram.bin: test/forth/%/fprog.asm  $(FORTH_SRC)
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
 
+
+test/forth/%/symbols.txt: test/forth/%/fprog.asm  $(FORTH_SRC)
+	$(CASM) $(CASMFLAGS) -f symbols -o $@ $<
+
 test/forth/00_boot: test/forth/00_boot/ram.bin $(SIM)-forth $(UROM) $(FORTH_SRC)
 	$(SIM) $(UROM) $< --silent
-
-test/forth/%/fprog.asm: test/forth/%/program.f
-	$(FORTH) $(FORTH_FLAGS) -o $@ $<
 
 test/forth/%/actual.txt: test/forth/%/ram.bin $(SIM)-forth $(UROM) test/forth/%/INPUT
 	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT > $@ || (echo 'Test forth $*.. FAILED.'; false)
