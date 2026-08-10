@@ -145,6 +145,24 @@ xt_sub: ; ( a b -- a-b )
 
 
 
+xt_shl: ; ( a b -- a<<b )
+    #res 1
+
+    sta arg0    ; save acc
+    jal xt_drop
+
+    shl arg0    ; sub
+    sta arg0
+    jal xt_drop
+
+    jal xt_push
+
+    ret xt_shl
+
+
+
+
+
 xt_and: ; ( a b -- a&b )
     #res 1
 
