@@ -149,6 +149,9 @@ test/forth/%: test/forth/%/ram.bin test/forth/%/INPUT $(SIM)-forth $(UROM)
 test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
 	$(SIM) $(UROM) $< --silent && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 
+test/forth/%-debug: test/forth/%/ram.bin test/forth/%/symbols.txt $(SIM)-forth $(UROM) test/forth/%/INPUT
+	$(SIM) $(UROM) $< --silent --acc-trace --mt-begin 0x1000 < test/forth/$*/INPUT | $(UTILS_DISASM) test/forth/$*/symbols.txt
+
 test/forth/%-debug: test/forth/%/ram.bin test/forth/%/symbols.txt $(SIM)-forth $(UROM)
 	$(SIM) $(UROM) $< --silent --acc-trace --mt-begin 0x1000 | $(UTILS_DISASM) test/forth/$*/symbols.txt
 
