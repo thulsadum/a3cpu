@@ -16,6 +16,8 @@ ASM = {
     "OR": "jal xt_or",
     "@": "jal xt_fetch",
     "!": "jal xt_store",
+    "KEY": "jal xt_key",
+    "EMIT": "jal xt_emit",
 }
 
 PARSER_STATE = "R"
@@ -43,7 +45,7 @@ def write_asm(args, asm):
 
 def parse_code(args, code):
     tokens = code.split()
-    return [ parse_token(tok) for tok in tokens ]
+    return [ ltok for tok in tokens if (ltok := parse_token(tok)) ]
 
 
 
@@ -54,6 +56,9 @@ def parse_token(token):
             return f'const({token})'
         elif token.upper().startswith("0X"):
             return f'const({token})'
+        elif token.upper() == '[CHAR]':
+            PARSER_STATE = 'C'
+            return ''
         elif token.upper() == '[ASM':
             PARSER_STATE = 'A'
             return '[ASM'
@@ -62,6 +67,9 @@ def parse_token(token):
         if token == ']':
             PARSER_STATE = 'R'
         return token
+    elif PARSER_STATE == 'C':
+        PARSER_STATE = 'R'
+        return f'const("{token}")'
 
 
 

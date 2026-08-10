@@ -253,5 +253,27 @@ xt_store:   ;; ( x addr -- )
 
     ret xt_store
 
+xt_emit: ;; ( ch -- )
+    #res 1
+
+    stia OUTPUT
+    lda DSP
+    dec
+    sta DSP
+    lia
+
+    ret xt_emit
+
+xt_key: ;; ( -- ch )
+    #res 1
+
+    stia DSP
+    lda DSP
+    inc
+    sta DSP
+    ldia INPUT
+
+    ret xt_key
+
 #bank forth_text
 __forth_start:
