@@ -31,7 +31,7 @@ void print_cpu_state(int cycle, cpu_t *cpu) {
 
 
 
-int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
+int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out, uint8_t *overflow_out) {
     uint16_t a,b;
     uint16_t alu_carry;
     uint32_t result = 0;
@@ -47,6 +47,7 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
         }
         result = a+b+alu_carry;
         *carry_out = (result > 0xffff);
+        *overflow_out = ((~(a ^ b) & (a ^ result)) & 0x8000)>>15;
         return result;
     case ALU_SBB:
         alu_carry = uc.signals.alu_carry_value;
@@ -55,6 +56,7 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
         }
         result = a + (0xffff & ~b) + alu_carry;
         *carry_out = (result > 0xffff);
+        *overflow_out = (((a ^ b) & (a ^ result)) & 0x8000)>>15;
         return result;
     case ALU_SHL:
         return a<<b;
@@ -77,16 +79,20 @@ int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out) {
 
 static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
     switch (uc.exec.exec_sel) {
-        case EXEC_ALWAYS:
+        case EXEC_ALWAYS:   // bra
             return 1 ^ uc.exec.exec_inv;
-        case EXEC_IF_CARRY:
+        case EXEC_IF_CARRY: // blo, bhs
             return cpu->flags.flags.carry ^ uc.exec.exec_inv;
-        case EXEC_IF_ZERO:
+        case EXEC_IF_ZERO:  // beq, bne
             return cpu->flags.flags.zero ^ uc.exec.exec_inv;
-        case EXEC_IF_NEG:
+        case EXEC_IF_NEG:  // bmi, bpl
             return cpu->flags.flags.neg ^ uc.exec.exec_inv;
-        case EXEC_IF_ZERO_OR_NO_BORROW:
+        case EXEC_IF_ZERO_OR_NO_BORROW:  // bls, bhi
             return (cpu->flags.flags.zero | !cpu->flags.flags.carry) ^ uc.exec.exec_inv;
+        case EXEC_IF_NEGATIVE_XOR_OVERFLOW:  // bge, blt
+            return (cpu->flags.flags.neg ^ cpu->flags.flags.overflow) ^ uc.exec.exec_inv;
+        case EXEC_IF_NEGATIVE_XOR_OVERFLOW_OR_ZERO:  // ble, bgt
+            return ((cpu->flags.flags.neg ^ cpu->flags.flags.overflow) | cpu->flags.flags.zero) ^ uc.exec.exec_inv;
         default:
             fprintf(stderr, "uc.exec.exec_sel: %03b (%d)\n",uc.exec.exec_sel, uc.exec.exec_sel);
             assert(0 && "Undefined exec conditional code");
@@ -96,7 +102,7 @@ static int is_exec_enable(cpu_t *cpu, uinstruction_t uc) {
 
 
 
-static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu_carry_out) {
+static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu_carry_out, uint8_t *alu_overflow_out) {
     int bus_drivers = 0;
     int bus = 0;
 
@@ -106,13 +112,13 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
         case BUS_WRITE_SEL_PC: bus = cpu->pc; bus_drivers++; break;
         case BUS_WRITE_SEL_MAR: bus = cpu->mar; bus_drivers++; break;
         case BUS_WRITE_SEL_MDR: bus = cpu->mdr; bus_drivers++; break;
-        case BUS_WRITE_SEL_ACC: 
-            bus = cpu->acc; 
+        case BUS_WRITE_SEL_ACC:
+            bus = cpu->acc;
             if(PRINT_ACC_TRACE) printf(" ACC -> BUS: 0x%04X\n", bus);
             bus_drivers++;
             break;
         case BUS_WRITE_SEL_IR: bus = cpu->ir.simple.immediate; bus_drivers++; break;
-        case BUS_WRITE_SEL_ALU: bus = alu(cpu, uc, alu_carry_out); bus_drivers++; break;
+        case BUS_WRITE_SEL_ALU: bus = alu(cpu, uc, alu_carry_out, alu_overflow_out); bus_drivers++; break;
         case BUS_WRITE_SEL_FLAGS: bus = cpu->flags.raw & 0xff; bus_drivers++; break;
         case BUS_WRITE_SEL_ADDR_VEC: bus = RAM_ISR_RET_VEC; bus_drivers++; break;
         case BUS_WRITE_SEL_ADDR_ISR: bus = RAM_ISR_ENTRY; bus_drivers++; break;
@@ -127,7 +133,7 @@ static int write_bus(cpu_t *cpu, uinstruction_t uc, uint16_t *pbus, uint8_t* alu
 
 
 
-static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, uint16_t bus) {
+static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, uint8_t alu_overflow_out, uint16_t bus) {
 
     const uint8_t flag_offsets[4] = { 0, 1, 4, 5 };
 
@@ -138,6 +144,7 @@ static void handle_flags(cpu_t *cpu, uinstruction_t uc, uint8_t alu_carry_out, u
     if(uc.signals.flags_update) {
         cpu->flags.flags.zero = (bus == 0);
         cpu->flags.flags.carry = alu_carry_out;
+        cpu->flags.flags.overflow = alu_overflow_out;
         cpu->flags.flags.neg = ((bus & 0x8000) != 0);
     }
 
@@ -238,6 +245,7 @@ void tick(cpu_t *cpu, int cycle) {
     uint16_t bus = 0;
     uinstruction_t uc = cpu->urom[cpu->upc];
     uint8_t alu_carry_out = 0;
+    uint8_t alu_overflow_out = 0;
 
     /* handling cpu signals */
 
@@ -251,12 +259,12 @@ void tick(cpu_t *cpu, int cycle) {
     }
 
     /* write to bus */
-    int bus_drivers = write_bus(cpu, uc, &bus, &alu_carry_out);
+    int bus_drivers = write_bus(cpu, uc, &bus, &alu_carry_out, &alu_overflow_out);
     /* check for bus conflicts */
     assert(bus_drivers <= 1 && "BUS-CONFLICT: parallel write to data bus detected");
 
     /* flag manipulation */
-    if (!uc.exec.pc_add_offset) handle_flags(cpu, uc, alu_carry_out, bus);
+    if (!uc.exec.pc_add_offset) handle_flags(cpu, uc, alu_carry_out, alu_overflow_out, bus);
 
     /* read from bus */
     bus_read(cpu, uc, bus);

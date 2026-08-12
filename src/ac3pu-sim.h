@@ -38,6 +38,8 @@ typedef enum {
     EXEC_IF_CARRY = 1,
     EXEC_IF_ZERO = 2,
     EXEC_IF_ZERO_OR_NO_BORROW = 3,
+    EXEC_IF_NEGATIVE_XOR_OVERFLOW = 4,
+    EXEC_IF_NEGATIVE_XOR_OVERFLOW_OR_ZERO = 5,
     EXEC_IF_NEG = 7,
 } exec_sel_t;
 
@@ -137,7 +139,7 @@ typedef struct {
     uint8_t       : 2;
     uint8_t carry : 1;
     uint8_t zero  : 1;
-    uint8_t       : 1;
+    uint8_t overflow : 1;
     uint8_t neg   : 1;
 } flags_t;
 
@@ -168,7 +170,7 @@ typedef struct {
 
 void print_cpu_state(int cycle, cpu_t *cpu);
 
-int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out);
+int16_t alu(cpu_t *cpu, uinstruction_t uc, uint8_t *carry_out, uint8_t *overflow_out);
 
 void tick(cpu_t *cpu, int cycle);
 
