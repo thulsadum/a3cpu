@@ -7,6 +7,7 @@ CASM = customasm
 CASMFLAGS = -q
 
 UTILS_DISASM = utils/trace_symbol_filter.py
+UTILS_REGTRA = utils/trace_register_filter.py
 
 SIM = src/ac3pu-sim
 UROM = ucode/urom.bin
@@ -88,29 +89,45 @@ test-asm: $(ASM_TESTS)
 
 test/asm/%: test/asm/%/actual.txt
 	@diff -u test/asm/$*/expected.txt test/asm/$*/actual.txt && echo "Test asm $* ... ok." ||( echo "Test asm $* ... FAIL!" && false)
-	@rm -f test/asm/$*/{ram.bin,actual.txt,sim}
+
+
+test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM) test/asm/%/INPUT
+		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) < "test/asm/$*/INPUT" > $@
 
 test/asm/%/actual.txt: test/asm/%/sim test/asm/%/ram.bin $(UROM)
-	[ -f "test/asm/$*/INPUT" ] && \
-		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) < "test/asm/$*/INPUT" > $@ || \
 		$< $(UROM) test/asm/$*/ram.bin --silent --mt-begin $(MMIO_BEGIN) > $@
+
 
 test/asm/%/sim: test/asm/%/sim.c src/*.c src/devices/*.c
 	$(CC) $(CFLAGS_ASM) -o $@ $^
 
 
+test/asm/%-debug: test/asm/%/sim test/asm/%/ram.bin $(UROM) test/asm/%/symbols.txt test/asm/%/INPUT
+		$< $(UROM) test/asm/$*/ram.bin --silent --acc-trace --mt-begin 0x00 < "test/asm/$*/INPUT" | $(UTILS_DISASM) test/asm/$*/symbols.txt
+
+test/asm/%-debug: test/asm/%/sim test/asm/%/ram.bin $(UROM) test/asm/%/symbols.txt
+		$< $(UROM) test/asm/$*/ram.bin --silent --acc-trace --mt-begin 0x00 | $(UTILS_DISASM) test/asm/$*/symbols.txt
+
+
+
 test-ucode: $(UCODE_TESTS)
 
 test/ucode/%: test/ucode/%/ram.bin test/ucode/%/actual.txt
-	@diff -u test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
-	@rm -f test/ucode/$*/{ram.bin,actual.txt}
+	@diff -u --color test/ucode/$*/expected.txt test/ucode/$*/actual.txt && echo "Test ucode $* ... ok." || (echo "Test ucode $* ... FAIL!" && false)
 
 test/ucode/%/actual.txt: test/ucode/%/ram.bin $(SIM)-ucode $(UROM)
 	$(SIM) $(UROM) test/ucode/$*/ram.bin > test/ucode/$*/actual.txt
 
+test/ucode/%-debug: test/ucode/%/ram.bin test/ucode/%/symbols.txt $(SIM)-ucode $(UROM)
+	$(SIM) $(UROM) $< | $(UTILS_REGTRA) test/ucode/$*/symbols.txt
+
+
 
 test/%/ram.bin: test/%/program.asm
 	$(CASM) $(CASMFLAGS) -f binary -o $@ $<
+
+test/%/symbols.txt: test/%/program.asm
+	$(CASM) $(CASMFLAGS) -f symbols -o $@ $<
 
 
 
