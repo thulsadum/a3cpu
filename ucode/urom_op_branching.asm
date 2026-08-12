@@ -89,17 +89,39 @@ op_bhi:
 
 
 ;;;
-;;; bge / blt - branch if greate or equal (unsigned >=), and branch if less than (unsigned <)
+;;; bhs / blo - branch if greate or equal (unsigned >=), and branch if less than (unsigned <)
+;;;
+
+#bank acpu
+
+op_bhs:
+    uc __branch_impl(SIG_EXEC_SEL_CARRY, 0)
+    uc SIG_UPC_RESET
+
+op_blo:
+    uc __branch_impl(SIG_EXEC_SEL_CARRY, SIG_EXEC_INV)
+    uc SIG_UPC_RESET
+
+#bank mrom
+#addr OC_BHS
+#d16 op_bhs
+#addr OC_BLO
+#d16 op_blo
+
+
+
+;;;
+;;; bge / blt - branch if greate or equal (signed >=), and branch if less than (signed <)
 ;;;
 
 #bank acpu
 
 op_bge:
-    uc __branch_impl(SIG_EXEC_SEL_CARRY, 0)
+    uc __branch_impl(SIG_EXEC_SEL_NEG_XOR_OVF, SIG_EXEC_INV)
     uc SIG_UPC_RESET
 
 op_blt:
-    uc __branch_impl(SIG_EXEC_SEL_CARRY, SIG_EXEC_INV)
+    uc __branch_impl(SIG_EXEC_SEL_NEG_XOR_OVF, 0)
     uc SIG_UPC_RESET
 
 #bank mrom
@@ -107,5 +129,27 @@ op_blt:
 #d16 op_bge
 #addr OC_BLT
 #d16 op_blt
+
+
+
+;;;
+;;; ble / bgt - branch if less or equal (signed <=), and branch if greater than (signed >)
+;;;
+
+#bank acpu
+
+op_ble:
+    uc __branch_impl(SIG_EXEC_SEL_NEG_XOR_OVF_OR_ZERO, 0)
+    uc SIG_UPC_RESET
+
+op_bgt:
+    uc __branch_impl(SIG_EXEC_SEL_NEG_XOR_OVF_OR_ZERO, SIG_EXEC_INV)
+    uc SIG_UPC_RESET
+
+#bank mrom
+#addr OC_BLE
+#d16 op_ble
+#addr OC_BGT
+#d16 op_bgt
 
 
