@@ -41,9 +41,9 @@ OP_STAZ = OC_STAZ << OP_OFFSET
         assert(imm<=0xff)
         asm { ldi.8 {imm}`8 }
     }
-    ldi {imm:u16} => asm { ldi.16 {imm} }
+    ldi {imm:s32} => asm { ldi.16 {imm} & 0xffff }
     ldi.8  {imm:u8} => (OP_LDI8 | (imm & 0xff))`16
-    ldi.16 {imm:u16} => OP_LDI`16 @ imm`16
+    ldi.16 {imm:s32} => OP_LDI`16 @ imm`16
 
     sta {addr:u8} => {
         assert(addr<=0xff)
@@ -102,22 +102,22 @@ OP_ALU_SHRZ  = OC_SHRZ  << OP_OFFSET
         assert(imm<=0xff)
         asm { addi.8  {imm} }
     }
-    addi {imm:u16} => asm { addi.16 {imm} }
+    addi {imm:s32} => asm { addi.16 {imm} & 0xffff }
     subi {imm:u8}  => {
         assert(imm<=0xff)
         asm { subi.8  {imm} }
     }
-    subi {imm:u16} => asm { subi.16 {imm} }
+    subi {imm:s32} => asm { subi.16 {imm} & 0xffff }
     shli {imm:u8}  => {
         assert(imm<=0xff)
         asm { shli.8  {imm} }
     }
-    shli {imm:u16} => asm { shli.16 {imm} }
+    shli {imm:s32} => asm { shli.16 {imm} & 0xffff }
     shri {imm:u8}  => {
         assert(imm<=0xff)
         asm { shri.8  {imm} }
     }
-    shri {imm:u16} => asm { shri.16 {imm} }
+    shri {imm:s32} => asm { shri.16 {imm} & 0xffff }
 
     add {addr:u8}  => {
         assert(addr<=0xff)
@@ -164,12 +164,12 @@ OP_ALU_SBBZ  = OC_SBBZ  << OP_OFFSET
         assert(imm<=0xff)
         asm { adci.8  {imm} }
     }
-    adci {imm:u16} => asm { adci.16 {imm} }
+    adci {imm:s32} => asm { adci.16 {imm} & 0xffff }
     sbbi {imm:u8}  => {
         assert(imm<=0xff)
         asm { sbbi.8  {imm} }
     }
-    sbbi {imm:u16} => asm { sbbi.16 {imm} }
+    sbbi {imm:s32} => asm { sbbi.16 {imm} & 0xffff }
 
     adc {addr:u8}  => {
         assert(addr<=0xff)
@@ -247,9 +247,9 @@ OP_ALU_XORZ  = OC_XORZ << OP_OFFSET
         assert(imm<=0xff)
         asm { xori.8 {imm} }
     }
-    andi {imm:u16} => asm { andi.16 {imm} }
-    ori {imm:u16} => asm { ori.16 {imm} }
-    xori {imm:u16} => asm { xori.16 {imm} }
+    andi {imm:s32} => asm { andi.16 {imm} & 0xffff }
+    ori {imm:s32} => asm { ori.16 {imm} & 0xffff }
+    xori {imm:s32} => asm { xori.16 {imm} & 0xffff }
 
     andi.8 {imm:u8} => (OP_ALU_ANDI8 | imm)`16
     ori.8 {imm:u8} => (OP_ALU_ORI8 | imm)`16
@@ -323,7 +323,7 @@ OP_CMPZ = OC_CMPZ << OP_OFFSET
         assert(imm<=0xff)
         asm { cmpi.8 {imm} }
     }
-    cmpi {imm:u16} => asm { cmpi.16 {imm} }
+    cmpi {imm:s32} => asm { cmpi.16 {imm} & 0xffff }
 
     cmp {addr:u8} => {
         assert(addr<=0xff)
@@ -396,6 +396,12 @@ OP_BHI = OC_BHI << OP_OFFSET
 OP_BGE = OC_BGE << OP_OFFSET
 OP_BLT = OC_BLT << OP_OFFSET
 
+OP_BLE = OC_BLE << OP_OFFSET
+OP_BGT = OC_BGT << OP_OFFSET
+
+OP_BHS = OC_BHS << OP_OFFSET
+OP_BLO = OC_BLO << OP_OFFSET
+
 #ruledef branching {
     __branch({op:u16},{target:u16}) => {
         rel_addr = (target - ($ + 1)) & 0xff
@@ -405,16 +411,20 @@ OP_BLT = OC_BLT << OP_OFFSET
     beq {target: u16} => asm { __branch(OP_BEQ,{target}) }
     bne {target: u16} => asm { __branch(OP_BNE,{target}) }
     blt {target: u16} => asm { __branch(OP_BLT,{target}) }
+    ble {target: u16} => asm { __branch(OP_BLE,{target}) }
+    blo {target: u16} => asm { __branch(OP_BLO,{target}) }
     bls {target: u16} => asm { __branch(OP_BLS,{target}) }
+    bgt {target: u16} => asm { __branch(OP_BGT,{target}) }
     bge {target: u16} => asm { __branch(OP_BGE,{target}) }
+    bhs {target: u16} => asm { __branch(OP_BHS,{target}) }
     bhi {target: u16} => asm { __branch(OP_BHI,{target}) }
     bpl {target: u16} => asm { __branch(OP_BPL,{target}) }
     bmi {target: u16} => asm { __branch(OP_BMI,{target}) }
 }
 
 #ruledef branching_aliases {
-    bcc {target:u16} => asm { blt {target} }
-    bcs {target:u16} => asm { bge {target} }
+    bcc {target:u16} => asm { blo {target} }
+    bcs {target:u16} => asm { bhs {target} }
     bzc {target:u16} => asm { bne {target} }
     bzs {target:u16} => asm { beq {target} }
 }
