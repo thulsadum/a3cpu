@@ -23,3 +23,7 @@
 #const DSP_ADDR = 0x20
 #const RSP_ADDR = 0xff
 
+#const FALSE = 0x0000
+#const TRUE  = 0xffff
+
+
