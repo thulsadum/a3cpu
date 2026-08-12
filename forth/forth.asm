@@ -1,6 +1,10 @@
 #include "forth_def.asm"
 #include "../lib/zp.asm"
 
+
+FALSE = 0x0000
+TRUE  = 0xffff
+
 #ruledef forth {
     push({value}) => asm {
         stia DSP
@@ -253,6 +257,8 @@ xt_store:   ;; ( x addr -- )
 
     ret xt_store
 
+
+
 xt_emit: ;; ( ch -- )
     #res 1
 
@@ -264,6 +270,8 @@ xt_emit: ;; ( ch -- )
 
     ret xt_emit
 
+
+
 xt_key: ;; ( -- ch )
     #res 1
 
@@ -274,6 +282,53 @@ xt_key: ;; ( -- ch )
     ldia INPUT
 
     ret xt_key
+
+
+xt_eq0: ;; ( x -- flags )
+    #res 1
+    beq .success
+    ldi FALSE
+    ret xt_eq0
+.success:
+    ldi TRUE
+    ret xt_eq0
+
+
+xt_eq: ;; ( x y -- flags )
+    #res 1
+
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    cmp TMP
+
+    beq .success
+    ldi FALSE
+    ret xt_eq
+.success:
+    ldi TRUE
+    ret xt_eq
+
+
+xt_lt: ;; ( x y -- flags )
+    #res 1
+
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    cmp TMP
+
+    blt .success
+    ldi FALSE
+    ret xt_lt
+.success:
+    ldi TRUE
+    ret xt_lt
+
 
 #bank forth_text
 __forth_start:

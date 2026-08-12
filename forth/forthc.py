@@ -14,6 +14,9 @@ ASM = {
     "SHL": "jal xt_shl",
     "AND": "jal xt_and",
     "OR": "jal xt_or",
+    "0=": "jal xt_eq0",
+    "=": "jal xt_eq",
+    "<": "jal xt_lt",
     "@": "jal xt_fetch",
     "!": "jal xt_store",
     "KEY": "jal xt_key",
@@ -52,7 +55,7 @@ def parse_code(args, code):
 def parse_token(token):
     global PARSER_STATE
     if PARSER_STATE == 'R':
-        if token.isdigit():
+        if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
             return f'const({token})'
         elif token.upper().startswith("0X"):
             return f'const({token})'
