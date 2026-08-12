@@ -1,3 +1,4 @@
+#once
 
 #bankdef forth_system {
     bits = 16

@@ -1,3 +1,4 @@
+#once
 #include "../asmdef/ac3puasm_def_no_bank.asm"
 
 #bankdef zp {
