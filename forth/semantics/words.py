@@ -1,0 +1,20 @@
+from .word import Word
+
+CORE : dict[str, Word] = {
+    "DROP" : Word("DROP", asm="drop", xt = "xt_drop"),
+    "DUP" : Word("DUP", asm="dup", xt = "xt_dup"),
+    "SWAP": Word("SWAP", asm = "swap", xt = "xt_swap"),
+    "OVER": Word("OVER", asm = "over", xt = "xt_over"),
+    "+": Word("+", asm = "add", xt = "xt_add"),
+    "-": Word("-", asm = "sub", xt = "xt_sub"),
+    "SHL": Word("SHL", asm = "shl", xt = "xt_shl"),
+    "AND": Word("AND", asm = "and", xt = "xt_and"),
+    "OR": Word("OR", asm = "or", xt = "xt_or"),
+    "0=": Word("0=", asm = "jal xt_eq0", xt = "xt_eq0"),
+    "=": Word("=", asm = "jal xt_eq", xt = "xt_eq"),
+    "<": Word("<", asm = "jal xt_lt", xt = "xt_lt"),
+    "@": Word("@", asm = "jal xt_fetch", xt = "xt_fetch"),
+    "!": Word("!", asm = "jal xt_store", xt = "xt_store"),
+    "KEY": Word("KEY", asm = "jal xt_key", xt = "xt_key"),
+    "EMIT": Word("EMIT", asm = "jal xt_emit", xt = "xt_emit"),
+}
