@@ -1,38 +1,65 @@
-from enum import Enum, auto
+from .tokens import *
 
-
-class TokenizerState(Enum):
-    REGULAR = auto()
-    ASSEMBLER = auto()
-    CHARACTER = auto()
 
 class Tokenizer:
 
+
+
     def __init__(self):
-        self.state = TokenizerState.REGULAR
+        pass
+
+
+    def _parse_asm(self, buf):
+        return buf.split(sep=']', maxsplit=1)
+
+
+
+    def next(self, buf):
+
+        if len(buf.lstrip()) == 0:
+            return (None, '')
+
+        buf = buf.lstrip()
+
+        if buf[0] == '[':
+
+            if buf.startswith("[ASM "):
+                (tok, rest) = self._parse_asm(buf[5:])
+                return (AsmToken(tok), rest)
+
+        elif buf[0] == '"':
+            pass # string parsing
+
+        else:
+            res = buf.split(maxsplit=1)
+            tok = res[0]
+            rest = ''
+
+            if len(res) != 1:
+                rest = res[1]
+
+            return (self.parse_token(tok), rest)
+
+
 
     def parse_code(self, code):
-        tokens = code.split()
-        return [ ltok for tok in tokens if (ltok := self.parse_token(tok)) ]
+        tokens = []
+
+        while True:
+            (tok, code) = self.next(code)
+            if tok is None:
+                break
+            tokens.append(tok)
+
+
+        return tokens
 
     def parse_token(self, token):
-        if self.state is TokenizerState.REGULAR:
-            if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
-                return f'const({token})'
-            elif token.upper().startswith("0X"):
-                return f'const({token})'
-            elif token.upper() == '[CHAR]':
-                self.state = TokenizerState.CHARACTER
-                return ''
-            elif token.upper() == '[ASM':
-                self.state = TokenizerState.ASSEMBLER
-                return '[ASM'
-            return token
-        elif self.state is TokenizerState.ASSEMBLER:
-            if token == ']':
-                self.state = TokenizerState.REGULAR
-            return token
-        elif self.state is TokenizerState.CHARACTER:
-            self.state = TokenizerState.REGULAR
-            return f'const("{token}")'
+        if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
+            return LiteralToken(int(token))
+        elif token.upper().startswith("0X"):
+            return LiteralToken( int(token,base=16), repr=LiteralRepresentation.HEX)
+        else:
+            return WordToken(token)
+
 
