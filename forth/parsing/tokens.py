@@ -1,6 +1,5 @@
 from enum import Enum, auto
 
-
 class LiteralRepresentation(Enum):
     DECIMAL = auto()
     HEX = auto()
@@ -21,6 +20,8 @@ class AsmToken(Token):
 
 
 class LiteralToken(Token):
+    __match_args__ = ('value',)
+
     def __init__(self, value, repr  = LiteralRepresentation.DECIMAL):
         self.value = value
         self.repr = repr
@@ -32,11 +33,13 @@ class LiteralToken(Token):
             case LiteralRepresentation.HEX:
                 return f'push({self.value:#04x})'
             case LiteralRepresentation.CHAR:
-                return f'push("{ord(self.value)}")'
+                return f'push("{chr(self.value)}")'
 
 
 
 class WordToken(Token):
+    __match_args__ = ('word',)
+
     def __init__(self, word):
         self.word = word
 

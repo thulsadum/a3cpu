@@ -26,6 +26,9 @@ class Tokenizer:
             if buf.startswith("[ASM "):
                 (tok, rest) = self._parse_asm(buf[5:])
                 return (AsmToken(tok), rest)
+            elif buf.startswith("[CHAR] "):
+                (tok, rest) = buf.split(maxsplit=2)[1:]
+                return (LiteralToken(ord(tok[0]), repr = LiteralRepresentation.CHAR), rest)
 
         elif buf[0] == '"':
             pass # string parsing
@@ -60,6 +63,6 @@ class Tokenizer:
         elif token.upper().startswith("0X"):
             return LiteralToken( int(token,base=16), repr=LiteralRepresentation.HEX)
         else:
-            return WordToken(token)
+            return WordToken(token.upper())
 
 

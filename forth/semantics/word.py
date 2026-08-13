@@ -16,6 +16,7 @@ class Word:
         self.asm = asm
         self.pop_count = pop_count
         self.push_count = push_count
+        self.xt = xt
 
 
 
