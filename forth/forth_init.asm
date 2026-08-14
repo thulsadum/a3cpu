@@ -4,12 +4,13 @@
 #bank zp
 ; global var
 #addr 0x10
-DSP:    #d16 DSP_ADDR
-RSP:    #d16 RSP_ADDR
-TMP:    #res 1
-TMP2:   #res 1
-INPUT:  #res 1
-OUTPUT: #res 1
+DSP:    #d16 DSP_ADDR   ;; Data Stack Pointer
+RSP:    #d16 RSP_ADDR   ;; Return Stack Pointer
+DBP:    #d16 DICT       ;; Dictionary Base Pointer
+TMP:    #res 1          ;; TMP pseudo register
+TMP2:   #res 1          ;; second temporary pseudo register
+INPUT:  #res 1          ;; detected UART input register address
+OUTPUT: #res 1          ;; detected UART output register address
 
 
 #bank forth_system

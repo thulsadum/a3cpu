@@ -68,3 +68,6 @@ _assert:
         cmpi 0x21
         bne .fail
         ret .stack_dropped
+
+
+DICT:

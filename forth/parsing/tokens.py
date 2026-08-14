@@ -10,6 +10,28 @@ class Token:
     pass
 
 
+class ParsingToken(Token):
+    pass
+
+
+class VariableToken(ParsingToken):
+
+    def __str__(self):
+        return f'; VARIABLE'
+
+
+class SymbolToken(Token):
+
+    __match_args__ = ('symbol',)
+
+    def __init__(self, symbol):
+        self.symbol = symbol
+        self.addr = None
+
+    def __str__(self):
+        return f'{self.addr:#04x}' if self.addr else f'; {self.symbol}'
+
+
 
 class AsmToken(Token):
     def __init__(self, asm):

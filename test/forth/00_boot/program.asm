@@ -5,3 +5,5 @@
     jal fexit
     lda 0xff
     taf ; should not be reached
+
+DICT:

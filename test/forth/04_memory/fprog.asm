@@ -4,6 +4,8 @@
 
 jmp setup_test
 
+DICT:
+
 pad:
     .fetch: #d16 0xf00b
     .store: #d16 0

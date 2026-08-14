@@ -4,6 +4,8 @@
 
 jmp setup_test
 
+DICT:
+
 test_add:
     #res 1
 

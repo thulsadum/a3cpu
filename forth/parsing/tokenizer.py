@@ -4,17 +4,15 @@ from .tokens import *
 class Tokenizer:
 
 
-
     def __init__(self):
-        pass
-
+        self.symbols = []
 
     def _parse_asm(self, buf):
         return buf.split(sep=']', maxsplit=1)
 
 
 
-    def next(self, buf):
+    def next(self, buf, tokens = []):
 
         if len(buf.lstrip()) == 0:
             return (None, '')
@@ -41,7 +39,7 @@ class Tokenizer:
             if len(res) != 1:
                 rest = res[1]
 
-            return (self.parse_token(tok), rest)
+            return (self.parse_token(tok, tokens), rest)
 
 
 
@@ -49,7 +47,7 @@ class Tokenizer:
         tokens = []
 
         while True:
-            (tok, code) = self.next(code)
+            (tok, code) = self.next(code, tokens)
             if tok is None:
                 break
             tokens.append(tok)
@@ -57,11 +55,19 @@ class Tokenizer:
 
         return tokens
 
-    def parse_token(self, token):
+    def parse_token(self, token, tokens):
         if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
             return LiteralToken(int(token))
         elif token.upper().startswith("0X"):
             return LiteralToken( int(token,base=16), repr=LiteralRepresentation.HEX)
+        elif token.upper() == "VARIABLE":
+            return VariableToken()
+        elif isinstance(tokens[-1], ParsingToken):
+            if not token in self.symbols:
+                self.symbols.append(token)
+            return SymbolToken(token)
+        elif token in self.symbols:
+            return SymbolToken(token)
         else:
             return WordToken(token.upper())
 

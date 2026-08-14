@@ -7,3 +7,5 @@
     jal fgetc
     jal fputc
     jal fexit
+
+DICT:
