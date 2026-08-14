@@ -5,7 +5,7 @@ import sys
 
 from semantics import Word
 from semantics import words
-from parsing import CodeReader, Tokenizer, Optimizer
+from parsing import CodeReader, Tokenizer, TokenStreamParser, Optimizer
 from generators import Ac3puGenerator, OutputWriter
 
 
@@ -24,6 +24,7 @@ def main():
     args = parse_args()
     code_reader = CodeReader(args)
     tokenizer = Tokenizer()
+    tsp = TokenStreamParser()
     optimizer = Optimizer(args)
     generator = Ac3puGenerator()
     writer = OutputWriter(args)
@@ -35,6 +36,7 @@ def main():
         sys.exit(1)
 
     tokens = tokenizer.parse_code(code)
+    tokens = tsp.parse(tokens)
     opt_immediate = optimizer.optimize(tokens)
     asm = generator.generate(opt_immediate)
     writer.write(asm)
