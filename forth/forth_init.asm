@@ -1,6 +1,16 @@
 #include "forth_def.asm"
 #include "../lib/zp.asm"
 
+#bank zp
+; global var
+#addr 0x10
+DSP:    #d16 DSP_ADDR
+RSP:    #d16 RSP_ADDR
+TMP:    #res 1
+TMP2:   #res 1
+INPUT:  #res 1
+OUTPUT: #res 1
+
 
 #bank forth_system
 
