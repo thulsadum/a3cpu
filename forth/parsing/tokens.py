@@ -10,8 +10,34 @@ class Token:
     pass
 
 
+
 class ParsingToken(Token):
     pass
+
+
+
+class SyntheticToken(Token):
+    pass
+
+
+class SymbolTableToken(SyntheticToken):
+
+    def __init__(self, size):
+        self.size = size
+
+    def __str__(self):
+        return f'DICT: #res {self.size}\n.end:'
+
+
+class SymbolReferenceToken(SyntheticToken):
+
+    def __init__(self, symbol, offset):
+        self.symbol = symbol
+        self.offset = offset
+
+    def __str__(self):
+        return f'push({self.offset})\nadd DBP ; symbol: {self.symbol}'
+
 
 
 class VariableToken(ParsingToken):
