@@ -284,6 +284,18 @@ xt_eq0: ;; ( x -- flags )
     ret xt_eq0
 
 
+
+xt_lt0: ;; ( x -- flags )
+    #res 1
+    bmi .success
+    ldi FALSE
+    ret xt_lt0
+.success:
+    ldi TRUE
+    ret xt_lt0
+
+
+
 xt_eq: ;; ( x y -- flags )
     #res 1
 
@@ -320,3 +332,18 @@ xt_lt: ;; ( x y -- flags )
     ret xt_lt
 
 
+xt_gt: ;; ( x y -- flags )
+    #res 1
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    cmp TMP
+
+    bgt .success
+    ldi FALSE
+    ret xt_gt
+.success:
+    ldi TRUE
+    ret xt_gt

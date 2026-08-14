@@ -110,6 +110,60 @@ __assert:
     ret .test_lt_3
 
 
+.test_lt0_0: ;; 1 0< --> FALSE
+    #res 1
+
+    cmpi FALSE
+    bne .fail
+
+    ret .test_lt0_0
+
+.test_lt0_1: ;; 0 0< --> FALSE
+    #res 1
+
+    cmpi FALSE
+    bne .fail
+
+    ret .test_lt0_1
+
+.test_lt0_2: ;; -1 0< --> TRUE
+    #res 1
+
+    cmpi TRUE
+    bne .fail
+
+    ret .test_lt0_2
+
+
+
+.test_gt_0:   ;; 1 0 >
+    #res 1
+
+    cmpi TRUE
+    bne .fail
+
+    ret .test_gt_0
+
+
+
+.test_gt_1:   ;; 0 0 >
+    #res 1
+
+    cmpi FALSE
+    bne .fail
+
+    ret .test_gt_1
+
+
+
+.test_gt_2:   ;; -1 0 >
+    #res 1
+
+    cmpi FALSE
+    bne .fail
+
+    ret .test_gt_2
+
 
 
 
@@ -135,8 +189,10 @@ setup_test:
 .max:   #d16 (.dict_tc_end - .dict_tc)
 .dict_tc:
     #d16 test_eq0
+    #d16 test_lt0
     #d16 test_eq
     #d16 test_lt
+    #d16 test_gt
 .dict_tc_end:
 
 #include "program.asm"

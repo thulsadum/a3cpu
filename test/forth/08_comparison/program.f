@@ -35,3 +35,24 @@
 [ASM jal __assert.test_lt_3 ]
 [ASM ret test_lt ]
 
+[ASM test_lt0:
+  #res 1 ]
+ 1 0<
+[ASM   jal __assert.test_lt0_0 ]
+ 0 0<
+[ASM   jal __assert.test_lt0_1 ]
+-1 0<
+[ASM   jal __assert.test_lt0_2 ]
+[ASM   ret test_lt0 ]
+
+
+[ASM test_gt:
+  #res 1 ]
+ 1 0 >
+[ASM   jal __assert.test_gt_0 ]
+ 0 0 >
+[ASM   jal __assert.test_gt_1 ]
+-1 0 >
+[ASM   jal __assert.test_gt_2 ]
+[ASM   ret test_gt ]
+
