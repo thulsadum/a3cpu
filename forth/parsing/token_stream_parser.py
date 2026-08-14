@@ -13,11 +13,11 @@ class TokenStreamParser:
         return symbol in self.symbols
 
     def parse(self, tokens):
-
+        max_passes = 5
         result = []
         unresolved_symbols = False
 
-        for i in range(2):
+        for i in range(max_passes):
 
             for token in tokens:
 
@@ -35,7 +35,7 @@ class TokenStreamParser:
                         else:
                             unresolved_symbols = True
 
-            if not unresolved_symbols:
+            if not unresolved_symbols or i == max_passes-1:
                 break
 
             tokens = result
