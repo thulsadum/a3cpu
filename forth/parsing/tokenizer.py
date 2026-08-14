@@ -67,6 +67,8 @@ class Tokenizer:
     def parse_parsing_token(self, token, tokens):
         if token.upper() == "VARIABLE":
             return VariableToken()
+        elif token.upper() == "CREATE":
+            return CreateToken()
         elif isinstance(tokens[-1], ParsingToken):
             if not token in self.symbols:
                 self.symbols.append(token)

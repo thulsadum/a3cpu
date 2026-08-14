@@ -16,8 +16,22 @@ class ParsingToken(Token):
 
 
 
+class VariableToken(ParsingToken):
+
+    def __str__(self):
+        return f'; VARIABLE'
+
+
+class CreateToken(ParsingToken):
+
+    def __str__(self):
+        return '; CREATE'
+
+
+
 class SyntheticToken(Token):
     pass
+
 
 
 class SymbolTableToken(SyntheticToken):
@@ -38,12 +52,6 @@ class SymbolReferenceToken(SyntheticToken):
     def __str__(self):
         return f'push({self.offset})\nadd DBP ; symbol: {self.symbol}'
 
-
-
-class VariableToken(ParsingToken):
-
-    def __str__(self):
-        return f'; VARIABLE'
 
 
 class SymbolToken(Token):
@@ -94,4 +102,5 @@ class WordToken(Token):
     def __str__(self):
         return f'{self.word}'
 
-
+    def __repr__(self):
+        return f'WordToken("{self.word}")'

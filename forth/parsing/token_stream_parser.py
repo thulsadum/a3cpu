@@ -5,9 +5,11 @@ class TokenStreamParser:
 
     def __init__(self):
         self.symbols = {}
+        self.offset = 0
 
-    def add_symbol(self, symbol):
-        self.symbols[symbol] = len(self.symbols)
+    def add_symbol(self, symbol, size = 1):
+        self.symbols[symbol] = self.offset
+        self.offset += size
 
     def has_symbol(self, symbol):
         return symbol in self.symbols
@@ -26,6 +28,14 @@ class TokenStreamParser:
                 match result[-2:]:
                     case [VariableToken(), SymbolToken(symbol)]:
                         self.add_symbol(symbol)
+                        result[-2:] = []
+                    case [CreateToken(), SymbolToken(symbol)]:
+                        self.add_symbol(symbol, size = 0)
+                        result[-2:] = []
+                    case [LiteralToken(size) as lt, WordToken("CELLS")]:
+                        result[-2:] = [lt]
+                    case [LiteralToken(size), WordToken("ALLOT")]:
+                        self.offset += size
                         result[-2:] = []
 
                 match result[-1:]:
