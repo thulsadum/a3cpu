@@ -22,4 +22,5 @@ CORE : dict[str, Word] = {
     ">R": Word(">R", asm = "movR", xt = "xt_movR"),
     "R>": Word("R>", asm = "pullR", xt = "xt_pullR"),
     "R@": Word("R@", asm = "copyR", xt = "xt_copyR"),
+    "DEPTH": Word("DEPTH", asm = "depth", xt = "xt_depth"),
 }

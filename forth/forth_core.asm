@@ -182,6 +182,15 @@
         ldia INPUT
     }
 
+    depth => asm {
+        stia DSP
+        lda DSP
+        inc
+        sta DSP
+        dec
+        subi DSP_ADDR
+    }
+
 }
 
 
@@ -401,3 +410,10 @@ xt_copyR:  ;; ( -- x ), R( x -- x )
     #res 1
     copyR
     ret xt_copyR
+
+xt_depth:  ;; ( -- +n )
+    #res 1
+
+    depth
+
+    ret xt_depth
