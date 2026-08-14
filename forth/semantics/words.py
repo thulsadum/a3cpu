@@ -19,4 +19,7 @@ CORE : dict[str, Word] = {
     "!": Word("!", asm = "jal xt_store", xt = "xt_store"),
     "KEY": Word("KEY", asm = "jal xt_key", xt = "xt_key"),
     "EMIT": Word("EMIT", asm = "jal xt_emit", xt = "xt_emit"),
+    ">R": Word(">R", asm = "movR", xt = "xt_movR"),
+    "R>": Word("R>", asm = "pullR", xt = "xt_pullR"),
+    "R@": Word("R@", asm = "copyR", xt = "xt_copyR"),
 }

@@ -17,6 +17,41 @@
         lia
     }
 
+    movR => asm {
+        stia RSP
+        lda RSP
+        dec
+        sta RSP
+
+        drop
+
+    }
+
+    pullR => asm {
+        stia DSP
+
+        lda DSP
+        inc
+        sta DSP
+
+        lda RSP
+        inc
+        sta RSP
+        lia
+    }
+
+    copyR => asm {
+        stia DSP
+
+        lda DSP
+        inc
+        sta DSP
+
+        lda RSP
+        inc
+        lia
+    }
+
     dup => asm {
         stia DSP
         lda DSP
@@ -347,3 +382,22 @@ xt_gt: ;; ( x y -- flags )
 .success:
     ldi TRUE
     ret xt_gt
+
+
+
+xt_movR:  ;; ( x -- ), R( -- x )
+    #res 1
+    movR
+    ret xt_movR
+
+
+
+xt_pullR:  ;; ( -- x ), R( x -- )
+    #res 1
+    pullR
+    ret xt_pullR
+
+xt_copyR:  ;; ( -- x ), R( x -- x )
+    #res 1
+    copyR
+    ret xt_copyR
