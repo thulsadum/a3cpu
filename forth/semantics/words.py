@@ -7,10 +7,12 @@ CORE : dict[str, Word] = {
     "OVER": Word("OVER", asm = "over", xt = "xt_over"),
     "+": Word("+", asm = "add", xt = "xt_add"),
     "1+": Word("1+", asm = "inc", xt = "xt_inc"),
+    "1-": Word("1-", asm = "dec", xt = "xt_dec"),
     "-": Word("-", asm = "sub", xt = "xt_sub"),
     "SHL": Word("SHL", asm = "shl", xt = "xt_shl"),
     "AND": Word("AND", asm = "and", xt = "xt_and"),
     "OR": Word("OR", asm = "or", xt = "xt_or"),
+    "NOT": Word("NOT", asm = "jal xt_eq0", xt = "xt_eq0"),
     "0=": Word("0=", asm = "jal xt_eq0", xt = "xt_eq0"),
     "0<": Word("0<", asm = "jal xt_lt0", xt = "xt_lt0"),
     "=": Word("=", asm = "jal xt_eq", xt = "xt_eq"),
@@ -24,4 +26,5 @@ CORE : dict[str, Word] = {
     "R>": Word("R>", asm = "pullR", xt = "xt_pullR"),
     "R@": Word("R@", asm = "copyR", xt = "xt_copyR"),
     "DEPTH": Word("DEPTH", asm = "depth", xt = "xt_depth"),
+    "FAIL": Word("FAIL", asm = "ldi 0xff\ntaf", xt = "xt_fail"),
 }
