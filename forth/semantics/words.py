@@ -6,6 +6,7 @@ CORE : dict[str, Word] = {
     "SWAP": Word("SWAP", asm = "swap", xt = "xt_swap"),
     "OVER": Word("OVER", asm = "over", xt = "xt_over"),
     "+": Word("+", asm = "add", xt = "xt_add"),
+    "1+": Word("1+", asm = "inc", xt = "xt_inc"),
     "-": Word("-", asm = "sub", xt = "xt_sub"),
     "SHL": Word("SHL", asm = "shl", xt = "xt_shl"),
     "AND": Word("AND", asm = "and", xt = "xt_and"),
