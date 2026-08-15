@@ -6,7 +6,7 @@ class Ac3puGenerator:
     def gen_tok(self, token):
         if isinstance(token, WordToken):
             word = words.CORE[str(token).upper()]
-            return f"jal {word.xt}"
+            return f"{word.asm}"
         else:
             return str(token)
 
