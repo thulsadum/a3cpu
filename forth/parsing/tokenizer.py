@@ -55,12 +55,17 @@ class Tokenizer:
 
         return tokens
 
-    def parse_token(self, token, tokens):
+
+    def parse_literal(self, token, tokens):
         if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
             return LiteralToken(int(token))
         elif token.upper().startswith("0X"):
             return LiteralToken( int(token,base=16), repr=LiteralRepresentation.HEX)
-        elif token.upper() == "VARIABLE":
+        return None
+
+
+    def parse_parsing_token(self, token, tokens):
+        if token.upper() == "VARIABLE":
             return VariableToken()
         elif isinstance(tokens[-1], ParsingToken):
             if not token in self.symbols:
@@ -68,7 +73,19 @@ class Tokenizer:
             return SymbolToken(token)
         elif token in self.symbols:
             return SymbolToken(token)
-        else:
-            return WordToken(token.upper())
+        return None
+
+
+    def parse_token(self, token, tokens):
+
+        rules = [self.parse_literal, self.parse_parsing_token]
+
+        for r in rules:
+
+            if ret := r(token, tokens):
+
+                return ret
+
+        return WordToken(token.upper())
 
 
