@@ -25,6 +25,13 @@ class Tokenizer:
                 return self.next(buf[pos:],tokens)
             else:
                 return (None, '')
+        elif buf[0] == '(':
+            # inline comment
+            if (pos:=buf.find(')')) > 0:
+                return self.next(buf[pos+1:],tokens)
+            else:
+                # TO DO: Raise an error
+                return (None, '')
         elif buf[0] == '[':
 
             if buf.startswith("[ASM "):
