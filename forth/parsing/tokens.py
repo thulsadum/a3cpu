@@ -34,6 +34,30 @@ class SyntheticToken(Token):
 
 
 
+class ControlFlowToken(Token):
+    def __init__(self):
+        self.symbol = None
+
+
+class IfToken(ControlFlowToken):
+    def __str__(self):
+        return f'stia DSP\nlda DSP\ndec\nsta DSP\ninc\nlia\nbeq {self.symbol} ; IF'
+
+class ElseToken(ControlFlowToken):
+
+    def __init__(self):
+        super().__init__()
+        self.symbol2 = None
+
+    def __str__(self):
+        return f'bra {self.symbol2}\n{self.symbol}: ; ELSE'
+
+
+class ThenToken(ControlFlowToken):
+
+    def __str__(self):
+        return f'{self.symbol}: ; THEN'
+
 class SymbolTableToken(SyntheticToken):
 
     def __init__(self, size):

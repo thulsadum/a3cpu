@@ -6,13 +6,34 @@ class TokenStreamParser:
     def __init__(self):
         self.symbols = {}
         self.offset = 0
+        self.cf_count = 0
+        self.cf = []
+
 
     def add_symbol(self, symbol, size = 1):
         self.symbols[symbol] = self.offset
         self.offset += size
 
+
     def has_symbol(self, symbol):
         return symbol in self.symbols
+
+
+    def generate_control_flow_label(self,prefix="_",push=False):
+        label = f'{prefix}{self.cf_count}'
+        self.cf_count += 1
+        if push:
+            self.push_cf(label)
+        return label
+
+
+    def push_cf(self, label):
+        self.cf.append(label)
+
+
+    def pop_cf(self):
+        return self.cf.pop()
+
 
     def parse(self, tokens):
         max_passes = 5
@@ -44,6 +65,17 @@ class TokenStreamParser:
                             result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol]) ]
                         else:
                             unresolved_symbols = True
+
+                    case [IfToken() as tok]:
+                        tok.symbol = self.generate_control_flow_label(prefix="__if_",push=True)
+
+                    case [ElseToken() as tok]:
+                        tok.symbol = self.pop_cf()
+                        tok.symbol2 = self.generate_control_flow_label(prefix="__else_",push=True)
+
+                    case [ThenToken() as tok]:
+                        tok.symbol = self.pop_cf()
+
 
             if not unresolved_symbols or i == max_passes-1:
                 break

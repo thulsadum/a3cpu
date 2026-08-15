@@ -78,9 +78,17 @@ class Tokenizer:
         return None
 
 
+    def parse_control_flow_token(self, token, tokens):
+        match token.upper():
+            case 'IF': return IfToken()
+            case 'ELSE': return ElseToken()
+            case 'THEN': return ThenToken()
+            case _: return None
+
+
     def parse_token(self, token, tokens):
 
-        rules = [self.parse_literal, self.parse_parsing_token]
+        rules = [self.parse_literal, self.parse_parsing_token, self.parse_control_flow_token]
 
         for r in rules:
 
