@@ -27,6 +27,11 @@ class CreateToken(ParsingToken):
     def __str__(self):
         return '; CREATE'
 
+class RequireToken(ParsingToken):
+
+    def __str__(self):
+        return '; INCLUDE'
+
 
 
 class SyntheticToken(Token):

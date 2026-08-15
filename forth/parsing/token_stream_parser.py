@@ -1,9 +1,11 @@
-
+from .code_reader import CodeReader
+from .tokenizer import Tokenizer
 from .tokens import *
 
 class TokenStreamParser:
 
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         self.symbols = {}
         self.offset = 0
         self.cf_count = 0
@@ -34,6 +36,10 @@ class TokenStreamParser:
     def pop_cf(self):
         return self.cf.pop()
 
+    def include(self, file, once=False):
+        code_reader = CodeReader(self.args, file=file)
+        tokenizer = Tokenizer()
+        return tokenizer.parse_code(code_reader.get_code())
 
     def parse(self, tokens):
         max_passes = 5
@@ -47,14 +53,22 @@ class TokenStreamParser:
                 result.append(token)
 
                 match result[-2:]:
+
                     case [VariableToken(), SymbolToken(symbol)]:
                         self.add_symbol(symbol)
                         result[-2:] = []
+
+                    case [RequireToken(), SymbolToken(symbol)]:
+                        result[-2:] = self.include(symbol, once=True)
+                        unresolved_symbols = True # invoke second pass
+
                     case [CreateToken(), SymbolToken(symbol)]:
                         self.add_symbol(symbol, size = 0)
                         result[-2:] = []
+
                     case [LiteralToken(size) as lt, WordToken("CELLS")]:
                         result[-2:] = [lt]
+
                     case [LiteralToken(size), WordToken("ALLOT")]:
                         self.offset += size
                         result[-2:] = []

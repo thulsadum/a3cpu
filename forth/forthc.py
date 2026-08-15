@@ -24,7 +24,7 @@ def main():
     args = parse_args()
     code_reader = CodeReader(args)
     tokenizer = Tokenizer()
-    tsp = TokenStreamParser()
+    tsp = TokenStreamParser(args)
     optimizer = Optimizer(args)
     generator = Ac3puGenerator()
     writer = OutputWriter(args)

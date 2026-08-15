@@ -82,6 +82,8 @@ class Tokenizer:
             return VariableToken()
         elif token.upper() == "CREATE":
             return CreateToken()
+        elif token.upper() == "REQUIRE":
+            return RequireToken()
         elif len(tokens)>0 and isinstance(tokens[-1], ParsingToken):
             if not token in self.symbols:
                 self.symbols.append(token)

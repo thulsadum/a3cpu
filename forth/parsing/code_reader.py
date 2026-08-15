@@ -3,9 +3,9 @@ import sys
 
 class CodeReader:
 
-    def __init__(self, args):
+    def __init__(self, args, file=None):
         self.args = args
-        self.file = args.input_file
+        self.file = file if file else args.input_file
 
     def get_code(self):
         if self.file == '-':
