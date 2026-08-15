@@ -58,6 +58,19 @@ class ThenToken(ControlFlowToken):
     def __str__(self):
         return f'{self.symbol}: ; THEN'
 
+
+class BeginToken(ControlFlowToken):
+
+    def __str__(self):
+        return f'stia DSP\n{self.symbol}: lda DSP\nlia ; BEGIN'
+
+
+class UntilToken(ControlFlowToken):
+
+    def __str__(self):
+        return f'stia DSP\nlda DSP\ndec\nsta DSP\ninc\nlia\nbne {self.symbol}\nlda DSP\nlia ; UNTIL'
+
+
 class SymbolTableToken(SyntheticToken):
 
     def __init__(self, size):

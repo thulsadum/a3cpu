@@ -83,6 +83,8 @@ class Tokenizer:
             case 'IF': return IfToken()
             case 'ELSE': return ElseToken()
             case 'THEN': return ThenToken()
+            case 'BEGIN': return BeginToken()
+            case 'UNTIL': return UntilToken()
             case _: return None
 
 

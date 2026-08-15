@@ -76,6 +76,12 @@ class TokenStreamParser:
                     case [ThenToken() as tok]:
                         tok.symbol = self.pop_cf()
 
+                    case [BeginToken() as tok]:
+                        tok.symbol = self.generate_control_flow_label(prefix="__begin_",push=True)
+
+                    case [UntilToken() as tok]:
+                        tok.symbol = self.pop_cf()
+
 
             if not unresolved_symbols or i == max_passes-1:
                 break
