@@ -19,7 +19,13 @@ class Tokenizer:
 
         buf = buf.lstrip()
 
-        if buf[0] == '[':
+        if buf[0] == '\\':
+            # line comment
+            if (pos:=buf.find('\n')) > 0:
+                return self.next(buf[pos:],tokens)
+            else:
+                return (None, '')
+        elif buf[0] == '[':
 
             if buf.startswith("[ASM "):
                 (tok, rest) = self._parse_asm(buf[5:])
