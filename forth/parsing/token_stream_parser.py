@@ -10,12 +10,21 @@ class TokenStreamParser:
         self.offset = 0
         self.cf_count = 0
         self.cf = []
+        self.current_definition = None
+        self.custom_words = {}
 
 
     def add_symbol(self, symbol, size = 1):
         self.symbols[symbol] = self.offset
         self.offset += size
 
+    def clean_symbol(self, symbol):
+        allowed_char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdeghijklmnopqrstuvwxyz0123456789_"
+        mask_disallowed = '_'
+        return self.generate_control_flow_label(prefix=''.join([c if c in allowed_char else mask_disallowed for c in symbol ]))
+
+    def add_custom_word(self, symbol, defTok : DefinitionToken):
+        self.custom_words[symbol] = defTok
 
     def has_symbol(self, symbol):
         return symbol in self.symbols
@@ -41,7 +50,7 @@ class TokenStreamParser:
         tokenizer = Tokenizer()
         return tokenizer.parse_code(code_reader.get_code())
 
-    def parse(self, tokens):
+    def parse(self, tokens, emit_symbol_table = True):
         max_passes = 5
         result = []
         unresolved_symbols = False
@@ -49,6 +58,15 @@ class TokenStreamParser:
         for i in range(max_passes):
 
             for token in tokens:
+                if self.current_definition:
+                    match token:
+                        case SemicolonToken():
+                            cur_def = self.current_definition
+                            self.current_definition = None
+                            cur_def.tokens = self.parse(cur_def.tokens, emit_symbol_table=False)
+                        case t:
+                            self.current_definition.add_token(token)
+                    continue
 
                 result.append(token)
 
@@ -73,6 +91,16 @@ class TokenStreamParser:
                         self.offset += size
                         result[-2:] = []
 
+                    case [ColonToken(), SymbolToken(word)]:
+                        if self.current_definition:
+                            # TO DO: Raise error
+                            pass
+                        symbol = self.clean_symbol(word)
+                        self.current_definition = DefinitionToken(word, token=f'xt_{symbol}')
+                        self.add_custom_word(word, self.current_definition)
+                        result[-2:] = [self.current_definition]
+
+
                 match result[-1:]:
                     case [SymbolToken(symbol)]:
                         if self.has_symbol(symbol):
@@ -96,6 +124,11 @@ class TokenStreamParser:
                     case [UntilToken() as tok]:
                         tok.symbol = self.pop_cf()
 
+                    case [WordToken(word)]:
+                        if word in self.custom_words:
+                            result[-1] = CustomWordToken(word, token=self.custom_words[word].token)
+
+
 
             if not unresolved_symbols or i == max_passes-1:
                 break
@@ -104,6 +137,6 @@ class TokenStreamParser:
             result = []
 
 
-        result.insert(0, SymbolTableToken(len(self.symbols)))
+        if emit_symbol_table: result.insert(0, SymbolTableToken(len(self.symbols)))
 
         return result

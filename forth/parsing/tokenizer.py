@@ -84,6 +84,10 @@ class Tokenizer:
             return CreateToken()
         elif token.upper() == "REQUIRE":
             return RequireToken()
+        elif token.upper() == ":":
+            return ColonToken()
+        elif token.upper() == ";":
+            return SemicolonToken()
         elif len(tokens)>0 and isinstance(tokens[-1], ParsingToken):
             if not token in self.symbols:
                 self.symbols.append(token)

@@ -7,12 +7,14 @@ class LiteralRepresentation(Enum):
 
 
 class Token:
-    pass
 
+    def __init__(self):
+        self.has_arg = False
 
 
 class ParsingToken(Token):
-    pass
+    def __init__(self):
+        self.has_arg = True
 
 
 
@@ -32,12 +34,41 @@ class RequireToken(ParsingToken):
     def __str__(self):
         return '; INCLUDE'
 
+class ColonToken(ParsingToken):
+
+    def __init__(self):
+        self.symbol = None
+        self.program = []
+
+    def __str__(self):
+        return '; :'
+
+class SemicolonToken(ParsingToken):
+
+    def __init(self):
+        self.has_arg = False
+
+    def __str__(self):
+        return '; ;'
 
 
 class SyntheticToken(Token):
     pass
 
 
+class DefinitionToken(SyntheticToken):
+    __match_args__ = ('symbol',)
+
+    def __init__(self, symbol, token=None):
+        self.symbol = symbol
+        self.token = token if token else f'xt_{symbol}'
+        self.tokens = []
+
+    def add_token(self, token):
+        self.tokens.append(token)
+
+    def __repr__(self):
+        return f'DefinitionToken({self.symbol}, token={self.token})'
 
 class ControlFlowToken(Token):
     def __init__(self):
@@ -146,3 +177,18 @@ class WordToken(Token):
 
     def __repr__(self):
         return f'WordToken("{self.word}")'
+
+
+class CustomWordToken(SyntheticToken):
+    __match_args__ = ('word',)
+
+    def __init__(self, word, token=None):
+        self.word = word
+        self.token = token if token else word
+
+    def __str__(self):
+        return f'jal {self.token}'
+
+    def __repr__(self):
+        return f'CustomWordToken("{self.word}")'
+
