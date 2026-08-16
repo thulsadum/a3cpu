@@ -88,9 +88,12 @@ class Tokenizer:
             return ColonToken()
         elif token.upper() == ";":
             return SemicolonToken()
-        elif len(tokens)>0 and isinstance(tokens[-1], ParsingToken):
+        elif len(tokens)>0 and tokens[-1].has_arg:
             if not token in self.symbols:
                 self.symbols.append(token)
+            else:
+                #TO DO: raise error
+                pass
             return SymbolToken(token)
         elif token in self.symbols:
             return SymbolToken(token)

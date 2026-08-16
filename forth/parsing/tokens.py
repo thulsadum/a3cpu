@@ -19,37 +19,31 @@ class ParsingToken(Token):
 
 
 class VariableToken(ParsingToken):
-
-    def __str__(self):
-        return f'; VARIABLE'
+    pass
 
 
 class CreateToken(ParsingToken):
+    pass
 
-    def __str__(self):
-        return '; CREATE'
 
 class RequireToken(ParsingToken):
+    pass
 
-    def __str__(self):
-        return '; INCLUDE'
 
 class ColonToken(ParsingToken):
 
     def __init__(self):
+        super().__init__()
         self.symbol = None
         self.program = []
 
-    def __str__(self):
-        return '; :'
+
 
 class SemicolonToken(ParsingToken):
 
     def __init(self):
         self.has_arg = False
 
-    def __str__(self):
-        return '; ;'
 
 
 class SyntheticToken(Token):
@@ -70,14 +64,17 @@ class DefinitionToken(SyntheticToken):
     def __repr__(self):
         return f'DefinitionToken({self.symbol}, token={self.token})'
 
+
+
 class ControlFlowToken(Token):
     def __init__(self):
+        super().__init__()
         self.symbol = None
 
 
 class IfToken(ControlFlowToken):
-    def __str__(self):
-        return f'stia DSP\nlda DSP\ndec\nsta DSP\ninc\nlia\nbeq {self.symbol} ; IF'
+    pass
+
 
 class ElseToken(ControlFlowToken):
 
@@ -85,45 +82,32 @@ class ElseToken(ControlFlowToken):
         super().__init__()
         self.symbol2 = None
 
-    def __str__(self):
-        return f'bra {self.symbol2}\n{self.symbol}: ; ELSE'
-
 
 class ThenToken(ControlFlowToken):
-
-    def __str__(self):
-        return f'{self.symbol}: ; THEN'
+    pass
 
 
 class BeginToken(ControlFlowToken):
-
-    def __str__(self):
-        return f'stia DSP\n{self.symbol}: lda DSP\nlia ; BEGIN'
+    pass
 
 
 class UntilToken(ControlFlowToken):
-
-    def __str__(self):
-        return f'stia DSP\nlda DSP\ndec\nsta DSP\ninc\nlia\nbne {self.symbol}\nlda DSP\nlia ; UNTIL'
+    pass
 
 
 class SymbolTableToken(SyntheticToken):
 
     def __init__(self, size):
+        super().__init__()
         self.size = size
-
-    def __str__(self):
-        return f'DICT: #res {self.size}\n.end:'
 
 
 class SymbolReferenceToken(SyntheticToken):
 
     def __init__(self, symbol, offset):
+        super().__init__()
         self.symbol = symbol
         self.offset = offset
-
-    def __str__(self):
-        return f'push({self.offset})\nadd DBP ; symbol: {self.symbol}'
 
 
 
@@ -132,37 +116,26 @@ class SymbolToken(Token):
     __match_args__ = ('symbol',)
 
     def __init__(self, symbol):
+        super().__init__()
         self.symbol = symbol
-        self.addr = None
-
-    def __str__(self):
-        return f'{self.addr:#04x}' if self.addr else f'; {self.symbol}'
 
 
 
 class AsmToken(Token):
+    __match_args__ = ('asm',)
     def __init__(self, asm):
+        super().__init__()
         self.asm = asm
 
-    def __str__(self):
-        return self.asm
 
 
 class LiteralToken(Token):
     __match_args__ = ('value',)
 
     def __init__(self, value, repr  = LiteralRepresentation.DECIMAL):
+        super().__init__()
         self.value = value
         self.repr = repr
-
-    def __str__(self):
-        match self.repr:
-            case LiteralRepresentation.DECIMAL:
-                return f'push({self.value})'
-            case LiteralRepresentation.HEX:
-                return f'push({self.value:#04x})'
-            case LiteralRepresentation.CHAR:
-                return f'push("{chr(self.value)}")'
 
 
 
@@ -170,6 +143,7 @@ class WordToken(Token):
     __match_args__ = ('word',)
 
     def __init__(self, word):
+        super().__init__()
         self.word = word
 
     def __str__(self):
@@ -185,9 +159,6 @@ class CustomWordToken(SyntheticToken):
     def __init__(self, word, token=None):
         self.word = word
         self.token = token if token else word
-
-    def __str__(self):
-        return f'jal {self.token}'
 
     def __repr__(self):
         return f'CustomWordToken("{self.word}")'
