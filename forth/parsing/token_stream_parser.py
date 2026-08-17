@@ -137,6 +137,6 @@ class TokenStreamParser:
             result = []
 
 
-        if emit_symbol_table: result.insert(0, SymbolTableToken(len(self.symbols)))
+        if emit_symbol_table: result.insert(0, SymbolTableToken(self.offset))
 
         return result

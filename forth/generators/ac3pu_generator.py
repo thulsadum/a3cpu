@@ -17,13 +17,13 @@ class Ac3puGenerator:
 
     def gen_if(self, tok : IfToken) -> str:
         return f"""; IF
-stia DSP
-lda DSP
-dec
-sta DSP
-inc
-lia
-beq {tok.symbol}"""
+beq {tok.symbol}_goto_false
+drop
+bra {tok.symbol}_true_branch
+{tok.symbol}_goto_false:
+drop
+bra {tok.symbol}
+{tok.symbol}_true_branch:"""
 
 
     def gen_else(self, tok : ElseToken) -> str:
@@ -39,22 +39,18 @@ bra {tok.symbol2}
 
     def gen_begin(self, tok : BeginToken) -> str:
         return f"""; BEGIN
-stia DSP
-{tok.symbol}: lda DSP
-lia"""
+{tok.symbol}:"""
 
 
     def gen_until(self, tok : UntilToken) -> str:
         return f"""; UNTIL
-stia DSP
-lda DSP
-dec
-sta DSP
-inc
-lia
-bne {tok.symbol}
-lda DSP
-lia"""
+beq {tok.symbol}_again
+drop
+bra {tok.symbol}_leave
+{tok.symbol}_again:
+drop
+bra {tok.symbol}
+{tok.symbol}_leave:"""
 
 
     def gen_symbol_table(self, tok : SymbolTableToken) -> str:
