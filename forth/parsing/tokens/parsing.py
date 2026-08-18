@@ -30,6 +30,6 @@ class ColonToken(ParsingToken):
 
 class SemicolonToken(ParsingToken):
 
-    def __init(self):
+    def __init__(self):
         self.has_arg = False
 
