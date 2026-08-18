@@ -44,3 +44,9 @@ class CustomWordToken(SyntheticToken):
     def __repr__(self):
         return f'CustomWordToken("{self.word}")'
 
+
+class CommentToken(SyntheticToken):
+    __match_args__ = ('comment',)
+    def __init__(self, comment):
+        self.comment = comment
+

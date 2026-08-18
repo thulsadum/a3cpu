@@ -77,7 +77,10 @@ class TokenStreamParser:
                         result[-2:] = []
 
                     case [RequireToken(), SymbolToken(symbol)]:
-                        result[-2:] = self.include(symbol, once=True)
+                        replacement = [CommentToken(f"--- BEGINNING OF {symbol} ---")]
+                        replacement.extend(self.include(symbol, once=True))
+                        replacement.append(CommentToken(f"--- END OF FILE: {symbol} ---"))
+                        result[-2:] = replacement
                         unresolved_symbols = True # invoke second pass
 
                     case [CreateToken(), SymbolToken(symbol)]:

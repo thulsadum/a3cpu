@@ -81,6 +81,8 @@ push("{chr(tok.value)}")'''
 
     def gen_tok(self, token):
         match token:
+            case CommentToken(comment):
+                return f'; {comment}'
             case AsmToken(asm):
                 return f'; [ASM\n{asm}\n; ]'
 
