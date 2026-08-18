@@ -1,4 +1,4 @@
-from .token import Token
+from .base import Token
 
 
 class ParsingToken(Token):

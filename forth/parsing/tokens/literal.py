@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from .token import Token
+from .base import Token
 
 
 class LiteralRepresentation(Enum):

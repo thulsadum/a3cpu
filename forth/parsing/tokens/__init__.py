@@ -1,5 +1,5 @@
-from .token import AsmToken, SymbolToken, WordToken
-from .parsing_token import *
-from .synthetic_token import *
-from .control_flow_token import *
-from .literal_token import *
+from .base import AsmToken, SymbolToken, WordToken
+from .parsing import *
+from .synthetic import *
+from .control_flow import *
+from .literal import *
