@@ -119,6 +119,10 @@ class SymbolToken(Token):
         super().__init__()
         self.symbol = symbol
 
+    def __repr__(self):
+        base = super().__repr__()
+        base = base[:-1] + f" {self.symbol}>"
+        return base
 
 
 class AsmToken(Token):
