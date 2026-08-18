@@ -108,6 +108,8 @@ class TokenStreamParser:
                     case [SymbolToken(symbol)]:
                         if self.has_symbol(symbol):
                             result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol]) ]
+                        elif symbol in self.custom_words:
+                            result[-1:] = [CustomWordToken(symbol,token=self.custom_words[symbol].token)]
                         else:
                             unresolved_symbols = True
 
