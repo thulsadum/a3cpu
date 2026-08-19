@@ -18,19 +18,19 @@ class Optimizer:
                 result.append(token)
 
                 match result[-3:]:
-                    case [LiteralToken(a), LiteralToken(b), WordToken("+")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("+")]:
                         result[-3:] = [LiteralToken(a+b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("-")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("-")]:
                         result[-3:] = [LiteralToken(a-b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("SHL")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("SHL")]:
                         result[-3:] = [LiteralToken(a<<b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("SHR")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("SHR")]:
                         result[-3:] = [LiteralToken(a>>b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("AND")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("AND")]:
                         result[-3:] = [LiteralToken(a & b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("OR")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("OR")]:
                         result[-3:] = [LiteralToken(a | b)]
-                    case [LiteralToken(a), LiteralToken(b), WordToken("XOR")]:
+                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("XOR")]:
                         result[-3:] = [LiteralToken(a ^ b)]
 
             tokens = result

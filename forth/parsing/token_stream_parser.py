@@ -108,10 +108,10 @@ class TokenStreamParser:
                         self.add_symbol(symbol, size = 0)
                         result[-2:] = []
 
-                    case [LiteralToken(size) as lt, WordToken("CELLS")]:
+                    case [LiteralToken(size) as lt, CoreWordToken("CELLS")]:
                         result[-2:] = [lt]
 
-                    case [LiteralToken(size), WordToken("ALLOT")]:
+                    case [LiteralToken(size), CoreWordToken("ALLOT")]:
                         self.offset += size
                         result[-2:] = []
 

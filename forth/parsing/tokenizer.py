@@ -115,7 +115,7 @@ class Tokenizer:
 
     def parse_core_word(self, token, tokens):
         if token.upper() in semantics.words.CORE:
-            return WordToken(token.upper())
+            return CoreWordToken(token.upper())
 
 
     def parse_token(self, token, tokens):

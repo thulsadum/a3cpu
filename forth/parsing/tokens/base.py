@@ -30,7 +30,7 @@ class AsmToken(Token):
 
 
 
-class WordToken(Token):
+class CoreWordToken(Token):
     __match_args__ = ('word',)
 
     def __init__(self, word):

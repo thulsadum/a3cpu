@@ -93,7 +93,7 @@ push({tok.value})'''
             case LiteralToken() as tok:
                 return self.gen_literal(tok)
 
-            case WordToken(word):
+            case CoreWordToken(word):
                 word = words.CORE[str(word).upper()]
                 return f"; {word.word}\n{word.asm}"
 
