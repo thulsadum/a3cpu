@@ -23,7 +23,7 @@ def parse_args():
 def main():
     args = parse_args()
     code_reader = CodeReader(args)
-    tokenizer = Tokenizer()
+    tokenizer = Tokenizer(args.input_file)
     tsp = TokenStreamParser(args)
     optimizer = Optimizer(args)
     generator = Ac3puGenerator()

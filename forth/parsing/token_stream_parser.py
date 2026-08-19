@@ -54,7 +54,7 @@ class TokenStreamParser:
 
     def include(self, file, once=False):
         code_reader = CodeReader(self.args, file=file)
-        tokenizer = Tokenizer()
+        tokenizer = Tokenizer(file)
         return tokenizer.parse_code(code_reader.get_code())
 
     def parse(self, tokens, emit_symbol_table = True):
@@ -97,10 +97,10 @@ class TokenStreamParser:
                         self.add_symbol(symbol)
                         result[-2:] = []
 
-                    case [RequireToken(), SymbolToken(symbol)]:
-                        replacement = [CommentToken(f"--- BEGINNING OF {symbol} ---")]
+                    case [RequireToken(file=f,line=l,column=c), SymbolToken(symbol)]:
+                        replacement = [CommentToken(f"--- BEGINNING OF {symbol} ---",f,l,c)]
                         replacement.extend(self.include(symbol, once=True))
-                        replacement.append(CommentToken(f"--- END OF FILE: {symbol} ---"))
+                        replacement.append(CommentToken(f"--- END OF FILE: {symbol} ---",f,l,c))
                         result[-2:] = replacement
                         unresolved_symbols = True # invoke second pass
 
@@ -115,24 +115,23 @@ class TokenStreamParser:
                         self.offset += size
                         result[-2:] = []
 
-                    case [ColonToken(), SymbolToken(word)]:
+                    case [ColonToken(file=f, line=l, column=c), SymbolToken(word)]:
                         if self.current_definition:
                             # TO DO: Raise error
                             pass
                         symbol = self.clean_symbol(word)
-                        self.current_definition = DefinitionToken(word, token=f'xt_{symbol}')
+                        self.current_definition = DefinitionToken(word, f,l,c, token=f'xt_{symbol}')
                         self.add_custom_word(word, self.current_definition)
                         result[-2:] = [self.current_definition]
 
-
                 match result[-1:]:
-                    case [SymbolToken(symbol)]:
+                    case [SymbolToken(symbol, file=f, line=l, column=c)]:
                         if self.has_symbol(symbol):
-                            result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol]) ]
+                            result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol], f, l, c) ]
                         elif symbol in self.constants:
-                            result[-1:] = [ ConstantReferenceToken(symbol, self.constants[symbol]) ]
+                            result[-1:] = [ ConstantReferenceToken(symbol, self.constants[symbol], f,l,c) ]
                         elif symbol in self.custom_words:
-                            result[-1:] = [CustomWordToken(symbol,token=self.custom_words[symbol].token)]
+                            result[-1:] = [CustomWordToken(symbol,f,l,c, token=self.custom_words[symbol].token)]
                         else:
                             unresolved_symbols = True
 
@@ -160,6 +159,6 @@ class TokenStreamParser:
             result = []
 
 
-        if emit_symbol_table: result.insert(0, SymbolTableToken(self.offset))
+        if emit_symbol_table: result.insert(0, SymbolTableToken(self.offset, self.args.input_file, -1, -1))
 
         return result

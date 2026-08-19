@@ -2,8 +2,11 @@
 
 class Token:
 
-    def __init__(self):
+    def __init__(self, file, line, column):
         self.has_arg = False
+        self.file = file
+        self.line = line
+        self.column = column
 
 
 
@@ -11,8 +14,8 @@ class SymbolToken(Token):
 
     __match_args__ = ('symbol',)
 
-    def __init__(self, symbol):
-        super().__init__()
+    def __init__(self, symbol, file, line, column):
+        super().__init__(file, line, column)
         self.symbol = symbol
 
     def __repr__(self):
@@ -24,8 +27,8 @@ class SymbolToken(Token):
 
 class AsmToken(Token):
     __match_args__ = ('asm',)
-    def __init__(self, asm):
-        super().__init__()
+    def __init__(self, asm, file, line, column):
+        super().__init__(file, line, column)
         self.asm = asm
 
 
@@ -33,8 +36,8 @@ class AsmToken(Token):
 class CoreWordToken(Token):
     __match_args__ = ('word',)
 
-    def __init__(self, word):
-        super().__init__()
+    def __init__(self, word, file, line, column):
+        super().__init__(file, line, column)
         self.word = word
 
     def __str__(self):

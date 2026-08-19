@@ -163,6 +163,22 @@ test/forth/%: test/forth/%/expected.txt test/forth/%/actual.txt
 test/forth/%: test/forth/%/ram.bin test/forth/%/INPUT $(SIM)-forth $(UROM)
 	$(SIM) $(UROM) $< --silent < test/forth/$*/INPUT && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 
+test/forth/%_forthc_fail: test/forth/%_forthc_fail/program.f $(FORTHC)
+	@echo $(FORTHC) -o $@/program.asm $<
+	@if $(FORTHC) -o $@/program.asm $<;  then \
+		echo 'Test forth $*_fail.. FAILED.'; false; \
+	else \
+		echo 'Test forth $*_fail ... ok.'; \
+	fi
+
+test/forth/%_fail: test/forth/%_fail/ram.bin $(SIM)-forth $(UROM)
+	@echo $(SIM) $(UROM) $< --silent
+	@if $(SIM) $(UROM) $< --silent; then \
+		echo 'Test forth $*_fail.. FAILED.'; false; \
+	else \
+		echo 'Test forth $*_fail ... ok.'; \
+	fi
+
 test/forth/%: test/forth/%/ram.bin $(SIM)-forth $(UROM)
 	$(SIM) $(UROM) $< --silent && echo 'Test forth $* ... ok.' || (echo 'Test forth $*.. FAILED.'; false)
 

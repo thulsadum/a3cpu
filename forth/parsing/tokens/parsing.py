@@ -2,7 +2,8 @@ from .base import Token
 
 
 class ParsingToken(Token):
-    def __init__(self):
+    def __init__(self, file, line, column):
+        super().__init__(file,line,column)
         self.has_arg = True
 
 
@@ -25,8 +26,8 @@ class RequireToken(ParsingToken):
 
 class ColonToken(ParsingToken):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,file,line,column):
+        super().__init__(file,line,column)
         self.symbol = None
         self.program = []
 
@@ -34,6 +35,7 @@ class ColonToken(ParsingToken):
 
 class SemicolonToken(ParsingToken):
 
-    def __init__(self):
+    def __init__(self,file,line,column):
+        super().__init__(file,line,column)
         self.has_arg = False
 

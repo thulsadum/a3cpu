@@ -18,20 +18,20 @@ class Optimizer:
                 result.append(token)
 
                 match result[-3:]:
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("+")]:
-                        result[-3:] = [LiteralToken(a+b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("-")]:
-                        result[-3:] = [LiteralToken(a-b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("SHL")]:
-                        result[-3:] = [LiteralToken(a<<b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("SHR")]:
-                        result[-3:] = [LiteralToken(a>>b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("AND")]:
-                        result[-3:] = [LiteralToken(a & b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("OR")]:
-                        result[-3:] = [LiteralToken(a | b)]
-                    case [LiteralToken(a), LiteralToken(b), CoreWordToken("XOR")]:
-                        result[-3:] = [LiteralToken(a ^ b)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("+")]:
+                        result[-3:] = [LiteralToken(a+b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("-")]:
+                        result[-3:] = [LiteralToken(a-b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("SHL")]:
+                        result[-3:] = [LiteralToken(a<<b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("SHR")]:
+                        result[-3:] = [LiteralToken(a>>b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("AND")]:
+                        result[-3:] = [LiteralToken(a & b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("OR")]:
+                        result[-3:] = [LiteralToken(a | b, f, l, c)]
+                    case [LiteralToken(a), LiteralToken(b, file=f, line=l, column=c), CoreWordToken("XOR")]:
+                        result[-3:] = [LiteralToken(a ^ b, f, l, c)]
 
             tokens = result
 
