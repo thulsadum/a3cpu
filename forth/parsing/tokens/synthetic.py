@@ -34,6 +34,15 @@ class SymbolReferenceToken(SyntheticToken):
         self.offset = offset
 
 
+class ConstantReferenceToken(SyntheticToken):
+    __match_args__ = ('symbol',)
+
+    def __init__(self, symbol, value):
+        super().__init__()
+        self.symbol = symbol
+        self.value= value
+
+
 class CustomWordToken(SyntheticToken):
     __match_args__ = ('word',)
 

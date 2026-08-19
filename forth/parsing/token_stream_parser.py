@@ -12,11 +12,18 @@ class TokenStreamParser:
         self.cf = []
         self.current_definition = None
         self.custom_words = {}
+        self.constants = {}
 
 
     def add_symbol(self, symbol, size = 1):
         self.symbols[symbol] = self.offset
         self.offset += size
+
+    def add_constant(self, symbol, value):
+        if symbol in self.constants:
+            # TO DO error
+            return
+        self.constants[symbol] =  value
 
     def clean_symbol(self, symbol):
         allowed_char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdeghijklmnopqrstuvwxyz0123456789_"
@@ -70,6 +77,20 @@ class TokenStreamParser:
 
                 result.append(token)
 
+                match result[-3:]:
+                    case [LiteralToken(value), ConstantToken(), SymbolToken(symbol)]:
+                        self.add_constant(symbol,value)
+                        result[-3:] = []
+
+                    case [ConstantReferenceToken(symbol2,value=value), ConstantToken(), SymbolToken(symbol)]:
+                        self.add_constant(symbol,value)
+                        result[-3:] = []
+
+                    case [SymbolToken(symbol2), ConstantToken(), SymbolToken(symbol)]:
+                        self.add_constant(symbol,self.constants[symbol2])
+                        result[-3:] = []
+
+
                 match result[-2:]:
 
                     case [VariableToken(), SymbolToken(symbol)]:
@@ -108,6 +129,8 @@ class TokenStreamParser:
                     case [SymbolToken(symbol)]:
                         if self.has_symbol(symbol):
                             result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol]) ]
+                        elif symbol in self.constants:
+                            result[-1:] = [ ConstantReferenceToken(symbol, self.constants[symbol]) ]
                         elif symbol in self.custom_words:
                             result[-1:] = [CustomWordToken(symbol,token=self.custom_words[symbol].token)]
                         else:
@@ -128,11 +151,6 @@ class TokenStreamParser:
 
                     case [UntilToken() as tok]:
                         tok.symbol = self.pop_cf()
-
-                    case [WordToken(word)]:
-                        if word in self.custom_words:
-                            result[-1] = CustomWordToken(word, token=self.custom_words[word].token)
-
 
 
             if not unresolved_symbols or i == max_passes-1:

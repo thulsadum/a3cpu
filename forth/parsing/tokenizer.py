@@ -1,5 +1,5 @@
 from .tokens import *
-
+import semantics
 
 class Tokenizer:
 
@@ -80,6 +80,8 @@ class Tokenizer:
     def parse_parsing_token(self, token, tokens):
         if token.upper() == "VARIABLE":
             return VariableToken()
+        elif token.upper() == "CONSTANT":
+            return ConstantToken()
         elif token.upper() == "CREATE":
             return CreateToken()
         elif token.upper() == "REQUIRE":
@@ -110,9 +112,15 @@ class Tokenizer:
             case _: return None
 
 
+
+    def parse_core_word(self, token, tokens):
+        if token.upper() in semantics.words.CORE:
+            return WordToken(token.upper())
+
+
     def parse_token(self, token, tokens):
 
-        rules = [self.parse_literal, self.parse_parsing_token, self.parse_control_flow_token]
+        rules = [self.parse_literal, self.parse_parsing_token, self.parse_control_flow_token, self.parse_core_word]
 
         for r in rules:
 
@@ -120,6 +128,6 @@ class Tokenizer:
 
                 return ret
 
-        return WordToken(token.upper())
+        return SymbolToken(token)
 
 

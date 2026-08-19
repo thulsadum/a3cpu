@@ -11,6 +11,10 @@ class VariableToken(ParsingToken):
     pass
 
 
+class ConstantToken(ParsingToken):
+    pass
+
+
 class CreateToken(ParsingToken):
     pass
 

@@ -78,6 +78,10 @@ push({tok.value:#04x})'''
 push("{chr(tok.value)}")'''
 
 
+    def gen_constant_reference(self, tok : ConstantReferenceToken) -> str:
+        return f'''; CONSTANT {tok.symbol} = {tok.value}
+push({tok.value})'''
+
 
     def gen_tok(self, token):
         match token:
@@ -115,6 +119,8 @@ push("{chr(tok.value)}")'''
                 return self.gen_symbol_table(stt)
             case SymbolReferenceToken() as srt:
                 return self.gen_symbol_reference(srt)
+            case ConstantReferenceToken() as crt:
+                return self.gen_constant_reference(crt)
 
             case token:
                 # TO DO emit error
