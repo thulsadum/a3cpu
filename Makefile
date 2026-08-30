@@ -13,6 +13,7 @@ SIM = src/ac3pu-sim
 UROM = ucode/urom.bin
 UCA = ucode_analyze/uca
 FORTHC = forth/forthc.py
+FORTH_FLAGS = -O0
 FORTH_SRC := $(wildcard forth/*.asm)
 
 UCA_SRCS := $(wildcard ucode_analyze/*.c)
