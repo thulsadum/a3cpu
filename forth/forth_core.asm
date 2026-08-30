@@ -163,7 +163,9 @@
         sta DSP
         inc     ; fetch NOS
         lia
-        stia TMP
+        stia TMP ; store
+        ; restore stack invariant (TOS -> ACC)
+        ldia DSP
     }
 
     emit => asm {

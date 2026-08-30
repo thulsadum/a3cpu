@@ -34,6 +34,20 @@ test_store:
 
 
 
+test_store_invariant:
+    #res 1
+
+    push(42)
+    push(21)
+    push(pad.store)
+    jal xt_store
+
+    jal __assert.test_store_invariant
+
+    ret test_store_invariant
+
+
+
 
 __assert:
 
@@ -75,6 +89,25 @@ __assert:
 
 
 
+;; 42 21 pad.store ! ( 42 21 pad.store_addr -- 42 )
+.test_store_invariant:
+    #res 1
+
+    cmpi 42
+    bne .fail
+
+    lda DSP
+    cmpi 0x21
+    bne .fail
+
+    lda pad.store
+    cmpi 21
+    bne .fail
+
+    ret .test_store_invariant
+
+
+
 
 
 setup_test:
@@ -94,7 +127,8 @@ setup_test:
     bne setup_test
     halt
 .next:  #d16 0
-.max:   #d16 2
+.max:   #d16 3
 .dict:
     #d16 test_fetch
     #d16 test_store
+    #d16 test_store_invariant

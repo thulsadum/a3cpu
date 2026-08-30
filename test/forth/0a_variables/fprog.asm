@@ -19,9 +19,6 @@ __assert:
 .test_variable_0:  ;;  VARIABLE foo 1000 foo !      \ ( -- )
     #res 1
 
-    cmpi 1000
-    bne .fail
-
     lda DSP
     cmpi (DSP_ADDR)
     bne .fail
