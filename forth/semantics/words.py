@@ -10,6 +10,7 @@ CORE : dict[str, Word] = {
     "1-": Word("1-", asm = "dec", xt = "xt_dec"),
     "-": Word("-", asm = "sub", xt = "xt_sub"),
     "LSHIFT": Word("LSHIFT", asm = "shl", xt = "xt_shl"),
+    "RSHIFT": Word("RSHIFT", asm = "shr", xt = "xt_shr"),
     "AND": Word("AND", asm = "and", xt = "xt_and"),
     "OR": Word("OR", asm = "or", xt = "xt_or"),
     "XOR": Word("XOR", asm = "xor", xt = "xt_xor"),
