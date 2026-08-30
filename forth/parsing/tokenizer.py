@@ -12,6 +12,7 @@ class Tokenizer:
         self.column = 0
         self.buf_len = 0
         self.buf_lines = 0
+        self.literal_repr = LiteralRepresentation.DECIMAL
 
     def _parse_asm(self, buf):
         return buf.split(sep=']', maxsplit=1)
@@ -90,6 +91,16 @@ class Tokenizer:
 
 
     def parse_literal(self, token, tokens):
+        match token[0]:
+            case '#':
+                return LiteralToken( int(token[1:], base=10), self.file, self.line, self.column, repr=self.literal_repr)
+            case '$':
+                return LiteralToken( int(token[1:], base=16), self.file, self.line, self.column, repr=self.literal_repr)
+            case '%':
+                return LiteralToken( int(token[1:], base=2), self.file, self.line, self.column, repr=self.literal_repr)
+            case '\'':
+                return LiteralToken( ord(token[1]), self.file, self.line, self.column, repr=self.literal_repr)
+
         if token.isdigit() or (token.startswith('-') and token[1:].isdigit()):
             return LiteralToken(int(token), self.file, self.line, self.column)
         elif token.upper().startswith("0X"):
@@ -110,6 +121,9 @@ class Tokenizer:
             return ColonToken(self.file, self.line, self.column)
         elif token.upper() == ";":
             return SemicolonToken(self.file, self.line, self.column)
+        elif token.upper() == "DECIMAL":
+            self.literal_repr = LiteralRepresentation.DECIMAL
+            return CommentToken("DECIMAL", self.file, self.line, self.column)
         elif token in self.symbols:
             return SymbolToken(token)
         return None
