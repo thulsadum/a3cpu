@@ -12,6 +12,7 @@ CORE : dict[str, Word] = {
     "SHL": Word("SHL", asm = "shl", xt = "xt_shl"),
     "AND": Word("AND", asm = "and", xt = "xt_and"),
     "OR": Word("OR", asm = "or", xt = "xt_or"),
+    "XOR": Word("XOR", asm = "xor", xt = "xt_xor"),
     "INVERT": Word("INVERT", asm = "jal xt_eq0", xt = "xt_eq0"),
     "NOT": Word("NOT", asm = "jal xt_eq0", xt = "xt_eq0"),
     "0=": Word("0=", asm = "jal xt_eq0", xt = "xt_eq0"),
