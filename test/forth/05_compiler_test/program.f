@@ -35,7 +35,7 @@
 
 [ASM test_store: ]
 [ASM #res 1 ]
-0xfe 0xca 8 SHL or
+0xfe 0xca 8 LSHIFT or
 [ASM push(pad.store) ] !
 [ASM jal __assert.test_store ]
 [ASM ret test_store ]
