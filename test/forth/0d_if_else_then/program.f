@@ -45,3 +45,9 @@ IF 42 ELSE 21 THEN
 [ASM   jal __assert.test_if_melse_1 ]
 [ASM ret test_if_melse_1 ]
 
+[ASM test_if_else_only: #res 1 ]
+ 0 IF ELSE 0xf3 THEN
+[ASM   jal __assert.test_if_else_only ]
+[ASM ret test_if_else_only ]
+
+

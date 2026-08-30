@@ -123,6 +123,25 @@ __assert:
     ret .test_if_melse_1
 
 
+;; 0 IF ELSE 0xf3 THEN
+.test_if_else_only: ;; ( -- 0xf3 )
+    #res 1
+
+    stia DSP
+
+    lda DSP
+    cmpi (DSP_ADDR+1)
+    bne .fail
+
+    lda DSP
+    lia
+    cmpi 0xf3
+    bne .fail
+
+    ret .test_if_else_only
+
+
+
 setup_test:
     ldi DSP_ADDR
     sta DSP
@@ -149,6 +168,7 @@ setup_test:
     #d16 test_if_1
     #d16 test_if_melse_0
     #d16 test_if_melse_1
+    #d16 test_if_else_only
 .dict_tc_end:
 
 #include "program.asm"
