@@ -17,6 +17,7 @@ class Ac3puGenerator:
 
     def gen_if(self, tok : IfToken) -> str:
         return f"""; IF
+tst
 beq {tok.symbol}_goto_false
 drop
 bra {tok.symbol}_true_branch
@@ -44,6 +45,7 @@ bra {tok.symbol2}
 
     def gen_until(self, tok : UntilToken) -> str:
         return f"""; UNTIL
+tst
 beq {tok.symbol}_again
 drop
 bra {tok.symbol}_leave
