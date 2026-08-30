@@ -13,6 +13,7 @@ class TokenStreamParser:
         self.current_definition = None
         self.custom_words = {}
         self.constants = {}
+        self.included = []
 
 
     def add_symbol(self, symbol, size = 1):
@@ -53,6 +54,10 @@ class TokenStreamParser:
         return self.cf.pop()
 
     def include(self, file, once=False):
+        if once and file in self.included:
+            return []
+        elif once:
+            self.included.append(file)
         code_reader = CodeReader(self.args, file=file)
         tokenizer = Tokenizer(file)
         return tokenizer.parse_code(code_reader.get_code())
