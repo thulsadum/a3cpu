@@ -96,7 +96,12 @@ class TokenStreamParser:
                         result[-3:] = []
 
 
+
                 match result[-2:]:
+
+                    case [ConstantToken() as tok, SymbolToken(symbol)]:
+                        self.add_symbol(symbol)
+                        result[-2:] = [SymbolReferenceToken(symbol, self.symbols[symbol], tok.file, tok.line, tok.column), CoreWordToken("!", tok.file, tok.line, tok.column)]
 
                     case [VariableToken(), SymbolToken(symbol)]:
                         self.add_symbol(symbol)
