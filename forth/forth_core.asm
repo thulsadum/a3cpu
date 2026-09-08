@@ -333,6 +333,7 @@ xt_eq0: ;; ( x -- flags )
 
 xt_lt0: ;; ( x -- flags )
     #res 1
+    tst
     bmi .success
     ldi FALSE
     ret xt_lt0
