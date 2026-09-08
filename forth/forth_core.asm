@@ -383,6 +383,24 @@ xt_lt: ;; ( x y -- flags )
     ret xt_lt
 
 
+xt_ult: ;; ( ux uy -- flags )
+    #res 1
+
+    sta TMP
+    lda DSP
+    dec
+    sta DSP
+    lia
+    cmp TMP
+
+    blo .success
+    ldi FALSE
+    ret xt_ult
+.success:
+    ldi TRUE
+    ret xt_ult
+
+
 xt_gt: ;; ( x y -- flags )
     #res 1
     sta TMP

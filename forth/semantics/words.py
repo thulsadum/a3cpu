@@ -20,6 +20,7 @@ CORE : dict[str, Word] = {
     "0<": Word("0<", asm = "jal xt_lt0", xt = "xt_lt0"),
     "=": Word("=", asm = "jal xt_eq", xt = "xt_eq"),
     "<": Word("<", asm = "jal xt_lt", xt = "xt_lt"),
+    "U<": Word("U<", asm = "jal xt_ult", xt = "xt_ult"),
     ">": Word(">", asm = "jal xt_gt", xt = "xt_gt"),
     "@": Word("@", asm = "jal xt_fetch", xt = "xt_fetch"),
     "!": Word("!", asm = "jal xt_store", xt = "xt_store"),
