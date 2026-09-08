@@ -193,6 +193,10 @@
         subi DSP_ADDR
     }
 
+   invert => asm {
+        xori 0xFFFF
+   }
+
 }
 
 
@@ -420,3 +424,10 @@ xt_depth:  ;; ( -- +n )
     depth
 
     ret xt_depth
+
+xt_invert:  ;; ( n -- ~n )
+    #res 1
+
+    invert
+
+    ret xt_invert
