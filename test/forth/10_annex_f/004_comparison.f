@@ -48,3 +48,25 @@ T{ MAX-INT  0= -> <FALSE> }T
 [ASM tc_lt_d:] T{       0 MIN-INT < -> <FALSE> }T
 [ASM tc_lt_e:] T{ MAX-INT MIN-INT < -> <FALSE> }T
 [ASM tc_lt_f:] T{ MAX-INT       0 < -> <FALSE> }T
+
+
+
+\ F.6.1.0540
+\ >
+[ASM tc_gt_0 :] T{       0       1 > -> <FALSE> }T
+[ASM tc_gt_1 :] T{       1       2 > -> <FALSE> }T
+[ASM tc_gt_2 :] T{      -1       0 > -> <FALSE> }T
+[ASM tc_gt_3 :] T{      -1       1 > -> <FALSE> }T
+[ASM tc_gt_4 :] T{ MIN-INT       0 > -> <FALSE> }T
+[ASM tc_gt_5 :] T{ MIN-INT MAX-INT > -> <FALSE> }T
+[ASM tc_gt_6 :] T{       0 MAX-INT > -> <FALSE> }T
+[ASM tc_gt_7 :] T{       0       0 > -> <FALSE> }T
+[ASM tc_gt_8 :] T{       1       1 > -> <FALSE> }T
+[ASM tc_gt_9 :] T{       1       0 > -> <TRUE>  }T
+[ASM tc_gt_10:]  T{       2       1 > -> <TRUE>  }T
+[ASM tc_gt_11:]  T{       0      -1 > -> <TRUE>  }T
+[ASM tc_gt_12:]  T{       1      -1 > -> <TRUE>  }T
+[ASM tc_gt_13:]  T{       0 MIN-INT > -> <TRUE>  }T
+[ASM tc_gt_14:]  T{ MAX-INT MIN-INT > -> <TRUE>  }T
+[ASM tc_gt_15:]  T{ MAX-INT       0 > -> <TRUE>  }T
+
