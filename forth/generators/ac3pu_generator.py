@@ -81,7 +81,21 @@ push("{chr(tok.value)}")'''
 
 
     def gen_constant_reference(self, tok : ConstantReferenceToken) -> str:
-        return f'''; CONSTANT {tok.symbol} = {tok.value}
+        match tok:
+            case RuntimeConstantDefinitionToken(symbol):
+                return f'''; CONSTANT definition (runtime) {tok.symbol}
+push({tok.value})
+add DBP
+{self.gen_tok(CoreWordToken("!", tok.file, tok.line, tok.column))}'''
+
+            case RuntimeConstantReferenceToken(symbol):
+                return f'''; CONSTANT (runtime) {tok.symbol}
+push({tok.value})
+add DBP
+{self.gen_tok(CoreWordToken("@", tok.file, tok.line, tok.column))}'''
+
+            case ConstantReferenceToken(symbol):
+                return f'''; CONSTANT {tok.symbol} = {tok.value}
 push({tok.value})'''
 
 

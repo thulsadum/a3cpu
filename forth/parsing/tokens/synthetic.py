@@ -43,6 +43,20 @@ class ConstantReferenceToken(SyntheticToken):
         self.value= value
 
 
+class RuntimeConstantDefinitionToken(ConstantReferenceToken):
+    __match_args__ = ('symbol',)
+
+    def __init__(self, symbol, addr, file, line, column):
+        super().__init__(symbol, addr, file, line, column)
+
+
+class RuntimeConstantReferenceToken(ConstantReferenceToken):
+    __match_args__ = ('symbol',)
+
+    def __init__(self, symbol, addr, file, line, column):
+        super().__init__(symbol, addr, file, line, column)
+
+
 class CustomWordToken(SyntheticToken):
     __match_args__ = ('word',)
 

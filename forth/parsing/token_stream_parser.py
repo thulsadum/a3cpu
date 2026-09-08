@@ -20,11 +20,13 @@ class TokenStreamParser:
         self.symbols[symbol] = self.offset
         self.offset += size
 
-    def add_constant(self, symbol, value):
+    def add_constant(self, symbol, value, runtime=False):
         if symbol in self.constants:
             # TO DO error
             return
-        self.constants[symbol] =  value
+        self.constants[symbol] =  {"value": value, "runtime": runtime}
+        if runtime:
+            self.offset += 1
 
     def clean_symbol(self, symbol):
         allowed_char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdeghijklmnopqrstuvwxyz0123456789_"
@@ -100,8 +102,8 @@ class TokenStreamParser:
                 match result[-2:]:
 
                     case [ConstantToken() as tok, SymbolToken(symbol)]:
-                        self.add_symbol(symbol)
-                        result[-2:] = [SymbolReferenceToken(symbol, self.symbols[symbol], tok.file, tok.line, tok.column), CoreWordToken("!", tok.file, tok.line, tok.column)]
+                        self.add_constant(symbol, self.offset, runtime=True)
+                        result[-2:] = [RuntimeConstantDefinitionToken(symbol, self.constants[symbol]['value'], tok.file, tok.line, tok.column)]
 
                     case [VariableToken(), SymbolToken(symbol)]:
                         self.add_symbol(symbol)
@@ -139,7 +141,10 @@ class TokenStreamParser:
                         if self.has_symbol(symbol):
                             result[-1:] = [ SymbolReferenceToken(symbol, self.symbols[symbol], f, l, c) ]
                         elif symbol in self.constants:
-                            result[-1:] = [ ConstantReferenceToken(symbol, self.constants[symbol], f,l,c) ]
+                            if self.constants[symbol]['runtime']:
+                                result[-1:] = [ RuntimeConstantReferenceToken(symbol, self.constants[symbol]['value'], f,l,c) ]
+                            else:
+                                result[-1:] = [ ConstantReferenceToken(symbol, self.constants[symbol]['value'], f,l,c) ]
                         elif symbol in self.custom_words:
                             result[-1:] = [CustomWordToken(symbol,f,l,c, token=self.custom_words[symbol].token)]
                         else:
