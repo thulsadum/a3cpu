@@ -1,3 +1,5 @@
+REQUIRE forth/forth_core.f
+
 \ include test facilities.
 
 REQUIRE lib/test.f

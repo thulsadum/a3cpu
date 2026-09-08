@@ -1,5 +1,3 @@
-REQUIRE forth/forth_core.f
-
 
 [ASM tc_shifts_msb:] T{ MSB BITSSET? -> 0 0 }T
 
