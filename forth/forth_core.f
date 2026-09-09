@@ -24,3 +24,6 @@
 
 : MAX ( n1 n2 -- max{n1,n2} )
   2DUP < IF SWAP THEN DROP ;
+
+: MIN ( n1 n2 -- min{n1,n2} )
+  2DUP > IF SWAP THEN DROP ;

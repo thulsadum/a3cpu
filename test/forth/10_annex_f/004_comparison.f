@@ -108,3 +108,24 @@ T{ MAX-INT  0= -> <FALSE> }T
 [ASM tc_max_13:]  T{       0 MIN-INT MAX ->       0 }T
 [ASM tc_max_14:]  T{ MAX-INT MIN-INT MAX -> MAX-INT }T
 [ASM tc_max_15:]  T{ MAX-INT       0 MAX -> MAX-INT }T
+
+
+
+\ F.6.1.1880
+\ MIN
+[ASM tc_min_0 :] T{       0       1 MIN ->       0 }T
+[ASM tc_min_1 :] T{       1       2 MIN ->       1 }T
+[ASM tc_min_2 :] T{      -1       0 MIN ->      -1 }T
+[ASM tc_min_3 :] T{      -1       1 MIN ->      -1 }T
+[ASM tc_min_4 :] T{ MIN-INT       0 MIN -> MIN-INT }T
+[ASM tc_min_5 :] T{ MIN-INT MAX-INT MIN -> MIN-INT }T
+[ASM tc_min_6 :] T{       0 MAX-INT MIN ->       0 }T
+[ASM tc_min_7 :] T{       0       0 MIN ->       0 }T
+[ASM tc_min_8 :] T{       1       1 MIN ->       1 }T
+[ASM tc_min_9 :] T{       1       0 MIN ->       0 }T
+[ASM tc_min_10:]  T{       2       1 MIN ->       1 }T
+[ASM tc_min_11:]  T{       0      -1 MIN ->      -1 }T
+[ASM tc_min_12:]  T{       1      -1 MIN ->      -1 }T
+[ASM tc_min_13:]  T{       0 MIN-INT MIN -> MIN-INT }T
+[ASM tc_min_14:]  T{ MAX-INT MIN-INT MIN -> MIN-INT }T
+[ASM tc_min_15:]  T{ MAX-INT       0 MIN ->       0 }T
