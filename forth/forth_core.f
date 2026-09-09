@@ -15,3 +15,6 @@
 
 : 2SWAP ( a b c d -- c d a b )
   ROT >R ROT R> ;
+
+: 2OVER ( a b c d -- a b c d a b )
+  >R >R 2DUP R> R> 2SWAP ;
