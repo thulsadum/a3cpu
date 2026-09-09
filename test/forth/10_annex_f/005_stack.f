@@ -13,3 +13,9 @@
 \ F.6.1.1990
 \ OVER
 [ASM tc_over:] T{ 1 2 OVER -> 1 2 1 }T
+
+
+\ F.6.1.2160
+\ ROT
+[ASM tc_rot:] T{ 1 2 3 ROT -> 2 3 1 }T
+

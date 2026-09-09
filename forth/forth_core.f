@@ -6,3 +6,6 @@
   DUP 0< IF
     1 RSHIFT 0x8000 OR ELSE
     1 RSHIFT THEN ;
+
+: ROT ( a b c --- b c a )
+  >R SWAP R> SWAP ;
