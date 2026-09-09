@@ -47,3 +47,10 @@
 \ 2OVER
 [ASM tc_2over:] T{ 1 2 3 4 2OVER -> 1 2 3 4 1 2 }T
 
+
+\ F.6.1.0630
+\ ?DUP
+[ASM tc_question_dupe_0:] T{ -1 ?DUP -> -1 -1 }T
+[ASM tc_question_dupe_1:] T{  0 ?DUP ->  0    }T
+[ASM tc_question_dupe_2:] T{  1 ?DUP ->  1  1 }T
+

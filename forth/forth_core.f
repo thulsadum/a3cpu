@@ -18,3 +18,6 @@
 
 : 2OVER ( a b c d -- a b c d a b )
   >R >R 2DUP R> R> 2SWAP ;
+
+: ?DUP ( x -- 0|x x )
+  DUP IF DUP THEN ;
