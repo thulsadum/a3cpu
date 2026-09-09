@@ -9,5 +9,6 @@ REQUIRE 001_logic.f
 REQUIRE 002_shifts.f
 REQUIRE 003_numerics.f
 REQUIRE 004_comparison.f
+REQUIRE 005_stack.f
 
 [ASM halt ]
