@@ -17,6 +17,13 @@
         lia
     }
 
+    two_drop => asm {
+        lda DSP
+        subi 2
+        sta DSP
+        lia
+    }
+
     movR => asm {
         stia RSP
         lda RSP
@@ -208,6 +215,15 @@ xt_drop: ; ( x -- ), no_tmp, atomic
     drop
 
     ret xt_drop
+
+
+
+xt_2drop: ; ( x -- ), no_tmp, atomic
+    #res 1
+
+    two_drop
+
+    ret xt_2drop
 
 
 

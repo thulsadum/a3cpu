@@ -23,3 +23,12 @@
 \ F.6.1.2260
 \ SWAP
 [ASM tc_swap:] T{ 1 2 SWAP -> 2 1 }T
+
+
+
+\\\ two cell stack operations
+
+\ F.6.1.0370
+\ 2DROP
+[ASM tc_2drop:] T{ 1 2 2DROP -> }T
+
