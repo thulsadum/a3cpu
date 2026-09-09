@@ -32,3 +32,7 @@
 \ 2DROP
 [ASM tc_2drop:] T{ 1 2 2DROP -> }T
 
+
+\ F.6.1.0430
+\ 2SWAP
+[ASM tc_2swap:] T{ 1 2 3 4 2SWAP -> 3 4 1 2 }T

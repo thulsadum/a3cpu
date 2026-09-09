@@ -9,3 +9,5 @@
 
 : ROT ( a b c --- b c a )
   >R SWAP R> SWAP ;
+: 2SWAP ( a b c d -- c d a b )
+  ROT >R ROT R> ;
