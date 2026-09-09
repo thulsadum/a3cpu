@@ -9,3 +9,7 @@
 \ DUP
 [ASM tc_dup:] T{ 1 DUP -> 1 1 }T
 
+
+\ F.6.1.1990
+\ OVER
+[ASM tc_over:] T{ 1 2 OVER -> 1 2 1 }T
