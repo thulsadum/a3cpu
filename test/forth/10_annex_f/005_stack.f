@@ -19,3 +19,7 @@
 \ ROT
 [ASM tc_rot:] T{ 1 2 3 ROT -> 2 3 1 }T
 
+
+\ F.6.1.2260
+\ SWAP
+[ASM tc_swap:] T{ 1 2 SWAP -> 2 1 }T
