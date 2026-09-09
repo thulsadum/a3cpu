@@ -87,3 +87,24 @@ T{ MAX-INT  0= -> <FALSE> }T
 [ASM tc_ult_10:]  T{ MAX-UINT        0 U< -> <FALSE> }T
 [ASM tc_ult_11:]  T{ MAX-UINT MID-UINT U< -> <FALSE> }T
 
+
+
+
+\ F.6.1.1870
+\ MAX
+[ASM tc_max_0 :] T{       0       1 MAX ->       1 }T
+[ASM tc_max_1 :] T{       1       2 MAX ->       2 }T
+[ASM tc_max_2 :] T{      -1       0 MAX ->       0 }T
+[ASM tc_max_3 :] T{      -1       1 MAX ->       1 }T
+[ASM tc_max_4 :] T{ MIN-INT       0 MAX ->       0 }T
+[ASM tc_max_5 :] T{ MIN-INT MAX-INT MAX -> MAX-INT }T
+[ASM tc_max_6 :] T{       0 MAX-INT MAX -> MAX-INT }T
+[ASM tc_max_7 :] T{       0       0 MAX ->       0 }T
+[ASM tc_max_8 :] T{       1       1 MAX ->       1 }T
+[ASM tc_max_9 :] T{       1       0 MAX ->       1 }T
+[ASM tc_max_10:]  T{       2       1 MAX ->       2 }T
+[ASM tc_max_11:]  T{       0      -1 MAX ->       0 }T
+[ASM tc_max_12:]  T{       1      -1 MAX ->       1 }T
+[ASM tc_max_13:]  T{       0 MIN-INT MAX ->       0 }T
+[ASM tc_max_14:]  T{ MAX-INT MIN-INT MAX -> MAX-INT }T
+[ASM tc_max_15:]  T{ MAX-INT       0 MAX -> MAX-INT }T

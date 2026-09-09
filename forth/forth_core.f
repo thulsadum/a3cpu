@@ -21,3 +21,6 @@
 
 : ?DUP ( x -- 0|x x )
   DUP IF DUP THEN ;
+
+: MAX ( n1 n2 -- max{n1,n2} )
+  2DUP < IF SWAP THEN DROP ;
