@@ -54,3 +54,9 @@
 [ASM tc_question_dupe_1:] T{  0 ?DUP ->  0    }T
 [ASM tc_question_dupe_2:] T{  1 ?DUP ->  1  1 }T
 
+
+\ F.6.1.1200
+\ DEPTH
+[ASM tc_depth_0:] T{ 0 1 DEPTH -> 0 1 2 }T
+[ASM tc_depth_1:] T{   0 DEPTH -> 0 1   }T
+[ASM tc_depth_2:] T{     DEPTH -> 0     }T
