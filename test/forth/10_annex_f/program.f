@@ -10,5 +10,6 @@ REQUIRE 002_shifts.f
 REQUIRE 003_numerics.f
 REQUIRE 004_comparison.f
 REQUIRE 005_stack.f
+REQUIRE 006_return_stack.f
 
 [ASM halt ]
